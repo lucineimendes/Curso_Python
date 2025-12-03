@@ -196,6 +196,14 @@ def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
     if current_lesson_index != -1 and current_lesson_index < len(all_lessons_for_course) - 1:
         next_lesson_obj = all_lessons_for_course[current_lesson_index + 1]
 
+    # Marcar lição como completa quando o usuário acessa
+    try:
+        user_id = 'default'  # TODO: Implementar autenticação de usuários
+        progress_mgr.mark_lesson_complete(user_id, course_id, lesson_id_str)
+        logger.info(f"Lição '{lesson_id_str}' marcada como completa para usuário '{user_id}'")
+    except Exception as prog_error:
+        logger.error(f"Erro ao marcar progresso da lição: {prog_error}", exc_info=True)
+
     return render_template('lesson_detail.html', # Assumindo que o template se chama lesson_detail.html
                            course=current_course,
                            lesson=current_lesson,
@@ -492,6 +500,15 @@ def api_check_exercise():
             details = "Código executado com sucesso (nenhum teste automático para este exercício)."
         elif not test_code and not success:
             details = f"Erro ao executar o código: {details if details else 'Erro desconhecido'}"
+
+        # Marcar exercício como completo se foi bem-sucedido
+        if success:
+            try:
+                user_id = data.get('user_id', 'default')
+                progress_mgr.mark_exercise_complete(user_id, course_id, exercise_id_str, success=True, attempts=1)
+                logger.info(f"Exercício '{exercise_id_str}' marcado como completo para usuário '{user_id}'")
+            except Exception as prog_error:
+                logger.error(f"Erro ao marcar progresso do exercício: {prog_error}", exc_info=True)
 
         logger.info(f"POST /api/check-exercise - Verificação: success={success}")
         return jsonify({"success": success, "output": api_output_response, "details": details})

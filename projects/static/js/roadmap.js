@@ -4,13 +4,40 @@ class CourseRoadmap {
     constructor(courseId, containerId) {
         this.courseId = courseId;
         this.container = document.getElementById(containerId);
-        this.progress = this.loadProgress();
+        this.progress = { lessons: {}, exercises: {} };
+        this.loadProgressFromServer();
     }
 
-    loadProgress() {
-        // Carregar progresso do localStorage
+    async loadProgressFromServer() {
+        try {
+            const response = await fetch(`/api/progress/course/${this.courseId}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.progress) {
+                    this.progress = {
+                        lessons: data.progress.lessons || {},
+                        exercises: data.progress.exercises || {},
+                    };
+                    // Também salvar no localStorage como backup
+                    this.saveProgress();
+                    // Atualizar visual se já foi renderizado
+                    if (this.container && this.container.innerHTML) {
+                        this.updateVisual();
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao carregar progresso do servidor:', error);
+            // Fallback para localStorage
+            this.loadProgressFromLocalStorage();
+        }
+    }
+
+    loadProgressFromLocalStorage() {
         const stored = localStorage.getItem(`progress_${this.courseId}`);
-        return stored ? JSON.parse(stored) : { lessons: {}, exercises: {} };
+        if (stored) {
+            this.progress = JSON.parse(stored);
+        }
     }
 
     saveProgress() {
@@ -208,22 +235,33 @@ class CourseRoadmap {
 
     updateVisual() {
         // Recarregar o roadmap com dados atualizados
-        // Esta função será chamada após marcar itens como completos
-        console.log('Roadmap atualizado');
+        if (typeof courseData !== 'undefined' && courseData.lessons && courseData.exercises) {
+            this.render(courseData.lessons, courseData.exercises);
+        }
+    }
+}
+
+// Função auxiliar para recarregar o roadmap
+function reloadRoadmap() {
+    if (window.courseRoadmap) {
+        window.courseRoadmap.loadProgressFromServer();
     }
 }
 
 // Inicializar roadmap quando a página carregar
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const roadmapContainer = document.getElementById('course-roadmap');
     if (roadmapContainer && typeof courseData !== 'undefined') {
         const roadmap = new CourseRoadmap(
             courseData.courseId,
             'course-roadmap'
         );
-        roadmap.render(courseData.lessons, courseData.exercises);
 
         // Tornar disponível globalmente para outras funções
         window.courseRoadmap = roadmap;
+
+        // Aguardar carregamento do progresso e então renderizar
+        await roadmap.loadProgressFromServer();
+        roadmap.render(courseData.lessons, courseData.exercises);
     }
 });
