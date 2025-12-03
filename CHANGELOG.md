@@ -3,6 +3,20 @@
 ## [Não Lançado]
 
 ### Adicionado
+
+#### Sistema de Roadmap e Progresso
+- Roadmap visual interativo para acompanhamento de progresso
+- Mapa com checkpoints e ramificações para cada lição
+- Rastreamento automático de lições e exercícios completados
+- Estatísticas detalhadas de progresso (lições, exercícios, percentuais)
+- Persistência de progresso em JSON (backend) e localStorage (frontend)
+- API RESTful para gerenciamento de progresso
+- Visualização de exercícios por lição no roadmap
+- Animações e transições suaves no roadmap
+- Suporte a tema escuro no roadmap
+- Botão de acesso ao roadmap na página de detalhes do curso
+
+#### Tema Escuro
 - Sistema de tema escuro/claro com alternância no navbar
 - Botão de alternância de tema com ícones 🌙/☀️
 - Persistência de preferência de tema em localStorage
@@ -45,6 +59,15 @@
 - Todos os guias de documentação para usar `uv` em vez de `pip`
 
 ### Arquivos Criados
+
+#### Sistema de Roadmap
+- `projects/progress_manager.py` - Gerenciador de progresso do usuário
+- `projects/static/js/roadmap.js` - Componente JavaScript do roadmap
+- `projects/static/css/roadmap.css` - Estilos do roadmap
+- `projects/templates/course_roadmap.html` - Template da página de roadmap
+- `docs/ROADMAP_SYSTEM.md` - Documentação completa do sistema
+
+#### Formatadores e Configuração
 - `.prettierrc` - Configuração do Prettier
 - `.prettierignore` - Arquivos ignorados pelo Prettier
 - `pyproject.toml` - Configuração do projeto Python

@@ -2,21 +2,39 @@
 
 ## Configuração do Ambiente
 
-### 1. Instalar Dependências
+### 1. Instalar uv
 
 ```bash
-# Criar ambiente virtual
-python -m venv .venv
+# Linux/macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Ou via pip
+pip install uv
+
+# Ou via pipx
+pipx install uv
+
+# Verificar instalação
+uv --version
+```
+
+### 2. Instalar Dependências
+
+```bash
+# Criar ambiente virtual com uv
+uv venv
+
+# Ativar ambiente virtual (opcional, uv pode executar sem ativar)
 source .venv/bin/activate  # Linux/macOS
 
 # Instalar dependências Python
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 
 # Instalar dependências Node (para Prettier)
 npm install
 ```
 
-### 2. Configurar Formatadores
+### 3. Configurar Formatadores
 
 O projeto usa:
 - **Ruff**: Formatador e linter Python (rápido e moderno)
@@ -25,8 +43,8 @@ O projeto usa:
 #### Instalação Manual (se necessário)
 
 ```bash
-# Python
-pip install ruff black pytest
+# Python (com uv)
+uv pip install ruff black pytest
 
 # Node
 npm install -g prettier
@@ -64,11 +82,15 @@ npm run fix:python       # Corrigir problemas Python
 ### Usando Comandos Diretos
 
 ```bash
-# Python - Ruff
-ruff format projects/              # Formatar
-ruff format --check projects/      # Verificar formatação
-ruff check projects/               # Lint
-ruff check --fix projects/         # Lint e corrigir
+# Python - Ruff (com uv)
+uv run ruff format projects/              # Formatar
+uv run ruff format --check projects/      # Verificar formatação
+uv run ruff check projects/               # Lint
+uv run ruff check --fix projects/         # Lint e corrigir
+
+# Ou com venv ativado
+ruff format projects/
+ruff check projects/
 
 # JavaScript/CSS/HTML - Prettier
 prettier --write "projects/**/*.{js,css,html}"    # Formatar
@@ -137,7 +159,7 @@ Para garantir que o código está formatado antes de cada commit:
 
 ```bash
 # Instalar pre-commit
-pip install pre-commit
+uv pip install pre-commit
 
 # Criar .pre-commit-config.yaml (já incluído no projeto)
 # Instalar hooks
@@ -171,26 +193,30 @@ git commit -m "docs: atualizar README com instruções de instalação"
 ## Testes
 
 ```bash
-# Executar todos os testes
-pytest
+# Executar todos os testes (com uv)
+uv run pytest
 
 # Executar com cobertura
-pytest --cov=projects
+uv run pytest --cov=projects
 
 # Executar teste específico
-pytest projects/testes/test_app.py
+uv run pytest projects/testes/test_app.py
 
 # Executar com verbose
-pytest -v
+uv run pytest -v
+
+# Ou com venv ativado
+pytest
+pytest --cov=projects
 ```
 
 ## Troubleshooting
 
 ### Ruff não encontrado
 ```bash
-pip install ruff
+uv pip install ruff
 # ou
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 ### Prettier não encontrado

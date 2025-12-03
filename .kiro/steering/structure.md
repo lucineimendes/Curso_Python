@@ -9,15 +9,23 @@ projects/                    # Pacote principal da aplicação
 ├── course_manager.py       # Gerenciamento de dados de cursos
 ├── lesson_manager.py       # Gerenciamento de dados de lições
 ├── exercise_manager.py     # Gerenciamento de dados de exercícios
+├── progress_manager.py     # Gerenciamento de progresso do usuário
 ├── code_executor.py        # Execução segura de código Python
 ├── data/                   # Armazenamento de dados JSON
 │   ├── courses.json        # Lista de cursos disponíveis
+│   ├── user_progress.json  # Progresso dos usuários
 │   ├── basic/              # Dados do curso básico
 │   ├── intermediate/       # Dados do curso intermediário
 │   └── advanced/           # Dados do curso avançado
 ├── static/                 # Assets estáticos
 │   ├── css/
+│   │   ├── style.css       # Estilos principais + tema escuro
+│   │   └── roadmap.css     # Estilos do roadmap
 │   └── js/
+│       ├── main.js         # JavaScript principal + alternância de tema
+│       ├── editor.js       # Integração CodeMirror
+│       ├── roadmap.js      # Componente do roadmap visual
+│       └── exercise_handler.js  # Gerenciamento de exercícios
 ├── templates/              # Templates Jinja2
 └── testes/                 # Suite de testes
     ├── conftest.py         # Fixtures pytest e configuração
@@ -28,19 +36,27 @@ projects/                    # Pacote principal da aplicação
 ## Padrões Arquiteturais
 
 ### Separação UI/API
-- **Rotas UI**: Renderizam templates HTML (`/`, `/courses`, `/courses/<id>`)
-- **Rotas API**: Retornam JSON, prefixadas com `/api` (`/api/execute-code`, `/api/check-exercise`)
+- **Rotas UI**: Renderizam templates HTML (`/`, `/courses`, `/courses/<id>`, `/courses/<id>/roadmap`)
+- **Rotas API**: Retornam JSON, prefixadas com `/api` (`/api/execute-code`, `/api/check-exercise`, `/api/progress/*`)
 
 ### Managers (Camada de Dados)
 - **CourseManager**: Carrega todos os cursos na inicialização
 - **LessonManager**: Carrega lições sob demanda via `load_lessons_from_file()`
 - **ExerciseManager**: Carrega exercícios sob demanda via `load_exercises_from_file()`
+- **ProgressManager**: Gerencia progresso do usuário (lições/exercícios completados, estatísticas)
 - Otimização: Managers de lições/exercícios não carregam todos os dados na inicialização
 
 ### Execução de Código
 - `code_executor.execute_code()`: Executa código do usuário, captura stdout/stderr
 - `code_executor.execute_test()`: Executa código de teste com namespace customizado
 - Variável `output` disponibilizada para `test_code` contendo stdout do código do usuário
+
+### Sistema de Progresso
+- **ProgressManager**: Gerencia progresso do usuário através dos cursos
+- **Persistência**: Dados salvos em `data/user_progress.json`
+- **API RESTful**: Endpoints para marcar lições/exercícios como completos
+- **Frontend**: Roadmap visual interativo com estatísticas em tempo real
+- **Sincronização**: localStorage (frontend) + JSON (backend)
 
 ## Convenções de Código
 
@@ -86,3 +102,5 @@ projects/                    # Pacote principal da aplicação
 - Rota legada `/submit_exercise` mantida para compatibilidade (considerar refatoração)
 - `courses_file` vs `couses.json` (typo no nome do arquivo - verificar se é usado)
 - Escalabilidade: JSON funciona para escala atual, considerar BD para crescimento futuro
+- Sistema de progresso usa `user_id="default"` - implementar autenticação para multi-usuário
+- Progresso salvo em localStorage pode ser perdido - sincronizar com backend regularmente

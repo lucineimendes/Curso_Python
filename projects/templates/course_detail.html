@@ -4,8 +4,11 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="mb-4">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
         <a href="{{ url_for('list_courses_page') }}" class="btn btn-outline-secondary">← Voltar para Cursos</a>
+        <a href="{{ url_for('course_roadmap_page', course_id=course.id) }}" class="btn btn-primary">
+            🗺️ Ver Roadmap do Curso
+        </a>
     </div>
 
     <div class="card mb-4">

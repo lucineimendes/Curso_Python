@@ -41,15 +41,48 @@ async function submitCode(courseId, exerciseId) {
         }
 
         const result = await response.json();
-        
+
         outputContent.textContent = result.output || "(Nenhuma saída padrão)";
         outputDetails.textContent = result.details || "";
 
         outputArea.classList.add(result.success ? "success" : "error");
 
+        // Se o exercício foi completado com sucesso, marcar no progresso
+        if (result.success) {
+            markExerciseComplete(courseId, exerciseId);
+        }
+
     } catch (error) {
         outputContent.textContent = "Erro ao submeter o código.";
         outputDetails.textContent = error.message;
         outputArea.classList.add("error");
+    }
+}
+
+async function markExerciseComplete(courseId, exerciseId) {
+    try {
+        const response = await fetch('/api/progress/exercise', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                course_id: courseId,
+                exercise_id: exerciseId,
+                success: true,
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Exercício marcado como completo:', data);
+
+            // Atualizar roadmap se estiver disponível
+            if (window.courseRoadmap) {
+                window.courseRoadmap.markExerciseComplete(exerciseId);
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao marcar exercício como completo:', error);
     }
 }

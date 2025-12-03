@@ -2,7 +2,36 @@
 
 ## ✅ Implementações Concluídas
 
-### 1. Tema Escuro 🌙
+### 1. Sistema de Roadmap e Progresso 🗺️
+
+**Arquivos Criados:**
+- `projects/progress_manager.py` - Backend de gerenciamento de progresso
+- `projects/static/js/roadmap.js` - Frontend do roadmap interativo
+- `projects/static/css/roadmap.css` - Estilos visuais do roadmap
+- `projects/templates/course_roadmap.html` - Template da página
+- `docs/ROADMAP_SYSTEM.md` - Documentação completa
+
+**Funcionalidades:**
+- ✅ Roadmap visual com checkpoints e ramificações
+- ✅ Rastreamento automático de progresso
+- ✅ Estatísticas detalhadas (lições, exercícios, percentuais)
+- ✅ Persistência em JSON (backend) e localStorage (frontend)
+- ✅ API RESTful para progresso
+- ✅ Visualização de exercícios por lição
+- ✅ Animações e transições suaves
+- ✅ Suporte a tema escuro
+- ✅ Integração automática com exercícios
+
+**API Endpoints:**
+- `POST /api/progress/lesson` - Marcar lição como completa
+- `POST /api/progress/exercise` - Marcar exercício como completo
+- `GET /api/progress/course/<id>` - Obter progresso do curso
+- `GET /api/progress/user` - Obter estatísticas do usuário
+
+**Rota HTML:**
+- `GET /courses/<id>/roadmap` - Página de roadmap visual
+
+### 2. Tema Escuro 🌙
 
 **Arquivos Modificados:**
 - `projects/static/css/style.css` - Variáveis CSS e estilos para ambos os temas
@@ -98,22 +127,25 @@ uv run ruff format projects/         # Formatar código
 
 ## 📊 Estatísticas
 
-### Arquivos Criados: 15
+### Arquivos Criados: 20
+- 5 arquivos do sistema de roadmap
 - 3 steering rules
 - 5 arquivos de configuração
-- 4 arquivos de documentação
-- 3 scripts/ferramentas
+- 5 arquivos de documentação
+- 2 scripts/ferramentas
 
-### Arquivos Modificados: 5
-- 3 arquivos JavaScript/CSS
-- 1 template HTML
+### Arquivos Modificados: 8
+- 1 arquivo Python (app.py)
+- 4 arquivos JavaScript/CSS
+- 2 templates HTML
 - 1 arquivo de dependências
 
-### Linhas de Código Adicionadas: ~2000+
-- CSS: ~200 linhas (variáveis e estilos de tema)
-- JavaScript: ~100 linhas (lógica de tema)
-- Documentação: ~1500 linhas
-- Configuração: ~200 linhas
+### Linhas de Código Adicionadas: ~3500+
+- Python: ~400 linhas (ProgressManager + rotas API)
+- JavaScript: ~300 linhas (roadmap + integrações)
+- CSS: ~400 linhas (estilos do roadmap + tema)
+- HTML: ~100 linhas (template roadmap)
+- Documentação: ~2300 linhas
 
 ## 🎯 Próximos Passos Sugeridos
 
@@ -176,12 +208,14 @@ make format        # Formatar tudo
 
 ## ✨ Destaques
 
-1. **Tema Escuro Completo** - Interface moderna com alternância suave
-2. **Formatação Automática** - Código sempre consistente e limpo
-3. **uv Integration** - Velocidade 10-100x maior nas operações
-4. **Documentação Rica** - Guias completos para desenvolvimento
-5. **Automação** - Scripts e comandos para facilitar o workflow
-6. **VS Code Ready** - Configurações prontas para uso
+1. **Sistema de Roadmap Visual** - Acompanhamento interativo de progresso com estatísticas
+2. **Tema Escuro Completo** - Interface moderna com alternância suave
+3. **Formatação Automática** - Código sempre consistente e limpo
+4. **uv Integration** - Velocidade 10-100x maior nas operações
+5. **API RESTful de Progresso** - Endpoints completos para rastreamento
+6. **Documentação Rica** - Guias completos para desenvolvimento
+7. **Automação** - Scripts e comandos para facilitar o workflow
+8. **VS Code Ready** - Configurações prontas para uso
 
 ## 🎉 Resultado
 

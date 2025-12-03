@@ -1,0 +1,229 @@
+// Gerenciamento do Roadmap Visual do Curso
+
+class CourseRoadmap {
+    constructor(courseId, containerId) {
+        this.courseId = courseId;
+        this.container = document.getElementById(containerId);
+        this.progress = this.loadProgress();
+    }
+
+    loadProgress() {
+        // Carregar progresso do localStorage
+        const stored = localStorage.getItem(`progress_${this.courseId}`);
+        return stored ? JSON.parse(stored) : { lessons: {}, exercises: {} };
+    }
+
+    saveProgress() {
+        localStorage.setItem(`progress_${this.courseId}`, JSON.stringify(this.progress));
+    }
+
+    markLessonComplete(lessonId) {
+        this.progress.lessons[lessonId] = {
+            completed: true,
+            completedAt: new Date().toISOString(),
+        };
+        this.saveProgress();
+        this.updateVisual();
+        this.syncWithServer(lessonId, 'lesson');
+    }
+
+    markExerciseComplete(exerciseId) {
+        this.progress.exercises[exerciseId] = {
+            completed: true,
+            completedAt: new Date().toISOString(),
+        };
+        this.saveProgress();
+        this.updateVisual();
+        this.syncWithServer(exerciseId, 'exercise');
+    }
+
+    syncWithServer(itemId, type) {
+        const endpoint =
+            type === 'lesson'
+                ? '/api/progress/lesson'
+                : '/api/progress/exercise';
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                course_id: this.courseId,
+                [type + '_id']: itemId,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Progresso sincronizado:', data);
+            })
+            .catch(error => {
+                console.error('Erro ao sincronizar progresso:', error);
+            });
+    }
+
+    calculateStatistics(lessons, exercises) {
+        const completedLessons = Object.keys(this.progress.lessons).filter(
+            id => this.progress.lessons[id].completed
+        ).length;
+
+        const completedExercises = Object.keys(this.progress.exercises).filter(
+            id => this.progress.exercises[id].completed
+        ).length;
+
+        const totalLessons = lessons.length;
+        const totalExercises = exercises.length;
+
+        const lessonsPercentage =
+            totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+        const exercisesPercentage =
+            totalExercises > 0 ? (completedExercises / totalExercises) * 100 : 0;
+        const overallPercentage = (lessonsPercentage + exercisesPercentage) / 2;
+
+        return {
+            completedLessons,
+            totalLessons,
+            lessonsPercentage: Math.round(lessonsPercentage),
+            completedExercises,
+            totalExercises,
+            exercisesPercentage: Math.round(exercisesPercentage),
+            overallPercentage: Math.round(overallPercentage),
+        };
+    }
+
+    render(lessons, exercises) {
+        if (!this.container) return;
+
+        const stats = this.calculateStatistics(lessons, exercises);
+
+        // Criar HTML do roadmap
+        const html = `
+            <div class="roadmap-container">
+                <div class="roadmap-header">
+                    <h3>Progresso do Curso</h3>
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Progresso Geral</span>
+                            <span class="stat-value">${stats.overallPercentage}%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Lições</span>
+                            <span class="stat-value">${stats.completedLessons}/${stats.totalLessons}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Exercícios</span>
+                            <span class="stat-value">${stats.completedExercises}/${stats.totalExercises}</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${stats.overallPercentage}%"></div>
+                    </div>
+                </div>
+
+                <div class="roadmap-content">
+                    ${this.renderLessonsMap(lessons, exercises)}
+                </div>
+            </div>
+        `;
+
+        this.container.innerHTML = html;
+        this.attachEventListeners();
+    }
+
+    renderLessonsMap(lessons, exercises) {
+        return lessons
+            .map((lesson, index) => {
+                const isCompleted = this.progress.lessons[lesson.id]?.completed;
+                const lessonExercises = exercises.filter(
+                    ex => ex.lesson_id === lesson.id
+                );
+
+                const completedExercises = lessonExercises.filter(
+                    ex => this.progress.exercises[ex.id]?.completed
+                ).length;
+
+                const exerciseProgress =
+                    lessonExercises.length > 0
+                        ? Math.round(
+                              (completedExercises / lessonExercises.length) * 100
+                          )
+                        : 0;
+
+                return `
+                    <div class="roadmap-node ${isCompleted ? 'completed' : ''}" data-lesson-id="${lesson.id}">
+                        <div class="node-connector ${index > 0 ? 'visible' : ''}"></div>
+                        <div class="node-circle">
+                            <span class="node-number">${index + 1}</span>
+                            ${isCompleted ? '<span class="node-check">✓</span>' : ''}
+                        </div>
+                        <div class="node-content">
+                            <h4 class="node-title">${lesson.title}</h4>
+                            <p class="node-description">${lesson.description || ''}</p>
+                            ${
+                                lessonExercises.length > 0
+                                    ? `
+                                <div class="node-exercises">
+                                    <span class="exercises-label">Exercícios: ${completedExercises}/${lessonExercises.length}</span>
+                                    <div class="mini-progress-bar">
+                                        <div class="mini-progress-fill" style="width: ${exerciseProgress}%"></div>
+                                    </div>
+                                </div>
+                                <div class="exercise-list">
+                                    ${lessonExercises
+                                        .map(
+                                            ex => `
+                                        <div class="exercise-item ${this.progress.exercises[ex.id]?.completed ? 'completed' : ''}"
+                                             data-exercise-id="${ex.id}">
+                                            <span class="exercise-icon">${this.progress.exercises[ex.id]?.completed ? '✓' : '○'}</span>
+                                            <span class="exercise-name">${ex.title}</span>
+                                        </div>
+                                    `
+                                        )
+                                        .join('')}
+                                </div>
+                            `
+                                    : ''
+                            }
+                            <a href="/courses/${this.courseId}/lessons/${lesson.id}" class="node-link">
+                                ${isCompleted ? 'Revisar Lição' : 'Iniciar Lição'} →
+                            </a>
+                        </div>
+                    </div>
+                `;
+            })
+            .join('');
+    }
+
+    attachEventListeners() {
+        // Adicionar listeners para interações futuras
+        const nodes = this.container.querySelectorAll('.roadmap-node');
+        nodes.forEach(node => {
+            node.addEventListener('click', e => {
+                if (!e.target.classList.contains('node-link')) {
+                    node.classList.toggle('expanded');
+                }
+            });
+        });
+    }
+
+    updateVisual() {
+        // Recarregar o roadmap com dados atualizados
+        // Esta função será chamada após marcar itens como completos
+        console.log('Roadmap atualizado');
+    }
+}
+
+// Inicializar roadmap quando a página carregar
+document.addEventListener('DOMContentLoaded', function () {
+    const roadmapContainer = document.getElementById('course-roadmap');
+    if (roadmapContainer && typeof courseData !== 'undefined') {
+        const roadmap = new CourseRoadmap(
+            courseData.courseId,
+            'course-roadmap'
+        );
+        roadmap.render(courseData.lessons, courseData.exercises);
+
+        // Tornar disponível globalmente para outras funções
+        window.courseRoadmap = roadmap;
+    }
+});

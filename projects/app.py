@@ -17,6 +17,7 @@ from flask_cors import CORS
 from .course_manager import CourseManager
 from .lesson_manager import LessonManager
 from .exercise_manager import ExerciseManager
+from .progress_manager import ProgressManager
 from . import code_executor
 
 # Configuração básica de logging
@@ -32,6 +33,7 @@ CORS(app) # Habilita CORS para todas as rotas
 course_mgr = CourseManager()
 lesson_mgr = LessonManager()
 exercise_mgr = ExerciseManager()
+progress_mgr = ProgressManager()
 
 # --- Rotas de Apresentação (HTML) ---
 
@@ -94,6 +96,37 @@ def course_detail_page(course_id): # Renomeado para clareza
 
     return render_template('course_detail.html', course=course, lessons=lessons_for_course, title=course.get('name', 'Detalhes do Curso'))
 
+@app.route('/courses/<string:course_id>/roadmap', methods=['GET'])
+def course_roadmap_page(course_id):
+    """Renderiza a página de roadmap visual de um curso específico.
+
+    Exibe um mapa visual do progresso do usuário através das lições e exercícios.
+
+    Args:
+        course_id (str): O ID do curso.
+
+    Returns:
+        str: O conteúdo HTML da página de roadmap renderizada.
+    """
+    logger.info(f"GET /courses/{course_id}/roadmap - Solicitando roadmap do curso")
+    course = course_mgr.get_course_by_id(course_id)
+    if not course:
+        logger.warning(f"Curso '{course_id}' não encontrado para roadmap.")
+        abort(404)
+
+    # Carregar lições e exercícios
+    lessons_file = course.get("lessons_file")
+    exercises_file = course.get("exercises_file")
+
+    lessons = lesson_mgr.load_lessons_from_file(lessons_file) if lessons_file else []
+    exercises = exercise_mgr.load_exercises_from_file(exercises_file) if exercises_file else []
+
+    return render_template('course_roadmap.html',
+                          course=course,
+                          lessons=lessons,
+                          exercises=exercises,
+                          title=f"Roadmap - {course.get('name', 'Curso')}")
+
 @app.route('/courses/<string:course_id>/lessons/<string:lesson_id_str>', methods=['GET'])
 def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
     """Renderiza a página de detalhes de uma lição específica dentro de um curso.
@@ -122,7 +155,7 @@ def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
         abort(500, description="Configuração de lições ausente para este curso.")
 
     all_lessons_for_course = lesson_mgr.load_lessons_from_file(lessons_file_relative_path)
-    
+
     current_lesson = None
     current_lesson_index = -1
     for i, lesson_item_loop in enumerate(all_lessons_for_course):
@@ -134,10 +167,10 @@ def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
     if not current_lesson:
         logger.warning(f"Lição com ID '{lesson_id_str}' não encontrada no curso '{course_id}'.")
         abort(404)
-    
+
     course_level_from_course_json = current_course.get('level')
     expected_exercise_level = course_level_from_course_json.lower() if course_level_from_course_json else None
-        
+
     exercises_for_lesson = []
     exercises_file_relative_path = current_course.get("exercises_file")
     if exercises_file_relative_path:
@@ -149,7 +182,7 @@ def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
                 logger.debug(f"Verificando exercício: ID='{ex_item.get('id')}', "
                              f"LessonID_Ex='{ex_item.get('lesson_id')}', LessonID_Atual='{lesson_actual_id}', "
                              f"Level_Ex='{ex_item.get('level', '').lower()}', Level_Esperado='{expected_exercise_level}'")
-                
+
                 # Verifica se o exercício pertence à lição atual E ao nível esperado do curso
                 if isinstance(ex_item, dict) and \
                    str(ex_item.get('lesson_id')) == str(lesson_actual_id) and \
@@ -417,10 +450,10 @@ def api_check_exercise():
         user_stdout = user_exec_result["stdout"]
         user_stderr = user_exec_result["stderr"]
         user_success = user_exec_result["returncode"] == 0
-        
+
         # Inicializa 'output' com a saída do código do usuário.
         # Será sobrescrito pela saída do test_code se este for executado.
-        api_output_response = user_stdout 
+        api_output_response = user_stdout
         details = user_stderr # Detalhes podem vir do erro do usuário ou do teste
         success = False # Assume que falha até que o test_code passe ou não haja test_code
 
@@ -438,7 +471,7 @@ def api_check_exercise():
             test_globals = {'output': user_stdout} # Disponibiliza a saída do user_code para o test_code
             test_exec_result = code_executor.execute_code(test_code, execution_globals=test_globals)
             success = test_exec_result["returncode"] == 0
-            
+
             # O 'output' da API deve combinar o stdout do user_code e do test_code
             # Se o test_code produziu output (ex: "SUCCESS"), anexe-o.
             # Se o user_code produziu output, ele já está em api_output_response.
@@ -459,12 +492,160 @@ def api_check_exercise():
             details = "Código executado com sucesso (nenhum teste automático para este exercício)."
         elif not test_code and not success:
             details = f"Erro ao executar o código: {details if details else 'Erro desconhecido'}"
-        
+
         logger.info(f"POST /api/check-exercise - Verificação: success={success}")
         return jsonify({"success": success, "output": api_output_response, "details": details})
     except Exception as e:
         logger.error(f"POST /api/check-exercise - Erro inesperado: {e}", exc_info=True)
         return jsonify({"success": False, "output": "", "details": f"Erro interno do servidor ao verificar: {str(e)}"}), 500 # No Linter: Adicionar espaço antes do #
+
+# --- Rotas de API de Progresso ---
+
+@app.route('/api/progress/lesson', methods=['POST'])
+def api_mark_lesson_complete():
+    """API endpoint para marcar uma lição como completa.
+
+    JSON de Requisição:
+        {
+            "course_id": "str",
+            "lesson_id": "str",
+            "user_id": "str (opcional, padrão: 'default')"
+        }
+
+    Returns:
+        Response: JSON com o progresso atualizado do curso.
+    """
+    logger.info("POST /api/progress/lesson - Marcando lição como completa")
+    data = request.get_json()
+
+    if not data or not all(k in data for k in ['course_id', 'lesson_id']):
+        return jsonify({"success": False, "message": "Campos obrigatórios: course_id, lesson_id"}), 400
+
+    user_id = data.get('user_id', 'default')
+    course_id = data['course_id']
+    lesson_id = data['lesson_id']
+
+    try:
+        course_progress = progress_mgr.mark_lesson_complete(user_id, course_id, lesson_id)
+        return jsonify({
+            "success": True,
+            "message": "Lição marcada como completa",
+            "progress": course_progress
+        })
+    except Exception as e:
+        logger.error(f"Erro ao marcar lição como completa: {e}", exc_info=True)
+        return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
+
+@app.route('/api/progress/exercise', methods=['POST'])
+def api_mark_exercise_complete():
+    """API endpoint para marcar um exercício como completo.
+
+    JSON de Requisição:
+        {
+            "course_id": "str",
+            "exercise_id": "str",
+            "success": "bool (opcional, padrão: true)",
+            "attempts": "int (opcional, padrão: 1)",
+            "user_id": "str (opcional, padrão: 'default')"
+        }
+
+    Returns:
+        Response: JSON com o progresso atualizado do curso.
+    """
+    logger.info("POST /api/progress/exercise - Marcando exercício como completo")
+    data = request.get_json()
+
+    if not data or not all(k in data for k in ['course_id', 'exercise_id']):
+        return jsonify({"success": False, "message": "Campos obrigatórios: course_id, exercise_id"}), 400
+
+    user_id = data.get('user_id', 'default')
+    course_id = data['course_id']
+    exercise_id = data['exercise_id']
+    success = data.get('success', True)
+    attempts = data.get('attempts', 1)
+
+    try:
+        course_progress = progress_mgr.mark_exercise_complete(
+            user_id, course_id, exercise_id, success, attempts
+        )
+        return jsonify({
+            "success": True,
+            "message": "Exercício atualizado",
+            "progress": course_progress
+        })
+    except Exception as e:
+        logger.error(f"Erro ao marcar exercício como completo: {e}", exc_info=True)
+        return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
+
+@app.route('/api/progress/course/<string:course_id>', methods=['GET'])
+def api_get_course_progress(course_id):
+    """API endpoint para obter o progresso de um curso.
+
+    Args:
+        course_id (str): ID do curso.
+
+    Query Parameters:
+        user_id (str): ID do usuário (opcional, padrão: 'default').
+
+    Returns:
+        Response: JSON com o progresso e estatísticas do curso.
+    """
+    logger.info(f"GET /api/progress/course/{course_id} - Obtendo progresso do curso")
+    user_id = request.args.get('user_id', 'default')
+
+    try:
+        # Obter informações do curso
+        course = course_mgr.get_course_by_id(course_id)
+        if not course:
+            return jsonify({"success": False, "message": "Curso não encontrado"}), 404
+
+        # Carregar lições e exercícios
+        lessons_file = course.get("lessons_file")
+        exercises_file = course.get("exercises_file")
+
+        lessons = lesson_mgr.load_lessons_from_file(lessons_file) if lessons_file else []
+        exercises = exercise_mgr.load_exercises_from_file(exercises_file) if exercises_file else []
+
+        # Obter progresso
+        course_progress = progress_mgr.get_course_progress(user_id, course_id)
+        statistics = progress_mgr.get_course_statistics(
+            user_id, course_id, len(lessons), len(exercises)
+        )
+
+        return jsonify({
+            "success": True,
+            "course": course,
+            "progress": course_progress,
+            "statistics": statistics,
+            "lessons": lessons,
+            "exercises": exercises
+        })
+    except Exception as e:
+        logger.error(f"Erro ao obter progresso do curso: {e}", exc_info=True)
+        return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
+
+@app.route('/api/progress/user', methods=['GET'])
+def api_get_user_progress():
+    """API endpoint para obter o progresso geral do usuário.
+
+    Query Parameters:
+        user_id (str): ID do usuário (opcional, padrão: 'default').
+
+    Returns:
+        Response: JSON com estatísticas gerais do usuário.
+    """
+    logger.info("GET /api/progress/user - Obtendo progresso do usuário")
+    user_id = request.args.get('user_id', 'default')
+
+    try:
+        statistics = progress_mgr.get_all_statistics(user_id)
+        return jsonify({
+            "success": True,
+            "statistics": statistics
+        })
+    except Exception as e:
+        logger.error(f"Erro ao obter progresso do usuário: {e}", exc_info=True)
+        return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
 # --- Rota Legada (Manter por compatibilidade ou remover se não for mais usada) ---
 @app.route('/submit_exercise/<string:course_id>/<string:exercise_id_str>', methods=['POST'])
@@ -489,7 +670,7 @@ def submit_exercise_solution_legacy(course_id, exercise_id_str):
     logger.info(f"POST /submit_exercise/{course_id}/{exercise_id_str} (legacy) - Submetendo solução.")
     # Esta rota agora redireciona sua lógica para a nova API /api/check-exercise
     # para evitar duplicação de código.
-    
+
     data_from_request = request.get_json()
     user_code = None
     if data_from_request and 'code' in data_from_request:
@@ -510,14 +691,14 @@ def submit_exercise_solution_legacy(course_id, exercise_id_str):
         "exercise_id": exercise_id_str,
         "code": user_code
     }
-    
+
     # Chama a lógica da nova API internamente.
     # Isso requer que o contexto da aplicação Flask esteja disponível.
     # Uma forma mais limpa seria extrair a lógica de `api_check_exercise` para uma função helper.
     # Por simplicidade aqui, vamos assumir que podemos chamar a função diretamente se ela for refatorada.
     # Para este exemplo, vamos apenas logar e retornar um aviso,
     # pois chamar outra rota internamente pode ser complexo sem refatoração.
-    
+
     # --- Início da lógica duplicada (idealmente refatorar para uma função helper) ---
     course = course_mgr.get_course_by_id(course_id)
     if not course:
@@ -526,7 +707,7 @@ def submit_exercise_solution_legacy(course_id, exercise_id_str):
     exercises_file_relative_path = course.get("exercises_file")
     if not exercises_file_relative_path:
         return jsonify({"success": False, "output": "", "details": "Arquivo de exercícios não definido para este curso."}), 500
-    
+
     course_level_from_course_json = course.get('level')
     expected_exercise_level = course_level_from_course_json.lower() if course_level_from_course_json else None
 
@@ -537,7 +718,7 @@ def submit_exercise_solution_legacy(course_id, exercise_id_str):
             if not expected_exercise_level or ex_item.get('level', '').lower() == expected_exercise_level:
                 exercise_details_to_check = ex_item
                 break
-    
+
     if not exercise_details_to_check:
         return jsonify({"success": False, "output": "", "details": f"Exercício '{exercise_id_str}' não encontrado."}), 404
 
@@ -554,7 +735,7 @@ def submit_exercise_solution_legacy(course_id, exercise_id_str):
             details = "Falha na asserção do teste."
         elif not success and not details:
             details = "Erro durante a execução do código de verificação."
-        
+
         if not test_code and success:
             details = "Código executado com sucesso (nenhum teste automático)."
         elif not test_code and not success:

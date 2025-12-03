@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Roadmap - {{ course.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/roadmap.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Início</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('list_courses_page') }}">Cursos</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('course_detail_page', course_id=course.id) }}">{{ course.name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Roadmap</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>{{ course.name }} - Roadmap</h1>
+                <a href="{{ url_for('course_detail_page', course_id=course.id) }}" class="btn btn-secondary">
+                    ← Voltar ao Curso
+                </a>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>💡 Dica:</strong> Acompanhe seu progresso através do roadmap visual abaixo.
+                Clique nos nós para expandir e ver os exercícios de cada lição.
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Container do Roadmap -->
+            <div id="course-roadmap"></div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Sobre o Roadmap</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Como funciona?</h5>
+                    <ul>
+                        <li><strong>Nós Verdes:</strong> Lições completadas</li>
+                        <li><strong>Nós Azuis:</strong> Lições pendentes</li>
+                        <li><strong>Exercícios com ✓:</strong> Exercícios completados</li>
+                        <li><strong>Exercícios com ○:</strong> Exercícios pendentes</li>
+                    </ul>
+                    <p class="mb-0">
+                        Seu progresso é salvo automaticamente conforme você completa lições e exercícios.
+                        Continue aprendendo e veja seu progresso crescer!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dados do curso para o roadmap
+    const courseData = {
+        courseId: "{{ course.id }}",
+        lessons: {{ lessons | tojson }},
+        exercises: {{ exercises | tojson }}
+    };
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/roadmap.js') }}"></script>
+{% endblock %}
