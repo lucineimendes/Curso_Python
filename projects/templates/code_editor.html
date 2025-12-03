@@ -48,7 +48,7 @@
                             <p>Escreva seu código Python abaixo e execute-o.</p>
                         {% endif %}
                     </div>
-                    
+
                     <div class="mb-3">
                         <textarea id="code-editor">{% if exercise and exercise.initial_code %}{{ exercise.initial_code }}{% elif not exercise %}print("Olá, mundo!"){% endif %}</textarea>
                     </div>
@@ -58,8 +58,8 @@
                             <i class="fas fa-play"></i> Executar Código
                         </button>
                         {% if exercise %}
-                        <button id="check-exercise" class="btn btn-success" 
-                                data-course-id="{{ course.id if course else '' }}" 
+                        <button id="check-exercise" class="btn btn-success"
+                                data-course-id="{{ course.id if course else '' }}"
                                 data-exercise-id="{{ exercise.id }}">
                             <i class="fas fa-check"></i> Verificar Solução
                         </button>
@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         mode: "python",
         theme: "monokai",
         lineNumbers: true,
+        lineWrapping: true,  // Quebra automática de linha
         indentUnit: 4,
         matchBrackets: true,
         autoCloseBrackets: true,
@@ -112,9 +113,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 },
                 body: JSON.stringify({ code })
             });
-            
+
             const data = await response.json();
-            
+
             if (response.ok) { // Checa se a resposta HTTP foi bem sucedida (status 2xx)
                 outputPre.textContent = data.output || (data.success ? "Código executado sem erros, mas sem saída." : "Falha na execução.");
                 if (data.success) {
@@ -166,7 +167,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         code: code
                     })
                 });
-                
+
                 const data = await response.json();
 
                 if (response.ok) {

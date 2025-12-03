@@ -4,12 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Determinar tema inicial
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
     const editorTheme = currentTheme === 'dark' ? 'monokai' : 'default';
-    
+
     // Inicializar o editor CodeMirror
     codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
         mode: 'python',
         theme: editorTheme,
         lineNumbers: true,
+        lineWrapping: true,  // Quebra automática de linha
         indentUnit: 4,
         indentWithTabs: false,
         smartIndent: true,
@@ -31,13 +32,13 @@ document.addEventListener('DOMContentLoaded', function() {
     runButton.addEventListener('click', function() {
         // Obter o código do editor
         const code = codeEditor.getValue();
-        
+
         // Mostrar indicador de carregamento
         outputDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Executando...</span></div><p>Executando o código...</p></div>';
-        
+
         // Mudar para a aba de saída
         outputTab.click();
-        
+
         // Enviar o código para o servidor para execução
         fetch('/api/execute-code', {
             method: 'POST',
@@ -68,29 +69,29 @@ document.addEventListener('DOMContentLoaded', function() {
         checkButton.addEventListener('click', function() {
             // Obter o código do editor
             const code = codeEditor.getValue();
-            
+
             // Mostrar indicador de carregamento
             outputDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Verificando...</span></div><p>Verificando a solução...</p></div>';
-            
+
             // Mudar para a aba de saída
             outputTab.click();
-            
+
             // Enviar o código para o servidor para verificação
             fetch('/api/check-exercise', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=utf-8'
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     exercise_id: exerciseId,
-                    code: code 
+                    code: code
                 })
             })
             .then(response => response.json())
             .then(data => {
                 // Exibir o resultado da verificação
                 if (data.success) {
-                    outputDiv.innerHTML = '<div class="alert alert-success">' + 
+                    outputDiv.innerHTML = '<div class="alert alert-success">' +
                         '<h4 class="alert-heading">Parabéns!</h4>' +
                         '<p>' + data.message + '</p>' +
                         (data.output ? '<pre>' + data.output + '</pre>' : '') +
@@ -117,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const editorTop = editorElement.getBoundingClientRect().top;
             const footerHeight = 100; // Altura aproximada do footer
             const newHeight = windowHeight - editorTop - footerHeight;
-            
+
             if (newHeight >= 300) { // Altura mínima
                 editorElement.style.height = newHeight + 'px';
             }

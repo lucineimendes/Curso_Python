@@ -6,12 +6,12 @@
                     "lessons": {
                         "intro-programacao-python": {
                             "completed": true,
-                            "completed_at": "2025-12-03T17:48:32.243510",
+                            "completed_at": "2025-12-03T17:59:34.205537",
                             "times_viewed": 1
                         },
                         "configurando-ambiente-python": {
                             "completed": true,
-                            "completed_at": "2025-12-03T17:49:49.604176",
+                            "completed_at": "2025-12-03T18:08:44.067456",
                             "times_viewed": 1
                         },
                         "ola-mundo-python": {
@@ -26,18 +26,36 @@
                             "completed_at": "2025-12-03T17:50:39.333443",
                             "attempts": 1,
                             "first_attempt_success": true
+                        },
+                        "ex-intro-prog-1": {
+                            "completed": true,
+                            "completed_at": "2025-12-03T18:01:50.848728",
+                            "attempts": 2,
+                            "successful_attempts": 1,
+                            "failed_attempts": 1,
+                            "first_attempt_success": false,
+                            "last_attempt_at": "2025-12-03T18:01:50.848714"
+                        },
+                        "ex-config-env-1": {
+                            "completed": false,
+                            "completed_at": null,
+                            "attempts": 2,
+                            "successful_attempts": 0,
+                            "failed_attempts": 2,
+                            "first_attempt_success": false,
+                            "last_attempt_at": "2025-12-03T18:09:37.124915"
                         }
                     },
                     "started_at": "2025-12-03T17:48:26.625604",
-                    "last_accessed": "2025-12-03T17:50:39.333458",
+                    "last_accessed": "2025-12-03T18:09:37.124928",
                     "completed": false
                 }
             },
             "total_lessons_completed": 3,
-            "total_exercises_completed": 1,
+            "total_exercises_completed": 2,
             "created_at": "2025-12-03T17:48:26.625209"
         }
     },
     "created_at": "2025-12-03T17:10:36.020197",
-    "last_updated": "2025-12-03T17:50:39.333463"
+    "last_updated": "2025-12-03T18:09:37.124932"
 }
