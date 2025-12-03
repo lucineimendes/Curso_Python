@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ exercise.title }} - {{ course.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/default.min.css">
+<style>
+    .CodeMirror {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        height: 400px;
+        font-size: 14px;
+    }
+
+    .exercise-header {
+        background: linear-gradient(135deg, var(--example-border), #0056b3);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .exercise-instructions {
+        background-color: var(--bg-tertiary);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid var(--example-border);
+        margin-bottom: 2rem;
+    }
+
+    .output-container {
+        background-color: var(--code-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        min-height: 200px;
+        font-family: 'Courier New', monospace;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .output-container.success {
+        border-left: 4px solid #28a745;
+        background-color: rgba(40, 167, 69, 0.1);
+    }
+
+    .output-container.error {
+        border-left: 4px solid #dc3545;
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+
+    .stats-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin: 0.25rem;
+    }
+
+    .stats-badge.success {
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+
+    .stats-badge.error {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+    }
+
+    .stats-badge.info {
+        background-color: rgba(13, 110, 253, 0.2);
+        color: #0d6efd;
+    }
+
+    .feedback-message {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        font-weight: 500;
+    }
+
+    .feedback-message.success {
+        background-color: rgba(40, 167, 69, 0.1);
+        border: 1px solid #28a745;
+        color: #28a745;
+    }
+
+    .feedback-message.error {
+        background-color: rgba(220, 53, 69, 0.1);
+        border: 1px solid #dc3545;
+        color: #dc3545;
+    }
+
+    .navigation-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .navigation-buttons {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Início</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('list_courses_page') }}">Cursos</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('course_detail_page', course_id=course.id) }}">{{ course.name }}</a></li>
+            {% if lesson %}
+            <li class="breadcrumb-item"><a href="{{ url_for('lesson_detail_page', course_id=course.id, lesson_id_str=lesson.id) }}">{{ lesson.title }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ exercise.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Cabeçalho do Exercício -->
+    <div class="exercise-header">
+        <h1>{{ exercise.title }}</h1>
+        <p class="mb-0">{{ exercise.description }}</p>
+        <div class="mt-2">
+            <span class="badge bg-light text-dark">Dificuldade: {{ exercise.difficulty }}</span>
+            <span class="badge bg-light text-dark">Ordem: {{ exercise.order }}</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- Instruções -->
+            <div class="exercise-instructions">
+                <h4>📝 Instruções</h4>
+                <p>{{ exercise.instructions }}</p>
+            </div>
+
+            <!-- Editor de Código -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">💻 Editor de Código</h5>
+                </div>
+                <div class="card-body p-0">
+                    <textarea id="code-editor">{{ exercise.initial_code if exercise.initial_code else '# Escreva seu código aqui\n' }}</textarea>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="d-flex gap-2 mb-3">
+                <button id="run-code" class="btn btn-primary">
+                    <i class="bi bi-play-fill"></i> Executar Código
+                </button>
+                <button id="check-exercise" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Verificar Solução
+                </button>
+                <button id="reset-code" class="btn btn-secondary">
+                    <i class="bi bi-arrow-clockwise"></i> Resetar
+                </button>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <!-- Estatísticas -->
+            <div id="stats-container" class="mb-3" style="display: none;">
+                <h5>📊 Estatísticas</h5>
+                <div id="stats-badges"></div>
+            </div>
+
+            <!-- Feedback -->
+            <div id="feedback-container" style="display: none;"></div>
+
+            <!-- Saída -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">📤 Saída do Código</h5>
+                </div>
+                <div class="card-body">
+                    <div id="output-container" class="output-container">
+                        <span class="text-muted">A saída do seu código aparecerá aqui...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegação -->
+    <div class="navigation-buttons">
+        <div>
+            {% if lesson %}
+            <a href="{{ url_for('lesson_detail_page', course_id=course.id, lesson_id_str=lesson.id) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar para Lição
+            </a>
+            {% endif %}
+            <a href="{{ url_for('course_roadmap_page', course_id=course.id) }}" class="btn btn-outline-primary">
+                <i class="bi bi-map"></i> Ver Roadmap
+            </a>
+        </div>
+        <div>
+            {% if next_exercise %}
+            <a href="{{ url_for('exercise_code_editor_page', course_id=course.id, exercise_id_str=next_exercise.id) }}" class="btn btn-primary">
+                Próximo Exercício <i class="bi bi-arrow-right"></i>
+            </a>
+            {% elif next_lesson %}
+            <a href="{{ url_for('lesson_detail_page', course_id=course.id, lesson_id_str=next_lesson.id) }}" class="btn btn-primary">
+                Próxima Lição <i class="bi bi-arrow-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dados do exercício
+    const exerciseData = {
+        courseId: "{{ course.id }}",
+        exerciseId: "{{ exercise.id }}",
+        lessonId: "{{ lesson.id if lesson else '' }}",
+        initialCode: {{ exercise.initial_code | tojson if exercise.initial_code else '""' | safe }}
+    };
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Determinar tema do CodeMirror
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const editorTheme = currentTheme === 'dark' ? 'monokai' : 'default';
+
+    // Inicializar CodeMirror
+    const editor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+        mode: 'python',
+        theme: editorTheme,
+        lineNumbers: true,
+        indentUnit: 4,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        autofocus: true,
+        extraKeys: {
+            'Tab': function(cm) {
+                cm.replaceSelection('    ', 'end');
+            }
+        }
+    });
+
+    const outputContainer = document.getElementById('output-container');
+    const statsContainer = document.getElementById('stats-container');
+    const statsBadges = document.getElementById('stats-badges');
+    const feedbackContainer = document.getElementById('feedback-container');
+
+    // Botão Executar
+    document.getElementById('run-code').addEventListener('click', async function() {
+        const code = editor.getValue();
+        outputContainer.textContent = 'Executando...';
+        outputContainer.className = 'output-container';
+
+        try {
+            const response = await fetch('/api/execute-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                outputContainer.textContent = data.output || 'Código executado com sucesso (sem saída).';
+                outputContainer.className = 'output-container success';
+            } else {
+                outputContainer.textContent = data.details || data.output || 'Erro na execução.';
+                outputContainer.className = 'output-container error';
+            }
+        } catch (error) {
+            outputContainer.textContent = 'Erro de comunicação: ' + error.message;
+            outputContainer.className = 'output-container error';
+        }
+    });
+
+    // Botão Verificar
+    document.getElementById('check-exercise').addEventListener('click', async function() {
+        const code = editor.getValue();
+        outputContainer.textContent = 'Verificando solução...';
+        outputContainer.className = 'output-container';
+        feedbackContainer.style.display = 'none';
+
+        try {
+            const response = await fetch('/api/check-exercise', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    course_id: exerciseData.courseId,
+                    exercise_id: exerciseData.exerciseId,
+                    code: code
+                })
+            });
+
+            const data = await response.json();
+
+            // Atualizar saída
+            outputContainer.textContent = data.output || data.details || 'Sem saída.';
+            outputContainer.className = data.success ? 'output-container success' : 'output-container error';
+
+            // Mostrar estatísticas
+            if (data.stats) {
+                statsContainer.style.display = 'block';
+                statsBadges.innerHTML = `
+                    <span class="stats-badge info">Total de Tentativas: ${data.stats.attempts}</span>
+                    <span class="stats-badge success">Acertos: ${data.stats.successful_attempts}</span>
+                    <span class="stats-badge error">Erros: ${data.stats.failed_attempts}</span>
+                    ${data.stats.first_try ? '<span class="stats-badge success">✨ Acertou de Primeira!</span>' : ''}
+                `;
+            }
+
+            // Mostrar feedback
+            feedbackContainer.style.display = 'block';
+            if (data.success) {
+                feedbackContainer.innerHTML = `
+                    <div class="feedback-message success">
+                        <h5>🎉 Parabéns! Exercício Completado!</h5>
+                        <p>${data.details}</p>
+                        ${data.stats && data.stats.first_try ? '<p><strong>Você acertou de primeira! Excelente trabalho!</strong></p>' : ''}
+                    </div>
+                `;
+
+                // Atualizar roadmap se disponível
+                if (window.courseRoadmap) {
+                    window.courseRoadmap.markExerciseComplete(exerciseData.exerciseId);
+                }
+            } else {
+                const encouragement = data.stats && data.stats.attempts === 1
+                    ? 'Não desista! Revise as instruções e tente novamente.'
+                    : `Você já tentou ${data.stats.attempts} vezes. Continue tentando!`;
+
+                feedbackContainer.innerHTML = `
+                    <div class="feedback-message error">
+                        <h5>❌ Ainda não está correto</h5>
+                        <p>${data.details}</p>
+                        <p><em>${encouragement}</em></p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            outputContainer.textContent = 'Erro de comunicação: ' + error.message;
+            outputContainer.className = 'output-container error';
+        }
+    });
+
+    // Botão Resetar
+    document.getElementById('reset-code').addEventListener('click', function() {
+        if (confirm('Tem certeza que deseja resetar o código?')) {
+            editor.setValue(exerciseData.initialCode || '# Escreva seu código aqui\n');
+            outputContainer.textContent = 'Código resetado.';
+            outputContainer.className = 'output-container';
+            statsContainer.style.display = 'none';
+            feedbackContainer.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

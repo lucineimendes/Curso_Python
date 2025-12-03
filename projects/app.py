@@ -255,9 +255,53 @@ def exercise_code_editor_page(course_id, exercise_id_str): # Renomeado para clar
         logger.warning(f"Editor: Exercício ID '{exercise_id_str}' não encontrado no curso '{course_id}' ou nível incompatível.")
         abort(404)
 
-    return render_template('code_editor.html',
+    # Encontrar a lição do exercício
+    lesson_id = current_exercise.get('lesson_id')
+    current_lesson = None
+    if lesson_id:
+        lessons_file = current_course.get("lessons_file")
+        if lessons_file:
+            all_lessons = lesson_mgr.load_lessons_from_file(lessons_file)
+            for lesson in all_lessons:
+                if str(lesson.get('id')) == str(lesson_id):
+                    current_lesson = lesson
+                    break
+
+    # Encontrar próximo exercício ou próxima lição
+    next_exercise = None
+    next_lesson = None
+    current_exercise_index = -1
+
+    for i, ex in enumerate(all_exercises_for_course):
+        if str(ex.get('id')) == exercise_id_str:
+            current_exercise_index = i
+            break
+
+    # Próximo exercício da mesma lição
+    if current_exercise_index != -1 and current_exercise_index < len(all_exercises_for_course) - 1:
+        for i in range(current_exercise_index + 1, len(all_exercises_for_course)):
+            next_ex = all_exercises_for_course[i]
+            if str(next_ex.get('lesson_id')) == str(lesson_id):
+                next_exercise = next_ex
+                break
+
+    # Se não há próximo exercício, buscar próxima lição
+    if not next_exercise and current_lesson:
+        lessons_file = current_course.get("lessons_file")
+        if lessons_file:
+            all_lessons = lesson_mgr.load_lessons_from_file(lessons_file)
+            for i, lesson in enumerate(all_lessons):
+                if str(lesson.get('id')) == str(lesson_id):
+                    if i < len(all_lessons) - 1:
+                        next_lesson = all_lessons[i + 1]
+                    break
+
+    return render_template('exercise_editor.html',
                            course=current_course,
                            exercise=current_exercise,
+                           lesson=current_lesson,
+                           next_exercise=next_exercise,
+                           next_lesson=next_lesson,
                            title=f"Editor: {current_exercise.get('title', 'Exercício')}")
 
 @app.route('/editor', methods=['GET'])
@@ -501,17 +545,40 @@ def api_check_exercise():
         elif not test_code and not success:
             details = f"Erro ao executar o código: {details if details else 'Erro desconhecido'}"
 
-        # Marcar exercício como completo se foi bem-sucedido
-        if success:
-            try:
-                user_id = data.get('user_id', 'default')
-                progress_mgr.mark_exercise_complete(user_id, course_id, exercise_id_str, success=True, attempts=1)
-                logger.info(f"Exercício '{exercise_id_str}' marcado como completo para usuário '{user_id}'")
-            except Exception as prog_error:
-                logger.error(f"Erro ao marcar progresso do exercício: {prog_error}", exc_info=True)
+        # Registrar tentativa do exercício (sucesso ou falha)
+        try:
+            user_id = data.get('user_id', 'default')
+            exercise_progress = progress_mgr.mark_exercise_attempt(user_id, course_id, exercise_id_str, success=success)
+
+            # Adicionar estatísticas de tentativas na resposta
+            exercise_stats = exercise_progress.get("exercises", {}).get(exercise_id_str, {})
+            attempts_count = exercise_stats.get("attempts", 1)
+            successful_attempts = exercise_stats.get("successful_attempts", 0)
+            failed_attempts = exercise_stats.get("failed_attempts", 0)
+
+            logger.info(f"Exercício '{exercise_id_str}' - Tentativa registrada. Total: {attempts_count}, Sucesso: {successful_attempts}, Falhas: {failed_attempts}")
+        except Exception as prog_error:
+            logger.error(f"Erro ao registrar tentativa do exercício: {prog_error}", exc_info=True)
+            attempts_count = 1
+            successful_attempts = 1 if success else 0
+            failed_attempts = 0 if success else 1
 
         logger.info(f"POST /api/check-exercise - Verificação: success={success}")
-        return jsonify({"success": success, "output": api_output_response, "details": details})
+
+        # Preparar resposta com estatísticas
+        response_data = {
+            "success": success,
+            "output": api_output_response,
+            "details": details,
+            "stats": {
+                "attempts": attempts_count,
+                "successful_attempts": successful_attempts,
+                "failed_attempts": failed_attempts,
+                "first_try": attempts_count == 1 and success
+            }
+        }
+
+        return jsonify(response_data)
     except Exception as e:
         logger.error(f"POST /api/check-exercise - Erro inesperado: {e}", exc_info=True)
         return jsonify({"success": False, "output": "", "details": f"Erro interno do servidor ao verificar: {str(e)}"}), 500 # No Linter: Adicionar espaço antes do #

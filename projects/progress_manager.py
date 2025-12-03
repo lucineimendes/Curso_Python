@@ -156,10 +156,62 @@ class ProgressManager:
         logger.info(f"Lição '{lesson_id}' marcada como completa para usuário '{user_id}'")
         return course_progress
 
+    def mark_exercise_attempt(self, user_id: str, course_id: str, exercise_id: str,
+                              success: bool = False) -> dict:
+        """
+        Registra uma tentativa de exercício (sucesso ou falha).
+
+        Args:
+            user_id (str): ID do usuário.
+            course_id (str): ID do curso.
+            exercise_id (str): ID do exercício.
+            success (bool): Se a tentativa foi bem-sucedida.
+
+        Returns:
+            dict: Progresso atualizado do curso com estatísticas de tentativas.
+        """
+        course_progress = self.get_course_progress(user_id, course_id)
+
+        if exercise_id not in course_progress["exercises"]:
+            course_progress["exercises"][exercise_id] = {
+                "completed": False,
+                "completed_at": None,
+                "attempts": 0,
+                "successful_attempts": 0,
+                "failed_attempts": 0,
+                "first_attempt_success": False,
+                "last_attempt_at": None
+            }
+
+        exercise_data = course_progress["exercises"][exercise_id]
+        exercise_data["attempts"] = exercise_data.get("attempts", 0) + 1
+        exercise_data["last_attempt_at"] = datetime.now().isoformat()
+
+        if success:
+            exercise_data["successful_attempts"] = exercise_data.get("successful_attempts", 0) + 1
+
+            # Marcar como completo na primeira tentativa bem-sucedida
+            if not exercise_data.get("completed", False):
+                exercise_data["completed"] = True
+                exercise_data["completed_at"] = datetime.now().isoformat()
+                exercise_data["first_attempt_success"] = exercise_data["attempts"] == 1
+
+                # Atualizar contador global
+                user_progress = self.get_user_progress(user_id)
+                user_progress["total_exercises_completed"] = user_progress.get("total_exercises_completed", 0) + 1
+        else:
+            exercise_data["failed_attempts"] = exercise_data.get("failed_attempts", 0) + 1
+
+        course_progress["last_accessed"] = datetime.now().isoformat()
+        self._save_progress()
+
+        logger.info(f"Tentativa de exercício '{exercise_id}' registrada - Sucesso: {success}, Total tentativas: {exercise_data['attempts']}")
+        return course_progress
+
     def mark_exercise_complete(self, user_id: str, course_id: str, exercise_id: str,
                                success: bool = True, attempts: int = 1) -> dict:
         """
-        Marca um exercício como completo.
+        Marca um exercício como completo (método legado, use mark_exercise_attempt).
 
         Args:
             user_id (str): ID do usuário.
@@ -171,6 +223,11 @@ class ProgressManager:
         Returns:
             dict: Progresso atualizado do curso.
         """
+        return self.mark_exercise_attempt(user_id, course_id, exercise_id, success)
+
+    def _mark_exercise_complete_old(self, user_id: str, course_id: str, exercise_id: str,
+                               success: bool = True, attempts: int = 1) -> dict:
+        """Método antigo mantido para compatibilidade."""
         course_progress = self.get_course_progress(user_id, course_id)
 
         if exercise_id not in course_progress["exercises"]:
