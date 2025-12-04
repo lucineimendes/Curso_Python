@@ -11,12 +11,17 @@
                         },
                         "configurando-ambiente-python": {
                             "completed": true,
-                            "completed_at": "2025-12-03T18:08:44.067456",
+                            "completed_at": "2025-12-03T22:59:19.081099",
                             "times_viewed": 1
                         },
                         "ola-mundo-python": {
                             "completed": true,
-                            "completed_at": "2025-12-03T17:49:52.690428",
+                            "completed_at": "2025-12-03T22:59:55.544985",
+                            "times_viewed": 1
+                        },
+                        "variaveis-tipos-dados-numericos": {
+                            "completed": true,
+                            "completed_at": "2025-12-03T22:59:59.215947",
                             "times_viewed": 1
                         }
                     },
@@ -24,8 +29,10 @@
                         "ex-introducao-1": {
                             "completed": true,
                             "completed_at": "2025-12-03T17:50:39.333443",
-                            "attempts": 1,
-                            "first_attempt_success": true
+                            "attempts": 2,
+                            "first_attempt_success": true,
+                            "last_attempt_at": "2025-12-03T22:59:03.275016",
+                            "successful_attempts": 1
                         },
                         "ex-intro-prog-1": {
                             "completed": true,
@@ -37,25 +44,25 @@
                             "last_attempt_at": "2025-12-03T18:01:50.848714"
                         },
                         "ex-config-env-1": {
-                            "completed": false,
-                            "completed_at": null,
-                            "attempts": 2,
-                            "successful_attempts": 0,
+                            "completed": true,
+                            "completed_at": "2025-12-03T22:59:33.929901",
+                            "attempts": 3,
+                            "successful_attempts": 1,
                             "failed_attempts": 2,
                             "first_attempt_success": false,
-                            "last_attempt_at": "2025-12-03T18:09:37.124915"
+                            "last_attempt_at": "2025-12-03T22:59:33.929891"
                         }
                     },
                     "started_at": "2025-12-03T17:48:26.625604",
-                    "last_accessed": "2025-12-03T18:09:37.124928",
+                    "last_accessed": "2025-12-03T22:59:59.215963",
                     "completed": false
                 }
             },
-            "total_lessons_completed": 3,
-            "total_exercises_completed": 2,
+            "total_lessons_completed": 4,
+            "total_exercises_completed": 3,
             "created_at": "2025-12-03T17:48:26.625209"
         }
     },
     "created_at": "2025-12-03T17:10:36.020197",
-    "last_updated": "2025-12-03T18:09:37.124932"
+    "last_updated": "2025-12-03T22:59:59.215970"
 }

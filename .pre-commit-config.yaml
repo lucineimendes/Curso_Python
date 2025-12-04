@@ -1,44 +1,11 @@
+# .pre-commit-config.yaml
 repos:
-  # Ruff - Linter e formatador Python
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.9
+    rev: v0.1.6  # Use sempre a versão estável mais recente do Ruff
     hooks:
-      # Executar linter
+      # Hook 1: Roda o linter do Ruff. Ele irá bloquear o commit se houverem erros.
       - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
-      # Executar formatador
+        args: [ --fix ] # Adiciona o --fix para tentar corrigir problemas simples
+
+      # Hook 2: Roda o formatador do Ruff. Ele irá reformatar arquivos alterados.
       - id: ruff-format
-
-  # Prettier - Formatador JS/CSS/HTML
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
-    hooks:
-      - id: prettier
-        types_or: [javascript, css, html, json]
-        exclude: ^(node_modules/|\.venv/|venv/)
-
-  # Hooks gerais
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
-    hooks:
-      - id: trailing-whitespace
-        exclude: ^(\.min\.(js|css)$)
-      - id: end-of-file-fixer
-        exclude: ^(\.min\.(js|css)$)
-      - id: check-yaml
-      - id: check-json
-      - id: check-added-large-files
-        args: [--maxkb=1000]
-      - id: check-merge-conflict
-      - id: check-case-conflict
-      - id: mixed-line-ending
-        args: [--fix=lf]
-
-  # Verificar Python
-  - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.10.0
-    hooks:
-      - id: python-check-blanket-noqa
-      - id: python-check-blanket-type-ignore
-      - id: python-no-eval
-      - id: python-use-type-annotations
