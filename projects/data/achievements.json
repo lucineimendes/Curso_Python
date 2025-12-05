@@ -1,0 +1,113 @@
+{
+    "achievements": [
+        {
+            "id": "first_lesson",
+            "name": "Primeira Lição",
+            "description": "Complete sua primeira lição",
+            "icon": "🎯",
+            "category": "beginner",
+            "unlock_condition": {
+                "type": "lesson_count",
+                "value": 1
+            }
+        },
+        {
+            "id": "first_exercise",
+            "name": "Primeiro Exercício",
+            "description": "Resolva seu primeiro exercício",
+            "icon": "✅",
+            "category": "beginner",
+            "unlock_condition": {
+                "type": "exercise_count",
+                "value": 1
+            }
+        },
+        {
+            "id": "perfectionist",
+            "name": "Perfeccionista",
+            "description": "Acerte 10 exercícios na primeira tentativa",
+            "icon": "💯",
+            "category": "skill",
+            "unlock_condition": {
+                "type": "perfect_exercises",
+                "value": 10
+            }
+        },
+        {
+            "id": "marathoner",
+            "name": "Maratonista",
+            "description": "Complete 5 lições em um único dia",
+            "icon": "🏃",
+            "category": "dedication",
+            "unlock_condition": {
+                "type": "lessons_in_day",
+                "value": 5
+            }
+        },
+        {
+            "id": "course_basic_complete",
+            "name": "Básico Dominado",
+            "description": "Complete todas as lições do curso básico",
+            "icon": "🎓",
+            "category": "completion",
+            "unlock_condition": {
+                "type": "course_complete",
+                "course_id": "python-basico"
+            }
+        },
+        {
+            "id": "course_intermediate_complete",
+            "name": "Intermediário Dominado",
+            "description": "Complete todas as lições do curso intermediário",
+            "icon": "📚",
+            "category": "completion",
+            "unlock_condition": {
+                "type": "course_complete",
+                "course_id": "python-intermediario"
+            }
+        },
+        {
+            "id": "course_advanced_complete",
+            "name": "Avançado Dominado",
+            "description": "Complete todas as lições do curso avançado",
+            "icon": "🚀",
+            "category": "completion",
+            "unlock_condition": {
+                "type": "course_complete",
+                "course_id": "python-avancado"
+            }
+        },
+        {
+            "id": "python_master",
+            "name": "Mestre Python",
+            "description": "Complete todos os três cursos",
+            "icon": "🏆",
+            "category": "mastery",
+            "unlock_condition": {
+                "type": "all_courses_complete"
+            }
+        },
+        {
+            "id": "persistent",
+            "name": "Persistente",
+            "description": "Complete um exercício após 5 tentativas",
+            "icon": "💪",
+            "category": "dedication",
+            "unlock_condition": {
+                "type": "exercise_after_attempts",
+                "value": 5
+            }
+        },
+        {
+            "id": "speed_learner",
+            "name": "Aprendiz Veloz",
+            "description": "Complete 10 exercícios",
+            "icon": "⚡",
+            "category": "progress",
+            "unlock_condition": {
+                "type": "exercise_count",
+                "value": 10
+            }
+        }
+    ]
+}
