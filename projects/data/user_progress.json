@@ -6,12 +6,12 @@
                     "lessons": {
                         "intro-programacao-python": {
                             "completed": true,
-                            "completed_at": "2025-12-07T09:32:44.482547",
+                            "completed_at": "2025-12-07T10:00:03.969066",
                             "times_viewed": 1
                         },
                         "configurando-ambiente-python": {
                             "completed": true,
-                            "completed_at": "2025-12-04T22:04:50.253439",
+                            "completed_at": "2025-12-07T10:00:10.764060",
                             "times_viewed": 1
                         },
                         "ola-mundo-python": {
@@ -21,7 +21,12 @@
                         },
                         "variaveis-tipos-dados-numericos": {
                             "completed": true,
-                            "completed_at": "2025-12-07T09:34:02.232037",
+                            "completed_at": "2025-12-07T09:59:26.784684",
+                            "times_viewed": 1
+                        },
+                        "operadores-python": {
+                            "completed": true,
+                            "completed_at": "2025-12-07T10:07:45.382288",
                             "times_viewed": 1
                         }
                     },
@@ -63,15 +68,15 @@
                         }
                     },
                     "started_at": "2025-12-03T17:48:26.625604",
-                    "last_accessed": "2025-12-07T09:34:02.232049",
+                    "last_accessed": "2025-12-07T10:07:45.382307",
                     "completed": false
                 }
             },
-            "total_lessons_completed": 4,
+            "total_lessons_completed": 5,
             "total_exercises_completed": 4,
             "created_at": "2025-12-03T17:48:26.625209"
         }
     },
     "created_at": "2025-12-03T17:10:36.020197",
-    "last_updated": "2025-12-07T09:34:02.232053"
+    "last_updated": "2025-12-07T10:07:45.382312"
 }

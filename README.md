@@ -125,102 +125,77 @@ uv run pytest --cov=projects
 
 Para mais informações sobre contribuição, veja [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Documentação da API
+## Documentação
 
-A documentação detalhada da API, gerada a partir das docstrings do código, pode ser encontrada em:
-`docs_markdown/projects.md`
+### Documentação Principal
+
+- **[docs/INDEX.md](docs/INDEX.md)** - Índice completo da documentação técnica
+- **[docs/ARCHITECTURE_OVERVIEW.md](docs/ARCHITECTURE_OVERVIEW.md)** - Visão geral da arquitetura
+- **[docs/DOCUMENTATION_STANDARDS.md](docs/DOCUMENTATION_STANDARDS.md)** - Padrões de documentação
+
+### Documentação por Categoria
+
+#### Arquitetura e Design
+- [Sistema de Roadmap](docs/architecture/ROADMAP_SYSTEM.md) - Roadmap visual e rastreamento de progresso
+
+#### Guias Práticos
+- [Guia do UV](docs/guides/UV_GUIDE.md) - Gerenciador de pacotes Python
+
+#### Refatorações
+- [SOLID/DRY - Sistema de Conquistas](docs/refactoring/SOLID_DRY_ACHIEVEMENTS.md) - Refatoração aplicando princípios SOLID
+- [ProgressManager](docs/refactoring/PROGRESS_MANAGER.md) - Proposta de refatoração
+- [Rotas da Aplicação](docs/refactoring/APP_ROUTES.md) - Proposta de refatoração
+
+#### Implementações
+- [Roadmap Implementation](docs/implementation/ROADMAP_IMPLEMENTATION.md) - Sistema de roadmap visual
+- [Exercise Improvements](docs/implementation/EXERCISE_IMPROVEMENTS.md) - Melhorias no sistema de exercícios
+- [Summary](docs/implementation/SUMMARY.md) - Resumo de implementações
+- [Final Summary](docs/implementation/FINAL_SUMMARY.md) - Resumo final completo
+
+#### Manutenção
+- [Progress Fix](docs/maintenance/PROGRESS_FIX.md) - Correção do sistema de progresso
+- [Rollback Notes](docs/maintenance/ROLLBACK_NOTES.md) - Notas sobre rollback
+
+### Documentação da API
+
+A documentação da API está disponível através das docstrings no código-fonte. Para gerar a documentação completa:
+
+```bash
+# Gerar documentação com pydoc
+uv run python -m pydoc -w projects
+
+# Ou usar sphinx (se configurado)
+make docs
+```
 
 ---
 
-## Detalhes da Arquitetura e Implementação
+## Arquitetura
 
-Este documento detalha a estrutura e o funcionamento do projeto de sistema de curso interativo desenvolvido em Python, utilizando o framework Flask. O projeto foi concebido com foco em modularidade, separação de responsabilidades e uma estratégia robusta de testes automáticos.
+O projeto segue os princípios **SOLID** e **DRY** para garantir código limpo, manutenível e extensível.
 
-### Princípios de Design
+### Visão Geral
 
-O projeto segue os princípios **SOLID** e **DRY** para garantir código limpo, manutenível e extensível:
+[![Estrutura do Projeto](images/Estrutura_projeto.png)](images/Estrutura_projeto.png)
 
-- **Single Responsibility Principle (SRP)**: Cada classe tem uma única responsabilidade
-- **Open/Closed Principle (OCP)**: Código aberto para extensão, fechado para modificação
-- **Liskov Substitution Principle (LSP)**: Subclasses podem substituir suas superclasses
-- **Interface Segregation Principle (ISP)**: Interfaces específicas em vez de genéricas
-- **Dependency Inversion Principle (DIP)**: Dependência de abstrações, não de implementações concretas
-- **Don't Repeat Yourself (DRY)**: Eliminação de duplicação de código
+- **Aplicação Flask** com separação clara entre rotas UI e API
+- **Managers** para gerenciamento de dados (cursos, lições, exercícios, progresso)
+- **Execução segura** de código Python com captura de stdout/stderr
+- **Sistema de testes** robusto com pytest e meta-testes automáticos
 
-Para detalhes sobre a aplicação destes princípios, consulte:
-- [Refatoração SOLID/DRY do Sistema de Conquistas](docs/refactoring/SOLID_DRY_ACHIEVEMENTS.md)
-- [Refatoração Proposta: ProgressManager](docs/refactoring/PROGRESS_MANAGER.md)
-- [Refatoração Proposta: Rotas da Aplicação](docs/refactoring/APP_ROUTES.md)
-**Visão Geral e Estrutura Principal:**
-[![Estrutura do Projeto](\images\Estrutura_projeto.png)](\images\Estrutura_projeto.png)
-*(Clique na imagem para ampliar)*
+### Componentes Principais
 
-O projeto é um sistema de curso interativo que permite a apresentação de conteúdos de cursos e lições, e a execução e verificação de código Python submetido pelo usuário para exercícios práticos.
+- **CourseManager**: Gerenciamento de cursos
+- **LessonManager**: Gerenciamento de lições (carregamento sob demanda)
+- **ExerciseManager**: Gerenciamento de exercícios (carregamento sob demanda)
+- **ProgressManager**: Rastreamento de progresso do usuário
+- **AchievementManager**: Sistema de conquistas (refatorado com SOLID)
+- **CodeExecutor**: Execução isolada e segura de código Python
 
-A arquitetura central é uma aplicação web Flask (`app.py`). Esta aplicação atua como o "centro nervoso", recebendo requisições e orquestrando as operações necessárias.
+### Documentação Completa
 
-Existe uma **separação clara entre a interface de usuário (UI) e a API**:
-*   **Rotas de UI:** Servem páginas HTML usando *template handlers* (como a página inicial, lista de cursos, e páginas de lições/exercícios).
-*   **Rotas de API:** Começam com `/api` e retornam dados em formato JSON usando `jsonify`.
-*   O CORS (Cross-Origin Resource Sharing) está habilitado globalmente usando `flask_cors.CORS` para permitir que frontends em domínios ou portas diferentes possam interagir com a API.
+Para detalhes completos sobre arquitetura, design patterns, refatorações e implementações, consulte:
 
-A aplicação Flask (`app.py`) delega o "trabalho pesado" relacionado ao gerenciamento de dados a módulos dedicados, os *managers*.
-
-O projeto está organizado em módulos Python, com o código principal localizado na pasta `projects/`. A execução da aplicação para desenvolvimento é feita através de um script `run.py` na raiz do projeto, que adiciona o diretório `projects` ao `sys.path` e importa o aplicativo Flask.
-
-**Gerenciamento de Dados (Managers):**
-
-O projeto utiliza arquivos JSON na pasta `data/` para armazenar as informações de cursos, lições e exercícios. O gerenciamento desses dados é feito por classes específicas:
-*   `CourseManager`: Lida com as informações dos cursos.
-*   `LessonManager`: Gerencia as lições.
-*   `ExerciseManager`: Cuida dos exercícios.
-
-Uma prática adotada para otimizar o uso de memória é que `LessonManager` e `ExerciseManager` **não carregam todos os dados na inicialização**. Em vez disso, eles possuem funções como `load_lessons_from_file` e `load_exercises_from_file` que carregam os dados de um arquivo JSON específico *sob demanda*, apenas quando são necessários.
-
-O uso da biblioteca `pathlib` nos managers ajuda a lidar com caminhos de arquivo de forma portátil, funcionando corretamente em diferentes sistemas operacionais.
-
-**Execução Segura de Código do Usuário (`code_executor.py`):**
-
-Um componente crucial do sistema é a execução de código Python submetido pelos usuários para os exercícios. Esta funcionalidade é implementada no módulo `code_executor.py`.
-
-A execução é realizada usando a função `exec()` do Python, mas de forma controlada para garantir a segurança e capturar a saída.
-*   As funções `execute_code` e `execute_test` utilizam `io.StringIO` e os *context managers* `contextlib.redirect_stdout` e `redirect_stderr` para **capturar qualquer coisa que o código do usuário imprima no `stdout` (saída padrão) ou `stderr` (saída de erro)**.
-*   A saída e os erros capturados são retornados em um dicionário, juntamente com um código de retorno indicando sucesso (`0`) ou falha (`1`), e o tipo de erro, se aplicável.
-*   Essa captura **impede que a saída ou erros do código do usuário apareçam no console do servidor** onde a aplicação Flask está rodando.
-
-`execute_code` aceita um dicionário opcional `execution_globals` para definir o escopo global da execução. `execute_test` aceita um dicionário `namespace` para variáveis predefinidas.
-
-**Verificação de Exercícios (`api/check-exercise`):**
-
-A rota `/api/check-exercise` em `app.py` implementa a lógica para verificar se a solução de um exercício enviada pelo usuário está correta. O processo envolve:
-1.  Obter o código enviado pelo usuário (`user_code`) e os detalhes do exercício, incluindo o `test_code` definido no JSON do exercício.
-2.  Executar o `user_code` usando `code_executor.execute_code`, capturando sua saída (`user_stdout`) e erros (`user_stderr`).
-3.  Se o `user_code` executou com sucesso (sem erros de sintaxe ou runtime) e o exercício possui um `test_code`, o `test_code` é executado usando `code_executor.execute_test`.
-4.  **A chave para a verificação é que a saída do `user_code` (`user_stdout`) é passada como uma variável global chamada `output` para o ambiente de execução do `test_code`**.
-5.  O `test_code` contido no JSON do exercício pode então **realizar asserções ou verificações programáticas na variável `output`** para determinar se a saída do usuário está correta. O `test_code` frequentemente imprime uma mensagem como "SUCCESS" em caso de sucesso.
-6.  A API retorna um resultado JSON indicando `success` (se o código do usuário rodou e o `test_code` passou, ou se não havia `test_code`), a `output` combinada (saída do usuário + saída do teste), e `details` (erros ou mensagens do teste).
-
-**Estratégia de Testes Automáticos:**
-
-O projeto possui uma estratégia de testes automáticos **robusta** utilizando a biblioteca `pytest`.
-
-Componentes e práticas de teste notáveis:
-*   **`conftest.py`:** Este arquivo é fundamental no sistema de testes. Ele define *fixtures* que preparam o ambiente para os testes.
-*   **Fixtures de Aplicação e Cliente:** As fixtures `app` e `client` fornecem, respectivamente, uma instância do aplicativo Flask no modo de teste (`app.config['TESTING'] is True`) e um cliente de teste (`FlaskClient`) para simular requisições HTTP às rotas da aplicação.
-*   **`app_test_data` Fixture:** Esta fixture é configurada como `autouse`, o que significa que ela é executada automaticamente antes de cada teste que a solicita (ou implicitamente, se ela for declarada como `autouse=True` ou se outra fixture que a solicite for autoused). Sua função principal é **criar um conjunto de arquivos JSON temporários** para os dados de cursos, lições e exercícios.
-*   **`monkeypatch`:** A fixture `app_test_data` utiliza a técnica de `monkeypatch` para modificar o comportamento dos managers durante os testes. Ela faz com que `LessonManager` e `ExerciseManager` (e potencialmente `CourseManager`) leiam e escrevam nos arquivos JSON *temporários* criados pela fixture, **isolando completamente os testes dos arquivos de dados reais**. Isso garante que os testes não modifiquem os dados de produção.
-*   **`test_app.py`:** Contém testes que utilizam o cliente Flask para testar as rotas da UI e da API, como `test_index_route`, `test_course_list_route`, `test_execute_code_api`, e `test_check_exercise_api`, verificando respostas HTTP, status codes e conteúdo JSON.
-*   **`test_meta_exercise.py` (Meta-teste):** Este é um nível de teste inovador. Em vez de escrever um teste manual para cada exercício individualmente, este script **varre a pasta de dados em busca de *todos* os arquivos JSON de exercícios**. Para cada exercício encontrado, ele **gera um teste automaticamente**. Este teste gerado executa o `solution_code` (código de exemplo de solução) do exercício e então executa o `test_code` correspondente, **validando que a solução funciona conforme o esperado pelo teste definido**. Esta abordagem **garante a qualidade de todo o conteúdo dos exercícios** de forma altamente eficiente, sem a necessidade de escrever testes específicos para cada um. Ele verifica a presença de `solution_code` e `test_code` para cada exercício e lida com a possibilidade de exceções esperadas no `solution_code`.
-
-A estratégia de testes demonstra um **cuidado grande com a automação e a confiabilidade**.
-
-**Outros Aspectos:**
-
-*   O projeto utiliza a biblioteca padrão `logging` do Python para registrar eventos e erros na aplicação.
-*   O arquivo `setup.py` define o pacote `curso_interativo_python`, lista o Flask como dependência, e configura um *entry point* `curso-run` para executar a aplicação via linha de comando.
-
-**Considerações sobre Escalabilidade:**
-
-Embora a estrutura baseada em arquivos JSON e o carregamento sob demanda funcionem bem para o tamanho atual do projeto, vale a pena considerar a reflexão sobre a **escalabilidade**. Se o projeto crescesse para muitos cursos, milhões de usuários e submissões constantes, os arquivos JSON poderiam se tornar um **gargalo** devido a desafios de gerenciamento e concorrência. Nesse cenário, uma possível evolução seria a migração para um banco de dados (relacional ou NoSQL).
-
-Em resumo, o projeto apresenta uma **arquitetura bem modular e com foco em qualidade**, aplicando diversas boas práticas de desenvolvimento Python e web, especialmente na separação UI/API, gerenciamento de dados com otimização de memória, execução segura de código externo e uma estratégia de testes abrangente e automatizada.
+- **[Visão Geral da Arquitetura](docs/ARCHITECTURE_OVERVIEW.md)** - Arquitetura detalhada e componentes
+- **[Índice de Documentação](docs/INDEX.md)** - Índice completo de toda documentação técnica
+- **[Padrões de Documentação](docs/DOCUMENTATION_STANDARDS.md)** - Convenções e padrões

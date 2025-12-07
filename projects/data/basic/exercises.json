@@ -11,7 +11,6 @@
         "solution_code": "print('Olá, Mundo!')",
         "test_code": "assert output.strip() == 'Olá, Mundo!'",
         "level": "básico"
-        
     },
     {
         "id": "ex-variaveis-1",
@@ -25,7 +24,6 @@
         "solution_code": "ano_atual = 2024\nano_nascimento = 1990\nidade = ano_atual - ano_nascimento\nprint(idade)",
         "test_code": "try:\n    resultado_str = output.strip()\n    resultado_int = int(resultado_str)\n    idade_esperada = 2024 - 1990 # Conforme solution_code\n    if resultado_int == idade_esperada:\n        print(f\"SUCESSO: Cálculo da idade ({idade_esperada}) correto!\")\n    else:\n        print(f\"FALHA: Cálculo da idade incorreto. Esperado: {idade_esperada}, Obtido: {resultado_int}.\")\nexcept ValueError:\n    print(f\"FALHA: O resultado impresso ('{resultado_str}') não é um número inteiro válido. Certifique-se de imprimir apenas a idade calculada.\")\nexcept Exception as e:\n    print(f\"ERRO: Ocorreu um erro inesperado durante o teste: {str(e)}\")",
         "level": "básico"
-        
     },
     {
         "id": "ex-variaveis-2",
@@ -39,7 +37,6 @@
         "solution_code": "nome = 'João'\nsobrenome = 'Silva'\nnome_completo = nome + ' ' + sobrenome\nprint(nome_completo)",
         "test_code": "assert output.strip() == 'João Silva'",
         "level": "básico"
-        
     },
     {
         "id": "ex-estruturas-1",
@@ -53,7 +50,6 @@
         "solution_code": "numero = 10\nif numero % 2 == 0:\n    print('Par')\nelse:\n    print('Ímpar')",
         "test_code": "try:\n    resultado_str = output.strip().lower()\n    # Para o número 10 (da solution_code), o esperado é 'par'\n    esperado_str = 'par'\n    if resultado_str == esperado_str:\n        print(f\"SUCESSO: Verificação de número par correta! (Entrada: 10, Saída: '{output.strip()}')\")\n    else:\n        print(f\"FALHA: Saída incorreta para o número 10. Esperado: '{esperado_str.capitalize()}', Obtido: '{output.strip()}'.\")\nexcept AttributeError: # Caso output não seja uma string ou algo que tenha strip/lower\n    print(f\"ERRO: A saída do seu programa não parece ser um texto simples. Saída obtida: {output}\")\nexcept Exception as e:\n    print(f\"ERRO: Ocorreu um erro inesperado durante o teste: {str(e)}\")",
         "level": "básico"
-        
     },
     {
         "id": "ex-estruturas-2",
@@ -67,7 +63,6 @@
         "solution_code": "peso = 70\naltura = 1.75\nimc = peso / (altura ** 2)\nprint(imc)",
         "test_code": "assert abs(float(output) - 22.857) < 0.001",
         "level": "básico"
-        
     },
     {
         "id": "ex-estruturas-3",
@@ -81,7 +76,6 @@
         "solution_code": "numero_secreto = 7\nchute = int(input('Adivinhe o número: '))\nif chute == numero_secreto:\n    print('Acertou!')\nelse:\n    print('Errou!')",
         "test_code": "assert 'Acertou!' in output or 'Errou!' in output",
         "level": "básico"
-        
     },
     {
         "id": "ex-listas-1",
@@ -95,7 +89,6 @@
         "solution_code": "lista = [1, 2, 3, 4, 5]\nsoma = 0\nfor elemento in lista:\n    soma += elemento\nprint(soma)",
         "test_code": "try:\n    resultado_str = output.strip()\n    resultado_int = int(resultado_str)\n    soma_esperada = 15 # Para a lista [1, 2, 3, 4, 5]\n    if resultado_int == soma_esperada:\n        print(f\"SUCESSO: A soma dos elementos ({soma_esperada}) foi calculada corretamente!\")\n    else:\n        print(f\"FALHA: A soma calculada está incorreta. Para a lista [1, 2, 3, 4, 5], o esperado era {soma_esperada}, mas foi obtido {resultado_int}.\")\nexcept ValueError:\n    print(f\"FALHA: A saída ('{resultado_str}') não é um número inteiro válido. Certifique-se de imprimir apenas o valor numérico da soma.\")\nexcept Exception as e:\n    print(f\"ERRO: Ocorreu um erro inesperado durante o teste: {str(e)}\")",
         "level": "básico"
-        
     },
     {
         "id": "ex-listas-2",
@@ -109,11 +102,10 @@
         "solution_code": "lista = [5, 2, 8, 1, 9]\nmaior = lista[0]\nfor elemento in lista:\n    if elemento > maior:\n        maior = elemento\nprint(maior)",
         "test_code": "assert int(output.strip()) == 9",
         "level": "básico"
-        
     },
     {
         "id": "ex-listas-3",
-        "lesson_id": "listas-python-avancado", 
+        "lesson_id": "listas-python-avancado",
         "title": "Removendo Duplicatas",
         "description": "Dada uma lista com elementos duplicados, crie uma nova lista contendo apenas os elementos únicos, mantendo a ordem original da primeira aparição. Imprima a nova lista.",
         "difficulty": "Médio",
@@ -123,7 +115,6 @@
         "solution_code": "lista = [1, 2, 2, 3, 4, 4, 5]\nsem_duplicatas = []\nfor elemento in lista:\n    if elemento not in sem_duplicatas:\n        sem_duplicatas.append(elemento)\nprint(sem_duplicatas)",
         "test_code": "import ast\n\ntry:\n    resultado_str = output.strip()\n    resultado_lista = ast.literal_eval(resultado_str)\n    lista_esperada = [1, 2, 3, 4, 5]\n\n    if not isinstance(resultado_lista, list):\n        print(f\"FALHA: A saída ('{resultado_str}') não foi reconhecida como uma lista válida. Esperado um formato como [1, 2, 3].\")\n    elif resultado_lista == lista_esperada:\n        print(f\"SUCESSO: A lista sem duplicatas ({lista_esperada}) foi gerada corretamente!\")\n    else:\n        print(f\"FALHA: A lista gerada está incorreta. Esperado: {lista_esperada}, Obtido: {resultado_lista}.\")\nexcept (ValueError, SyntaxError):\n    print(f\"FALHA: A saída ('{resultado_str}') não é uma representação de lista Python válida (ex: '[1, 2, 3]'). Verifique a formatação.\")\nexcept Exception as e:\n    print(f\"ERRO: Ocorreu um erro inesperado durante o teste: {str(e)}\")",
         "level": "básico"
-        
     },
     {
         "id": "ex-tuplas-1",
@@ -137,7 +128,6 @@
         "solution_code": "tupla = (10, 20, 30, 40, 50)\nprimeiro = tupla[0]\nultimo = tupla[-1]\nprint(primeiro, ultimo)",
         "test_code": "assert output.strip() == '10 50'",
         "level": "básico"
-        
     },
     {
         "id": "ex-tuplas-2",
@@ -151,7 +141,6 @@
         "solution_code": "tupla = (15, 25, 35)\na, b, c = tupla\nprint(a, b, c)",
         "test_code": "assert output.strip() == '15 25 35'",
         "level": "básico"
-        
     },
     {
         "id": "ex-funcoes-1",
@@ -165,11 +154,10 @@
         "solution_code": "def soma(a, b):\n    return a + b\nprint(soma(5, 7))",
         "test_code": "assert int(output.strip()) == 12",
         "level": "básico"
-        
     },
     {
         "id": "ex-strings-1",
-        "lesson_id": "manipulacao-strings",
+        "lesson_id": "tipos-dados-string-booleano",
         "title": "Inversão de string",
         "description": "Escreva um programa que inverte uma string. Por exemplo, se a entrada for 'python', a saída deve ser 'nohtyp'.",
         "difficulty": "Fácil",
@@ -179,21 +167,6 @@
         "solution_code": "string = 'python'\nprint(string[::-1])",
         "test_code": "assert output.strip() == 'nohtyp'",
         "level": "básico"
-        
-    },
-    {
-        "id": "ex-modulos-1",
-        "lesson_id": "modulos-python-basico",
-        "title": "Calculadora com Módulo Math",
-        "description": "Crie um programa que usa funções do módulo `math` para calcular a raiz quadrada e o cosseno de um número. Imprima os resultados formatados.",
-        "difficulty": "Fácil",
-        "order": 1,
-        "instructions": "1. Importe o módulo `math`.\n2. Defina uma variável `numero` com o valor 9.\n3. Calcule a raiz quadrada usando `math.sqrt()`.\n4. Calcule o cosseno usando `math.cos()` (lembre-se que o cosseno espera o ângulo em radianos).\n5. Imprima os resultados de forma clara, como: 'Raiz quadrada de 9: 3.0' e 'Cosseno de 9 radianos: -0.9111...'.",
-        "initial_code": "import math\n\nnumero = 9\n\n# Calcule a raiz quadrada de 'numero'\n# raiz_quadrada = ...\n\n# Calcule o cosseno de 'numero' (em radianos)\n# cosseno_numero = ...\n\n# Imprima os resultados formatados\n# print(f'Raiz quadrada de {numero}: {raiz_quadrada}')\n# print(f'Cosseno de {numero} radianos: {cosseno_numero}')",
-        "solution_code": "import math\n\nnumero = 9\nraiz_quadrada = math.sqrt(numero)\ncosseno_numero = math.cos(numero)\n\nprint(f'Raiz quadrada de {numero}: {raiz_quadrada}')\nprint(f'Cosseno de {numero} radianos: {cosseno_numero}')",
-        "test_code": "assert 'Raiz quadrada de 9: 3.0' in output and 'Cosseno de 9 radianos: -0.9111' in output # Aproximação para cosseno",
-        "level": "básico"
-        
     },
     {
         "id": "ex-intro-prog-1",
@@ -207,7 +180,6 @@
         "solution_code": "print(\"Um algoritmo é uma sequência finita e bem definida de passos para resolver um problema ou alcançar um objetivo.\")",
         "test_code": "assert \"algoritmo\" in output.lower() and \"sequência\" in output.lower() and \"passos\" in output.lower() and \"resolver\" in output.lower()",
         "level": "básico"
-        
     },
     {
         "id": "ex-config-env-1",
@@ -221,7 +193,6 @@
         "solution_code": "print(\"Python 3.10.4\")",
         "test_code": "assert \"Python\" in output and len(output.strip().split('.')) == 3 and output.strip().split(' ')[0] == 'Python'",
         "level": "básico"
-        
     },
     {
         "id": "ex-precedencia-1",
@@ -235,7 +206,6 @@
         "solution_code": "resultado1 = 10 + 5 * 2\nresultado2 = (10 + 5) * 2\nprint(resultado1)\nprint(resultado2)",
         "test_code": "lines = output.strip().split('\\n')\nassert len(lines) == 2, \"Esperado duas linhas de saída\"\nassert int(lines[0]) == 20, \"Primeiro resultado (10 + 5 * 2) incorreto\"\nassert int(lines[1]) == 30, \"Segundo resultado ((10 + 5) * 2) incorreto\"",
         "level": "básico"
-        
     },
     {
         "id": "ex-loop-for-1",
@@ -249,7 +219,6 @@
         "solution_code": "for i in range(1, 6):\n    print(i)",
         "test_code": "expected_output = \"1\\n2\\n3\\n4\\n5\"\nassert output.strip() == expected_output, f\"Saída incorreta. Esperado: {expected_output}, Obtido: {output.strip()}\"",
         "level": "básico"
-        
     },
     {
         "id": "ex-controle-loops-1",
@@ -263,7 +232,6 @@
         "solution_code": "for i in range(1, 11):\n    print(i)\n    if i == 5:\n        break",
         "test_code": "expected_output = \"1\\n2\\n3\\n4\\n5\"\nassert output.strip() == expected_output, f\"Saída incorreta. Esperado números até 5. Obtido: {output.strip()}\"",
         "level": "básico"
-        
     },
     {
         "id": "ex-funcoes-args-1",
@@ -277,7 +245,6 @@
         "solution_code": "def detalhes_produto(nome_produto, categoria='Geral'):\n    print(f\"Produto: {nome_produto} - Categoria: {categoria}\")\n\ndetalhes_produto(\"Caneta\")\ndetalhes_produto(\"Notebook\", \"Eletrônicos\")",
         "test_code": "lines = output.strip().split('\\n')\nassert len(lines) == 2, \"Esperado duas linhas de saída.\"\nassert \"Produto: Caneta - Categoria: Geral\" in lines[0]\nassert \"Produto: Notebook - Categoria: Eletrônicos\" in lines[1]",
         "level": "básico"
-        
     },
     {
         "id": "ex-projeto-final-basico-1",
@@ -291,6 +258,83 @@
         "solution_code": "# A solução completa para este projeto envolve a implementação de todas as funcionalidades\n# descritas, incluindo o menu interativo e as funções para manipular la lista de tarefas.\n# O aluno deve desenvolver este código em seu próprio ambiente.\n\n# Para fins deste exercício específico no sistema do curso, a saída esperada é apenas a mensagem de confirmação.\ntarefas = [] # Definindo a variável para evitar erros se o initial_code for modificado\ndef adicionar_tarefa(descricao):\n    pass\ndef listar_tarefas():\n    pass\n\nprint(\"Estrutura inicial do Mini Sistema de Gerenciamento de Tarefas definida. Pronto para desenvolvimento!\")",
         "test_code": "assert \"Estrutura inicial do Mini Sistema de Gerenciamento de Tarefas definida. Pronto para desenvolvimento!\" in output.strip()",
         "level": "básico"
-        
+    },
+    {
+        "id": "ex-dicionarios-1",
+        "lesson_id": "dicionarios-python-basico",
+        "title": "Contagem de palavras",
+        "description": "Escreva um programa que conta a frequência de cada palavra em um texto.",
+        "difficulty": "Médio",
+        "order": 1,
+        "instructions": "Use um dicionário para armazenar a frequência de cada palavra.",
+        "initial_code": "# Escreva seu código aqui",
+        "solution_code": "texto = 'ola mundo ola'\npalavras = texto.split()\ncontagem = {}\nfor palavra in palavras:\n    if palavra in contagem:\n        contagem[palavra] += 1\n    else:\n        contagem[palavra] = 1\nprint(contagem)",
+        "test_code": "import ast\n\ntry:\n    resultado_str = output.strip()\n    resultado_dict = ast.literal_eval(resultado_str)\n    dict_esperado = {'ola': 2, 'mundo': 1}\n\n    if not isinstance(resultado_dict, dict):\n        print('FALHA: A saída não foi reconhecida como um dicionário válido')\n    elif resultado_dict == dict_esperado:\n        print('SUCESSO: O dicionário de contagem de palavras foi gerado corretamente!')\n    else:\n        print(f'FALHA: Dicionário incorreto. Esperado: {dict_esperado}, Obtido: {resultado_dict}')\nexcept (ValueError, SyntaxError):\n    print('FALHA: A saída não é uma representação válida de dicionário Python')\nexcept Exception as e:\n    print(f'ERRO: Ocorreu um erro inesperado durante o teste: {str(e)}')",
+        "level": "básico"
+    },
+    {
+        "id": "ex-dicionarios-2",
+        "lesson_id": "dicionarios-python-avancado",
+        "title": "Invertendo um dicionário",
+        "description": "Inverta as chaves e os valores de um dicionário.",
+        "difficulty": "Médio",
+        "order": 2,
+        "instructions": "Crie um novo dicionário com os valores originais como chaves e as chaves originais como valores.",
+        "initial_code": "# Escreva seu código aqui",
+        "solution_code": "dicionario = {'a': 1, 'b': 2, 'c': 3}\ninvertido = {valor: chave for chave, valor in dicionario.items()}\nprint(invertido)",
+        "test_code": "import ast\n\ntry:\n    resultado_str = output.strip()\n    resultado_dict = ast.literal_eval(resultado_str)\n    dict_esperado = {1: 'a', 2: 'b', 3: 'c'}\n\n    if not isinstance(resultado_dict, dict):\n        print(f\"FALHA: A saída ('{resultado_str}') não foi reconhecida como um dicionário. Esperado um formato como {{'chave': valor}}.\")\n    elif resultado_dict == dict_esperado:\n        print(f\"SUCESSO: O dicionário invertido ({dict_esperado}) foi gerado corretamente!\")\n    else:\n        print(f\"FALHA: O dicionário gerado está incorreto. Esperado: {dict_esperado}, Obtido: {resultado_dict}.\")\nexcept (ValueError, SyntaxError):\n    print(f\"FALHA: A saída ('{resultado_str}') não é uma representação de dicionário Python válida. Verifique a formatação.\")\nexcept Exception as e:\n    print(f\"ERRO: Ocorreu um erro inesperado durante o teste: {str(e)}\")",
+        "level": "básico"
+    },
+    {
+        "id": "ex-dicionarios-3",
+        "lesson_id": "dicionarios-python-avancado",
+        "title": "Unindo dois dicionários",
+        "description": "Una dois dicionários em um único dicionário.",
+        "difficulty": "Fácil",
+        "order": 3,
+        "instructions": "Use o método update() para unir os dicionários.",
+        "initial_code": "# Escreva seu código aqui",
+        "solution_code": "dicionario1 = {'a': 1, 'b': 2}\ndicionario2 = {'c': 3, 'd': 4}\ndicionario1.update(dicionario2)\nprint(dicionario1)",
+        "test_code": "import ast\n\ntry:\n    resultado_str = output.strip()\n    resultado_dict = ast.literal_eval(resultado_str)\n    dict_esperado = {'a': 1, 'b': 2, 'c': 3, 'd': 4}\n\n    if not isinstance(resultado_dict, dict):\n        print(f\"FALHA: A saída ('{resultado_str}') não foi reconhecida como um dicionário. Esperado um formato como {{'chave': valor}}.\")\n    elif resultado_dict == dict_esperado:\n        print(f\"SUCESSO: O dicionário unido ({dict_esperado}) foi gerado corretamente!\")\n    else:\n        print(f\"FALHA: O dicionário gerado está incorreto. Esperado: {dict_esperado}, Obtido: {resultado_dict}.\")\nexcept (ValueError, SyntaxError):\n    print(f\"FALHA: A saída ('{resultado_str}') não é uma representação de dicionário Python válida. Verifique a formatação.\")\nexcept Exception as e:\n    print(f\"ERRO: Ocorreu um erro inesperado durante o teste: {str(e)}\")",
+        "level": "básico"
+    },
+    {
+        "id": "ex-funcoes-2",
+        "lesson_id": "funcoes-python-definicao-chamada",
+        "title": "Fatorial",
+        "description": "Crie uma função que calcula o fatorial de um número.",
+        "difficulty": "Médio",
+        "order": 2,
+        "instructions": "Use recursão ou um loop for para calcular o fatorial.",
+        "initial_code": "# Escreva seu código aqui",
+        "solution_code": "def fatorial(n):\n    if n == 0:\n        return 1\n    else:\n        return n * fatorial(n-1)\nprint(fatorial(5))",
+        "test_code": "assert int(output.strip()) == 120",
+        "level": "básico"
+    },
+    {
+        "id": "ex-funcoes-3",
+        "lesson_id": "funcoes-python-definicao-chamada",
+        "title": "Sequência de Fibonacci",
+        "description": "Crie uma função que gera a sequência de Fibonacci até um determinado número de termos.",
+        "difficulty": "Difícil",
+        "order": 3,
+        "instructions": "Use um loop for para gerar a sequência.",
+        "initial_code": "# Escreva seu código aqui",
+        "solution_code": "def fibonacci(n):\n    a, b = 0, 1\n    for i in range(n):\n        print(a, end=' ')\n        a, b = b, a + b\nfibonacci(10)",
+        "test_code": "assert output.strip() == '0 1 1 2 3 5 8 13 21 34'",
+        "level": "básico"
+    },
+    {
+        "id": "ex-conjuntos-1",
+        "lesson_id": "conjuntos-python",
+        "title": "Removendo Duplicatas com Set",
+        "description": "Dada a lista `[10, 20, 20, 30, 40, 40, 40, 50]`, use um conjunto para remover os elementos duplicados e imprima o conjunto resultante.",
+        "difficulty": "Fácil",
+        "order": 1,
+        "instructions": "Crie a lista, converta-a para um conjunto e depois imprima o conjunto.",
+        "initial_code": "lista_com_duplicatas = [10, 20, 20, 30, 40, 40, 40, 50]\n# Converta para conjunto e imprima\n# conjunto_unico = ...\n# print(conjunto_unico)",
+        "solution_code": "lista_com_duplicatas = [10, 20, 20, 30, 40, 40, 40, 50]\nconjunto_unico = set(lista_com_duplicatas)\nprint(conjunto_unico)",
+        "test_code": "import ast\ntry:\n    result_set = ast.literal_eval(output.strip())\n    expected_set = {10, 20, 30, 40, 50}\n    assert isinstance(result_set, set), \"A saída não é um conjunto.\"\n    assert result_set == expected_set, f\"Conjunto incorreto. Esperado: {expected_set}, Obtido: {result_set}\"\nexcept: assert False, \"Erro ao avaliar a saída como um conjunto.\"",
+        "level": "básico"
     }
 ]

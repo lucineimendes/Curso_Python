@@ -482,7 +482,7 @@
         "summary": "<p>Testes são cruciais para a qualidade do software. Testes unitários verificam partes isoladas do código. Frameworks como <code>pytest</code> simplificam a escrita e execução de testes usando funções com nomes <code>test_*</code> e asserções (`assert`). Executar <code>pytest</code> no terminal descobre e roda seus testes, fornecendo um relatório. Organizar testes em uma pasta <code>tests/</code> é uma boa prática. TDD é uma metodologia onde testes são escritos antes do código.</p>",
         "estimated_time_minutes": 45
     },
-        {
+    {
         "id": "projeto-final-curso-intermediario",
         "course_id": "python-intermediario",
         "title": "Projeto Final do Curso de Python Intermediário",
@@ -503,6 +503,35 @@
         "examples": [],
         "summary": "O projeto final é a culminação do seu aprendizado no curso de Python Avançado. Siga as instruções do exercício associado para desenvolver uma aplicação completa e robusta.",
         "estimated_time_minutes": 0
+    },
+    {
+        "id": "tratamento-excecoes",
+        "course_id": "python-intermediario",
+        "title": "Tratamento de Exceções e Erros",
+        "order": 1,
+        "description": "Aprenda a lidar com erros e situações inesperadas em seus programas usando blocos try, except, else e finally.",
+        "learning_objectives": [
+            "Entender o que são exceções e por que ocorrem.",
+            "Utilizar a estrutura try-except para capturar erros.",
+            "Tratar múltiplos tipos de exceções.",
+            "Usar as cláusulas else e finally.",
+            "Levantar exceções personalizadas com raise."
+        ],
+        "key_concepts": [
+            "Exceção",
+            "Try/Except",
+            "Traceback",
+            "Raise",
+            "Finally"
+        ],
+        "content": "<h2>O que são Exceções?</h2><p>Exceções são erros detectados durante a execução do programa...</p>",
+        "examples": [
+            {
+                "title": "Tratamento Básico",
+                "code": "try:\n    x = 10 / 0\nexcept ZeroDivisionError:\n    print('Não é possível dividir por zero!')",
+                "explanation": "Captura o erro de divisão por zero."
+            }
+        ],
+        "estimated_time_minutes": 30
     }
-
 ]

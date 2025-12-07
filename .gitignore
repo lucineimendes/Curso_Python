@@ -11,3 +11,4 @@ ENV/
 *.db
 *.sqlite3
 instance/
+user_progress.json

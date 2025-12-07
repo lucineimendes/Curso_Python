@@ -16,12 +16,12 @@ docs/
 │   └── ROADMAP_SYSTEM.md
 │
 ├── guides/                       # Guias práticos e tutoriais
-│   └── UV_GUIDE.md
+│   └── GUIDE_UV_SETUP.md
 │
 ├── refactoring/                  # Documentos de refatoração
-│   ├── SOLID_DRY_ACHIEVEMENTS.md
-│   ├── PROGRESS_MANAGER.md
-│   └── APP_ROUTES.md
+│   ├── REFACTOR_ACHIEVEMENTS_SOLID_DRY.md
+│   ├── REFACTOR_PROGRESS_MANAGER.md
+│   └── REFACTOR_APP_ROUTES.md
 │
 ├── implementation/               # Documentos de implementação
 │   ├── ROADMAP_IMPLEMENTATION.md
@@ -44,13 +44,19 @@ docs/
   - Templates por tipo de documento
   - Checklist de qualidade
 
+- **[ORGANIZATION_SUMMARY.md](ORGANIZATION_SUMMARY.md)** - Resumo da organização da documentação
+  - ✅ **Completo**: Reorganização aplicada
+  - Estrutura criada
+  - Arquivos movidos e renomeados
+  - Benefícios e estatísticas
+
 ### Arquitetura e Design
 
 - **[architecture/ROADMAP_SYSTEM.md](architecture/ROADMAP_SYSTEM.md)** - Sistema de roadmap visual e rastreamento de progresso
 
 ### Guias Práticos
 
-- **[guides/UV_GUIDE.md](guides/UV_GUIDE.md)** - Guia de uso do gerenciador de pacotes UV
+- **[guides/GUIDE_UV_SETUP.md](guides/GUIDE_UV_SETUP.md)** - Guia de uso do gerenciador de pacotes UV
 
 ### Implementações
 
@@ -91,20 +97,20 @@ docs/
 
 ### Refatorações e Boas Práticas
 
-- **[refactoring/SOLID_DRY_ACHIEVEMENTS.md](refactoring/SOLID_DRY_ACHIEVEMENTS.md)** - Refatoração do sistema de conquistas aplicando princípios SOLID e DRY
+- **[refactoring/REFACTOR_ACHIEVEMENTS_SOLID_DRY.md](refactoring/REFACTOR_ACHIEVEMENTS_SOLID_DRY.md)** - Refatoração do sistema de conquistas aplicando princípios SOLID e DRY
   - ✅ **Implementado**: Sistema de conquistas refatorado
   - Separação de responsabilidades (SRP)
   - Strategy Pattern para avaliadores (OCP)
   - Dependency Injection (DIP)
   - Eliminação de código duplicado (DRY)
 
-- **[refactoring/PROGRESS_MANAGER.md](refactoring/PROGRESS_MANAGER.md)** - Proposta de refatoração do ProgressManager
+- **[refactoring/REFACTOR_PROGRESS_MANAGER.md](refactoring/REFACTOR_PROGRESS_MANAGER.md)** - Proposta de refatoração do ProgressManager
   - ⬜ **Pendente**: Aguardando implementação
   - Separação em Repository, Calculator e Validator
   - Aplicação dos princípios SOLID
   - Melhoria de testabilidade
 
-- **[refactoring/APP_ROUTES.md](refactoring/APP_ROUTES.md)** - Proposta de refatoração das rotas da aplicação
+- **[refactoring/REFACTOR_APP_ROUTES.md](refactoring/REFACTOR_APP_ROUTES.md)** - Proposta de refatoração das rotas da aplicação
   - ⬜ **Pendente**: Aguardando implementação
   - Eliminação de código duplicado (rota legada)
   - Criação de camada de serviços
