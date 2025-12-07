@@ -27,17 +27,17 @@
   - **Propriedade 4: Completude de dados de conquista**
   - **Valida: Requisitos 1.3, 6.5**
 
-- [ ] 3. Implementar sistema de avaliação de condições de desbloqueio
+- [x] 3. Implementar sistema de avaliação de condições de desbloqueio
   - Adicionar método `_evaluate_condition()` ao AchievementManager
   - Implementar handlers de tipos de condição: lesson_count, exercise_count, perfect_exercises
   - Implementar handlers de tipos de condição: lessons_in_day, course_complete, all_courses_complete, exercise_after_attempts
   - _Requisitos: 2.4, 5.5_
 
-- [ ] 3.1 Escrever teste de propriedade para determinismo de avaliação de condição
+- [x] 3.1 Escrever teste de propriedade para determinismo de avaliação de condição
   - **Propriedade 2: Determinismo de avaliação de condição de desbloqueio**
   - **Valida: Requisitos 2.4**
 
-- [ ] 3.2 Escrever teste de propriedade para suporte a todos os tipos de condição
+- [x] 3.2 Escrever teste de propriedade para suporte a todos os tipos de condição
   - **Propriedade 18: Todos os tipos de condição suportados**
   - **Valida: Requisitos 5.5**
 

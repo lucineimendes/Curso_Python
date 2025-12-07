@@ -253,3 +253,153 @@ def test_property_4_achievement_data_completeness(achievements):
     finally:
         # Limpar o diretório temporário
         shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# Estratégias para gerar dados de progresso
+
+
+@st.composite
+def progress_data(draw):
+    """Gera dados de progresso do usuário."""
+    # Gerar cursos com lições e exercícios
+    num_courses = draw(st.integers(min_value=0, max_value=3))
+    courses = {}
+
+    total_lessons = 0
+    total_exercises = 0
+
+    for _ in range(num_courses):
+        course_id = draw(st.sampled_from(["python-basico", "python-intermediario", "python-avancado"]))
+
+        # Gerar lições
+        num_lessons = draw(st.integers(min_value=0, max_value=10))
+        lessons = {}
+        for j in range(num_lessons):
+            lesson_id = f"lesson_{j}"
+            lessons[lesson_id] = {
+                "completed": draw(st.booleans()),
+                "completed_at": "2025-12-04T10:30:00",
+                "times_viewed": draw(st.integers(min_value=1, max_value=10)),
+            }
+            if lessons[lesson_id]["completed"]:
+                total_lessons += 1
+
+        # Gerar exercícios
+        num_exercises = draw(st.integers(min_value=0, max_value=10))
+        exercises = {}
+        for k in range(num_exercises):
+            exercise_id = f"exercise_{k}"
+            attempts = draw(st.integers(min_value=1, max_value=20))
+            completed = draw(st.booleans())
+            exercises[exercise_id] = {
+                "completed": completed,
+                "completed_at": "2025-12-04T15:45:00" if completed else None,
+                "attempts": attempts,
+                "successful_attempts": draw(st.integers(min_value=0, max_value=attempts)),
+                "failed_attempts": draw(st.integers(min_value=0, max_value=attempts)),
+                "first_attempt_success": attempts == 1 and completed,
+                "last_attempt_at": "2025-12-04T15:45:00",
+            }
+            if completed:
+                total_exercises += 1
+
+        courses[course_id] = {
+            "lessons": lessons,
+            "exercises": exercises,
+            "started_at": "2025-12-01T10:00:00",
+            "last_accessed": "2025-12-04T15:45:00",
+            "completed": draw(st.booleans()),
+        }
+
+    # Gerar achievement_stats
+    achievement_stats = {
+        "perfect_exercises_count": draw(st.integers(min_value=0, max_value=50)),
+        "lessons_in_day": draw(st.integers(min_value=0, max_value=20)),
+        "last_activity_date": "2025-12-04",
+    }
+
+    return {
+        "courses": courses,
+        "total_lessons_completed": total_lessons,
+        "total_exercises_completed": total_exercises,
+        "achievement_stats": achievement_stats,
+        "created_at": "2025-12-01T10:00:00",
+    }
+
+
+# **Feature: achievements-badges, Property 2: Determinismo de avaliação de condição de desbloqueio**
+# **Valida: Requisitos 2.4**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(condition=valid_unlock_condition(), progress=progress_data())
+def test_property_2_condition_evaluation_determinism(condition, progress):
+    """
+    Propriedade 2: Determinismo de avaliação de condição de desbloqueio.
+
+    Para quaisquer dados de progresso do usuário e condição de desbloqueio de conquista,
+    avaliar a condição múltiplas vezes deve sempre retornar o mesmo resultado.
+
+    **Feature: achievements-badges, Property 2: Determinismo de avaliação de condição de desbloqueio**
+    **Valida: Requisitos 2.4**
+    """
+    # Criar um diretório temporário para cada teste
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        # Criar um AchievementManager temporário
+        manager = AchievementManager(data_dir_path_str=tmp_dir)
+
+        # Avaliar a condição múltiplas vezes
+        result1 = manager._evaluate_condition(condition, progress)
+        result2 = manager._evaluate_condition(condition, progress)
+        result3 = manager._evaluate_condition(condition, progress)
+
+        # Todos os resultados devem ser idênticos
+        assert result1 == result2 == result3, (
+            f"Avaliação de condição não é determinística. "
+            f"Condição: {condition}, Progresso: {progress}, "
+            f"Resultados: {result1}, {result2}, {result3}"
+        )
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 18: Todos os tipos de condição suportados**
+# **Valida: Requisitos 5.5**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(condition=valid_unlock_condition(), progress=progress_data())
+def test_property_18_all_condition_types_supported(condition, progress):
+    """
+    Propriedade 18: Todos os tipos de condição suportados.
+
+    Para qualquer conquista com um tipo de condição do conjunto suportado
+    (lesson_count, exercise_count, course_complete, perfect_exercises,
+    lessons_in_day, all_courses_complete, exercise_after_attempts),
+    a função de avaliação deve processar corretamente esse tipo de condição.
+
+    **Feature: achievements-badges, Property 18: Todos os tipos de condição suportados**
+    **Valida: Requisitos 5.5**
+    """
+    # Criar um diretório temporário para cada teste
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        # Criar um AchievementManager temporário
+        manager = AchievementManager(data_dir_path_str=tmp_dir)
+
+        # Avaliar a condição - não deve lançar exceção
+        try:
+            result = manager._evaluate_condition(condition, progress)
+
+            # O resultado deve ser um booleano
+            assert isinstance(result, bool), (
+                f"Avaliação de condição não retornou booleano. "
+                f"Tipo de condição: {condition.get('type')}, Resultado: {result}, Tipo: {type(result)}"
+            )
+        except Exception as e:
+            # Se uma exceção foi lançada, o tipo de condição não é suportado
+            raise AssertionError(
+                f"Tipo de condição '{condition.get('type')}' não é suportado corretamente. "
+                f"Exceção: {type(e).__name__}: {e}"
+            ) from e
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)

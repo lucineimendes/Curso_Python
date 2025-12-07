@@ -3,12 +3,25 @@ Módulo para gerenciamento de conquistas e badges.
 
 Este módulo gerencia o sistema de conquistas, incluindo carregamento de definições,
 validação, verificação de condições de desbloqueio e persistência de conquistas desbloqueadas.
+
+Refatorado seguindo princípios SOLID:
+- Single Responsibility: Cada classe tem uma responsabilidade única
+- Open/Closed: Extensível via Strategy Pattern
+- Dependency Inversion: Depende de abstrações (validators, evaluators)
 """
 
 import json
 import logging
 from pathlib import Path
 from typing import Dict, List
+
+try:
+    from .condition_evaluator import ConditionEvaluator
+    from .condition_validator import AchievementValidator
+except ImportError:
+    # Fallback para execução direta ou testes
+    from condition_evaluator import ConditionEvaluator
+    from condition_validator import AchievementValidator
 
 logger = logging.getLogger(__name__)
 
@@ -24,16 +37,22 @@ class AchievementManager:
     - Fornecer dados de conquistas para a API
     """
 
-    def __init__(self, data_dir_path_str="data"):
+    def __init__(self, data_dir_path_str="data", validator=None, evaluator=None):
         """
         Inicializa o AchievementManager.
 
         Args:
             data_dir_path_str (str): Caminho para o diretório de dados.
+            validator: Validador de conquistas (Dependency Injection).
+            evaluator: Avaliador de condições (Dependency Injection).
         """
         self.base_dir = Path(__file__).resolve().parent
         self.data_dir = self.base_dir / data_dir_path_str
         self.achievements_file = self.data_dir / "achievements.json"
+
+        # Dependency Injection: permite substituir validators/evaluators para testes
+        self._validator = validator or AchievementValidator()
+        self._evaluator = evaluator or ConditionEvaluator()
 
         self.achievements = self.load_achievements()
         logger.info(
@@ -103,82 +122,27 @@ class AchievementManager:
         """
         Valida se uma definição de conquista contém todos os campos obrigatórios.
 
+        Delegado para AchievementValidator (Single Responsibility Principle).
+
         Args:
             achievement (Dict): Definição de conquista a ser validada.
 
         Returns:
             bool: True se a conquista é válida, False caso contrário.
         """
-        if not isinstance(achievement, dict):
-            logger.warning("Conquista não é um dicionário")
-            return False
+        return self._validator.validate_achievement(achievement)
 
-        # Campos obrigatórios
-        required_fields = ["id", "name", "description", "icon", "unlock_condition"]
+    def _evaluate_condition(self, condition: Dict, progress_data: Dict) -> bool:
+        """
+        Avalia se uma condição de desbloqueio foi satisfeita.
 
-        for field in required_fields:
-            if field not in achievement:
-                logger.warning(
-                    f"Conquista '{achievement.get('id', 'desconhecido')}' está faltando campo obrigatório: {field}"
-                )
-                return False
+        Delegado para ConditionEvaluator (Strategy Pattern + Dependency Inversion).
 
-            # Verificar que campos não estão vazios
-            if not achievement[field]:
-                logger.warning(f"Conquista '{achievement.get('id', 'desconhecido')}' tem campo vazio: {field}")
-                return False
+        Args:
+            condition (Dict): Condição de desbloqueio da conquista.
+            progress_data (Dict): Dados de progresso do usuário.
 
-        # Validar estrutura de unlock_condition
-        unlock_condition = achievement.get("unlock_condition")
-        if not isinstance(unlock_condition, dict):
-            logger.warning(f"Conquista '{achievement.get('id')}': unlock_condition não é um dicionário")
-            return False
-
-        if "type" not in unlock_condition:
-            logger.warning(f"Conquista '{achievement.get('id')}': unlock_condition está faltando campo 'type'")
-            return False
-
-        # Validar tipos de condição conhecidos
-        valid_condition_types = [
-            "lesson_count",
-            "exercise_count",
-            "perfect_exercises",
-            "lessons_in_day",
-            "course_complete",
-            "all_courses_complete",
-            "exercise_after_attempts",
-        ]
-
-        condition_type = unlock_condition.get("type")
-        if condition_type not in valid_condition_types:
-            logger.warning(f"Conquista '{achievement.get('id')}': tipo de condição desconhecido '{condition_type}'")
-            return False
-
-        # Validar que condições que precisam de 'value' o tenham
-        conditions_requiring_value = [
-            "lesson_count",
-            "exercise_count",
-            "perfect_exercises",
-            "lessons_in_day",
-            "exercise_after_attempts",
-        ]
-
-        if condition_type in conditions_requiring_value:
-            if "value" not in unlock_condition:
-                logger.warning(f"Conquista '{achievement.get('id')}': condição '{condition_type}' requer campo 'value'")
-                return False
-
-            # Validar que value é um número
-            if not isinstance(unlock_condition.get("value"), (int, float)):
-                logger.warning(f"Conquista '{achievement.get('id')}': campo 'value' deve ser um número")
-                return False
-
-        # Validar que course_complete tem course_id
-        if condition_type == "course_complete":
-            if "course_id" not in unlock_condition:
-                logger.warning(
-                    f"Conquista '{achievement.get('id')}': condição 'course_complete' requer campo 'course_id'"
-                )
-                return False
-
-        return True
+        Returns:
+            bool: True se a condição foi satisfeita, False caso contrário.
+        """
+        return self._evaluator.evaluate(condition, progress_data)
