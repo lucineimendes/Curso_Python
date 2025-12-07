@@ -10,8 +10,12 @@ projects/                    # Pacote principal da aplicação
 ├── lesson_manager.py       # Gerenciamento de dados de lições
 ├── exercise_manager.py     # Gerenciamento de dados de exercícios
 ├── progress_manager.py     # Gerenciamento de progresso do usuário
+├── achievement_manager.py  # Gerenciamento de conquistas (refatorado SOLID)
+├── condition_validator.py  # Validação de condições de conquistas (SRP)
+├── condition_evaluator.py  # Avaliação de condições (Strategy Pattern, OCP)
 ├── code_executor.py        # Execução segura de código Python
 ├── data/                   # Armazenamento de dados JSON
+│   ├── achievements.json   # Definições de conquistas
 │   ├── courses.json        # Lista de cursos disponíveis
 │   ├── user_progress.json  # Progresso dos usuários
 │   ├── basic/              # Dados do curso básico
@@ -44,6 +48,10 @@ projects/                    # Pacote principal da aplicação
 - **LessonManager**: Carrega lições sob demanda via `load_lessons_from_file()`
 - **ExerciseManager**: Carrega exercícios sob demanda via `load_exercises_from_file()`
 - **ProgressManager**: Gerencia progresso do usuário (lições/exercícios completados, estatísticas)
+- **AchievementManager**: Gerencia conquistas (refatorado com SOLID/DRY)
+  - Usa Dependency Injection para validators e evaluators
+  - Delega validação para `AchievementValidator`
+  - Delega avaliação para `ConditionEvaluator` (Strategy Pattern)
 - Otimização: Managers de lições/exercícios não carregam todos os dados na inicialização
 
 ### Execução de Código
