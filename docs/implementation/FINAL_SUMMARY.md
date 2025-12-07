@@ -94,11 +94,11 @@ Este documento resume todas as implementações realizadas no projeto Curso Inte
 - Templates existentes melhorados
 
 #### Documentação
-- `docs/ROADMAP_SYSTEM.md` (~600 linhas)
-- `docs/UV_GUIDE.md` (~400 linhas)
-- `ROADMAP_IMPLEMENTATION.md` (~400 linhas)
-- `EXERCISE_IMPROVEMENTS.md` (~300 linhas)
-- `PROGRESS_FIX.md` (~300 linhas)
+- `docs/architecture/ROADMAP_SYSTEM.md` (~600 linhas)
+- `docs/guides/UV_GUIDE.md` (~400 linhas)
+- `docs/implementation/ROADMAP_IMPLEMENTATION.md` (~400 linhas)
+- `docs/implementation/EXERCISE_IMPROVEMENTS.md` (~300 linhas)
+- `docs/maintenance/PROGRESS_FIX.md` (~300 linhas)
 - `CONTRIBUTING.md` (atualizado)
 - Steering rules atualizados
 
@@ -390,10 +390,10 @@ curl http://localhost:5000/api/progress/course/python-basico
 
 ## 📚 Documentação
 
-- **Sistema de Roadmap:** `docs/ROADMAP_SYSTEM.md`
-- **Guia do uv:** `docs/UV_GUIDE.md`
-- **Melhorias de Exercícios:** `EXERCISE_IMPROVEMENTS.md`
-- **Correção de Progresso:** `PROGRESS_FIX.md`
+- **Sistema de Roadmap:** `docs/architecture/ROADMAP_SYSTEM.md`
+- **Guia do uv:** `docs/guides/UV_GUIDE.md`
+- **Melhorias de Exercícios:** `docs/implementation/EXERCISE_IMPROVEMENTS.md`
+- **Correção de Progresso:** `docs/maintenance/PROGRESS_FIX.md`
 - **Contribuição:** `CONTRIBUTING.md`
 - **Steering Rules:** `.kiro/steering/`
 

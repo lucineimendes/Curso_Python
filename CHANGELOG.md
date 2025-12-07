@@ -65,7 +65,7 @@
 - `projects/static/js/roadmap.js` - Componente JavaScript do roadmap
 - `projects/static/css/roadmap.css` - Estilos do roadmap
 - `projects/templates/course_roadmap.html` - Template da página de roadmap
-- `docs/ROADMAP_SYSTEM.md` - Documentação completa do sistema
+- `docs/architecture/ROADMAP_SYSTEM.md` - Documentação completa do sistema
 
 #### Formatadores e Configuração
 - `.prettierrc` - Configuração do Prettier
@@ -77,7 +77,7 @@
 - `setup.sh` - Script de configuração automática
 - `CONTRIBUTING.md` - Guia de contribuição
 - `CHANGELOG.md` - Este arquivo
-- `docs/UV_GUIDE.md` - Guia completo do uv
+- `docs/guides/UV_GUIDE.md` - Guia completo do uv
 - `projects/static/css/theme-guide.md` - Guia do sistema de temas
 - `.vscode/settings.json` - Configurações do VS Code
 - `.vscode/extensions.json` - Extensões recomendadas

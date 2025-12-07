@@ -46,6 +46,7 @@
   - Adicionar campo `achievement_stats` para rastrear contadores (perfect_exercises_count, lessons_in_day, last_activity_date)
   - Implementar função de migração de dados para arquivos user_progress.json existentes
   - _Requisitos: 8.1, 8.3_
+  - **Nota**: Considerar refatoração do ProgressManager seguindo princípios SOLID (ver docs/refactoring/PROGRESS_MANAGER.md)
 
 - [ ] 4.1 Implementar rastreamento de estatísticas de conquistas
   - Atualizar `mark_exercise_attempt()` para rastrear exercícios perfeitos (first_attempt_success)

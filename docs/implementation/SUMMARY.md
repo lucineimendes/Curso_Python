@@ -9,7 +9,7 @@
 - `projects/static/js/roadmap.js` - Frontend do roadmap interativo
 - `projects/static/css/roadmap.css` - Estilos visuais do roadmap
 - `projects/templates/course_roadmap.html` - Template da página
-- `docs/ROADMAP_SYSTEM.md` - Documentação completa
+- `docs/architecture/ROADMAP_SYSTEM.md` - Documentação completa
 
 **Funcionalidades:**
 - ✅ Roadmap visual com checkpoints e ramificações
@@ -105,7 +105,7 @@ uv run ruff format projects/         # Formatar código
 - `.kiro/steering/tech.md` - Stack tecnológico
 - `.kiro/steering/structure.md` - Estrutura do projeto
 - `CONTRIBUTING.md` - Guia de contribuição
-- `docs/UV_GUIDE.md` - Guia completo do uv
+- `docs/guides/UV_GUIDE.md` - Guia completo do uv
 - `projects/static/css/theme-guide.md` - Guia do sistema de temas
 - `CHANGELOG.md` - Registro de mudanças
 - `.vscode/settings.json` - Configurações do VS Code
@@ -201,7 +201,7 @@ make format        # Formatar tudo
 ## 📖 Documentação
 
 - **Contribuição**: [CONTRIBUTING.md](CONTRIBUTING.md)
-- **Guia do uv**: [docs/UV_GUIDE.md](docs/UV_GUIDE.md)
+- **Guia do uv**: [docs/guides/UV_GUIDE.md](docs/guides/UV_GUIDE.md)
 - **Sistema de Temas**: [projects/static/css/theme-guide.md](projects/static/css/theme-guide.md)
 - **Mudanças**: [CHANGELOG.md](CHANGELOG.md)
 - **Steering Rules**: `.kiro/steering/`

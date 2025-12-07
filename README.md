@@ -135,6 +135,22 @@ A documentação detalhada da API, gerada a partir das docstrings do código, po
 ## Detalhes da Arquitetura e Implementação
 
 Este documento detalha a estrutura e o funcionamento do projeto de sistema de curso interativo desenvolvido em Python, utilizando o framework Flask. O projeto foi concebido com foco em modularidade, separação de responsabilidades e uma estratégia robusta de testes automáticos.
+
+### Princípios de Design
+
+O projeto segue os princípios **SOLID** e **DRY** para garantir código limpo, manutenível e extensível:
+
+- **Single Responsibility Principle (SRP)**: Cada classe tem uma única responsabilidade
+- **Open/Closed Principle (OCP)**: Código aberto para extensão, fechado para modificação
+- **Liskov Substitution Principle (LSP)**: Subclasses podem substituir suas superclasses
+- **Interface Segregation Principle (ISP)**: Interfaces específicas em vez de genéricas
+- **Dependency Inversion Principle (DIP)**: Dependência de abstrações, não de implementações concretas
+- **Don't Repeat Yourself (DRY)**: Eliminação de duplicação de código
+
+Para detalhes sobre a aplicação destes princípios, consulte:
+- [Refatoração SOLID/DRY do Sistema de Conquistas](docs/refactoring/SOLID_DRY_ACHIEVEMENTS.md)
+- [Refatoração Proposta: ProgressManager](docs/refactoring/PROGRESS_MANAGER.md)
+- [Refatoração Proposta: Rotas da Aplicação](docs/refactoring/APP_ROUTES.md)
 **Visão Geral e Estrutura Principal:**
 [![Estrutura do Projeto](\images\Estrutura_projeto.png)](\images\Estrutura_projeto.png)
 *(Clique na imagem para ampliar)*

@@ -68,9 +68,9 @@ O sistema de roadmap visual com acompanhamento de progresso foi implementado com
 
 ### 5. Documentação
 
-- ✅ `docs/ROADMAP_SYSTEM.md` - Documentação completa do sistema
+- ✅ `docs/architecture/ROADMAP_SYSTEM.md` - Documentação completa do sistema
 - ✅ `CHANGELOG.md` - Atualizado com novas funcionalidades
-- ✅ `SUMMARY.md` - Resumo das implementações
+- ✅ `docs/implementation/SUMMARY.md` - Resumo das implementações
 - ✅ Steering rules atualizados (product.md, structure.md)
 
 ## 📊 Estrutura de Dados
@@ -195,7 +195,7 @@ if (result.success) {
 - `projects/static/js/roadmap.js` (~250 linhas)
 - `projects/static/css/roadmap.css` (~400 linhas)
 - `projects/templates/course_roadmap.html` (~80 linhas)
-- `docs/ROADMAP_SYSTEM.md` (~600 linhas)
+- `docs/architecture/ROADMAP_SYSTEM.md` (~600 linhas)
 
 ### Arquivos Modificados: 4
 - `projects/app.py` (+150 linhas)
@@ -254,7 +254,7 @@ curl http://localhost:5000/api/progress/course/python-basico
 
 ## 📚 Documentação
 
-- **Sistema Completo**: `docs/ROADMAP_SYSTEM.md`
+- **Sistema Completo**: `docs/architecture/ROADMAP_SYSTEM.md`
 - **API Reference**: Ver docstrings em `progress_manager.py` e `app.py`
 - **Frontend**: Comentários em `roadmap.js`
 - **Estilos**: Comentários em `roadmap.css`
