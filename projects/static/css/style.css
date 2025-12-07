@@ -252,6 +252,23 @@ a:hover {
     background: var(--primary-gradient) !important;
 }
 
+.badge-soft-primary {
+    background-color: rgba(99, 102, 241, 0.1);
+    color: var(--accent-color);
+}
+
+[data-theme="dark"] .badge-soft-primary {
+    background-color: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+}
+
+/* List Groups (Objectives) */
+.list-group-item {
+    background-color: transparent;
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
 /* Code Blocks & Examples */
 pre, code, .CodeMirror {
     font-family: 'Fira Code', 'Courier New', monospace;

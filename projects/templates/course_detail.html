@@ -11,28 +11,43 @@
         </a>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="card-title">{{ course.name }}</h2>
-            <span class="badge bg-primary mb-2">{{ course.level }}</span>
-            <p class="card-text">{{ course.description }}</p>
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body p-4">
+            <h2 class="card-title mb-3">{{ course.name }}</h2>
+            <div class="mb-3">
+                <span class="badge badge-soft-primary">{{ course.level }}</span>
+            </div>
+            <p class="card-text lead text-muted">{{ course.description }}</p>
 
-            {% if course.duration %}
-            <p><strong>Duração estimada:</strong> {{ course.duration }}</p>
-            {% endif %}
+            <div class="d-flex gap-4 mt-4">
+                {% if course.duration %}
+                <div class="d-flex align-items-center text-muted">
+                    <i class="bi bi-clock me-2"></i>
+                    <span>{{ course.duration }}</span>
+                </div>
+                {% endif %}
 
-            {% if course.prerequisites %}
-            <p><strong>Pré-requisitos:</strong> {{ course.prerequisites }}</p>
-            {% endif %}
+                {% if course.prerequisites %}
+                <div class="d-flex align-items-center text-muted">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    <span>{{ course.prerequisites }}</span>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-body">
-            <h3 class="card-title">Objetivos do Curso</h3>
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body p-4">
+            <h3 class="card-title h4 mb-4">
+                <i class="bi bi-bullseye text-primary me-2"></i>Objetivos do Curso
+            </h3>
             <ul class="list-group list-group-flush">
                 {% for objective in course.objectives %}
-                    <li class="list-group-item">{{ objective }}</li>
+                    <li class="list-group-item px-0 py-3 border-bottom-0 d-flex">
+                        <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
+                        <span>{{ objective }}</span>
+                    </li>
                 {% endfor %}
             </ul>
         </div>
