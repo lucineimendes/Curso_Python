@@ -6,22 +6,22 @@
                     "lessons": {
                         "intro-programacao-python": {
                             "completed": true,
-                            "completed_at": "2025-12-08T16:03:00.633019",
+                            "completed_at": "2025-12-08T16:37:46.122266",
                             "times_viewed": 1
                         },
                         "configurando-ambiente-python": {
                             "completed": true,
-                            "completed_at": "2025-12-07T10:00:10.764060",
+                            "completed_at": "2025-12-08T16:37:49.931871",
                             "times_viewed": 1
                         },
                         "ola-mundo-python": {
                             "completed": true,
-                            "completed_at": "2025-12-03T22:59:55.544985",
+                            "completed_at": "2025-12-08T19:02:03.771509",
                             "times_viewed": 1
                         },
                         "variaveis-tipos-dados-numericos": {
                             "completed": true,
-                            "completed_at": "2025-12-08T16:03:42.729217",
+                            "completed_at": "2025-12-08T19:02:07.917748",
                             "times_viewed": 1
                         },
                         "operadores-python": {
@@ -36,7 +36,12 @@
                         },
                         "tipos-dados-string-booleano": {
                             "completed": true,
-                            "completed_at": "2025-12-08T12:53:26.559989",
+                            "completed_at": "2025-12-08T17:56:26.673774",
+                            "times_viewed": 1
+                        },
+                        "precedencia-conversao-tipos": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T16:39:35.388692",
                             "times_viewed": 1
                         }
                     },
@@ -44,10 +49,11 @@
                         "ex-introducao-1": {
                             "completed": true,
                             "completed_at": "2025-12-03T17:50:39.333443",
-                            "attempts": 2,
+                            "attempts": 3,
                             "first_attempt_success": true,
-                            "last_attempt_at": "2025-12-03T22:59:03.275016",
-                            "successful_attempts": 1
+                            "last_attempt_at": "2025-12-08T16:39:06.111167",
+                            "successful_attempts": 1,
+                            "failed_attempts": 1
                         },
                         "ex-intro-prog-1": {
                             "completed": true,
@@ -84,20 +90,113 @@
                             "failed_attempts": 2,
                             "first_attempt_success": true,
                             "last_attempt_at": "2025-12-08T13:12:59.474960"
+                        },
+                        "ex-variaveis-2": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T17:57:30.931509",
+                            "attempts": 1,
+                            "successful_attempts": 1,
+                            "failed_attempts": 0,
+                            "first_attempt_success": true,
+                            "last_attempt_at": "2025-12-08T17:57:30.931495"
                         }
                     },
                     "started_at": "2025-12-03T17:48:26.625604",
-                    "last_accessed": "2025-12-08T16:04:02.323812",
+                    "last_accessed": "2025-12-08T19:02:07.917764",
+                    "completed": false
+                },
+                "git-avancado": {
+                    "lessons": {
+                        "cheat-sheet": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:26:45.821722",
+                            "times_viewed": 1
+                        },
+                        "01-basic-theory-basics": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:26:48.231285",
+                            "times_viewed": 1
+                        },
+                        "01-basic-lab-first-commit": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:26:50.027942",
+                            "times_viewed": 1
+                        },
+                        "02-intermediario-theory-branches": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:26:51.798636",
+                            "times_viewed": 1
+                        },
+                        "02-intermediario-lab-merge-conflict": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:26:53.573478",
+                            "times_viewed": 1
+                        },
+                        "01-internals-theory": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:26:55.597647",
+                            "times_viewed": 1
+                        },
+                        "01-internals-lab-objects": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:26:57.124097",
+                            "times_viewed": 1
+                        },
+                        "02-advanced-history-theory-rebase": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:26:58.688318",
+                            "times_viewed": 1
+                        },
+                        "02-advanced-history-lab-interactive-rebase": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:27:00.437628",
+                            "times_viewed": 1
+                        },
+                        "03-workflows-theory-gitflow": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:27:02.758179",
+                            "times_viewed": 1
+                        },
+                        "03-workflows-lab-workflow-sim": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:27:04.667713",
+                            "times_viewed": 1
+                        },
+                        "04-tools-theory-hooks": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:27:06.829383",
+                            "times_viewed": 1
+                        },
+                        "04-tools-lab-bisect": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:27:09.052146",
+                            "times_viewed": 1
+                        },
+                        "05-complex-structures-theory-lfs": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:27:10.671019",
+                            "times_viewed": 1
+                        },
+                        "05-complex-structures-theory-submodules": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T19:27:13.004003",
+                            "times_viewed": 1
+                        }
+                    },
+                    "exercises": {},
+                    "started_at": "2025-12-08T19:06:08.135435",
+                    "last_accessed": "2025-12-08T19:27:13.004022",
                     "completed": false
                 }
             },
-            "total_lessons_completed": 7,
-            "total_exercises_completed": 5,
+            "total_lessons_completed": 23,
+            "total_exercises_completed": 6,
             "created_at": "2025-12-03T17:48:26.625209",
             "achievement_stats": {
-                "perfect_exercises_count": 1,
-                "lessons_in_day": 2,
-                "last_lesson_date": "2025-12-08"
+                "perfect_exercises_count": 2,
+                "lessons_in_day": 16,
+                "last_lesson_date": "2025-12-08",
+                "last_activity_date": "2025-12-08"
             },
             "achievements": [
                 {
@@ -115,6 +214,10 @@
                 {
                     "id": "persistent",
                     "unlocked_at": "2025-12-08T12:44:23.692146"
+                },
+                {
+                    "id": "marathoner",
+                    "unlocked_at": "2025-12-08T19:26:51.861140"
                 }
             ]
         },
@@ -720,5 +823,5 @@
         }
     },
     "created_at": "2025-12-03T17:10:36.020197",
-    "last_updated": "2025-12-08T16:04:02.323817"
+    "last_updated": "2025-12-08T19:27:13.004025"
 }
