@@ -36,6 +36,6 @@
   - Escrever `docs/git-course/03-avancado/05-complex-structures/theory-lfs.md`
   - _Requisito: 5_
 
-- [ ] 6. Criar Referência Rápida
+- [x] 6. Criar Referência Rápida
   - Escrever `docs/git-course/cheat-sheet.md`
   - _Requisito: 6_
