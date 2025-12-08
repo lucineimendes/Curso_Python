@@ -16,7 +16,7 @@
   - Escrever `docs/git-course/03-avancado/01-internals/lab-objects.md`
   - _Requisito: 1_
 
-- [ ] 2. Criar conteúdo para Módulo 2: Histórico Avançado
+- [x] 2. Criar conteúdo para Módulo 2: Histórico Avançado
   - Escrever `docs/git-course/03-avancado/02-advanced-history/theory-rebase.md`
   - Escrever `docs/git-course/03-avancado/02-advanced-history/lab-interactive-rebase.md`
   - _Requisito: 2_
