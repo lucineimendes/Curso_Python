@@ -21,7 +21,7 @@
   - Escrever `docs/git-course/03-avancado/02-advanced-history/lab-interactive-rebase.md`
   - _Requisito: 2_
 
-- [ ] 3. Criar conteúdo para Módulo 3: Workflows
+- [x] 3. Criar conteúdo para Módulo 3: Workflows
   - Escrever `docs/git-course/03-avancado/03-workflows/theory-gitflow.md`
   - Escrever `docs/git-course/03-avancado/03-workflows/lab-workflow-sim.md`
   - _Requisito: 3_
