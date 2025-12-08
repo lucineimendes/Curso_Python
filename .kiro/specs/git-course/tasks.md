@@ -11,7 +11,7 @@
   - _Requisito: Intermediário_
 
 
-- [ ] 1. Criar conteúdo para Módulo 1: Internals
+- [x] 1. Criar conteúdo para Módulo 1: Internals
   - Escrever `docs/git-course/03-avancado/01-internals/theory.md`
   - Escrever `docs/git-course/03-avancado/01-internals/lab-objects.md`
   - _Requisito: 1_
