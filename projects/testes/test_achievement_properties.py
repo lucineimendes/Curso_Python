@@ -1259,3 +1259,223 @@ def test_property_15_statistics_calculation_accuracy(user_id, achievements, num_
     finally:
         # Limpar o diretório temporário
         shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# ============================================
+# Propriedade 13: Ordenação da fila de notificações
+# ============================================
+
+
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(
+    achievements=st.lists(valid_achievement(), min_size=1, max_size=10, unique_by=lambda x: x["id"]),
+    unlock_order=st.data(),
+)
+def test_property_13_notification_queue_ordering(achievements, unlock_order):
+    """
+    **Feature: achievements-badges, Property 13: Ordenação da fila de notificações**
+
+    **Valida: Requisitos 3.4**
+
+    Para qualquer sequência de conquistas desbloqueadas, a fila de notificações
+    deve manter a ordem de desbloqueio e exibir notificações nessa mesma ordem.
+
+    Este teste valida que quando múltiplas conquistas são desbloqueadas,
+    o endpoint /api/achievements/check retorna as conquistas recém-desbloqueadas
+    na ordem em que foram desbloqueadas (ordem cronológica por timestamp).
+    """
+    # Criar diretório temporário para dados de teste
+    tmp_dir = tempfile.mkdtemp()
+
+    try:
+        # Criar estrutura de diretórios
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir(parents=True, exist_ok=True)
+
+        # Salvar conquistas no arquivo JSON
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            json.dump({"achievements": achievements}, f, ensure_ascii=False, indent=2)
+
+        # Criar arquivo de progresso vazio
+        progress_file = data_dir / "user_progress.json"
+        with open(progress_file, "w", encoding="utf-8") as f:
+            json.dump({"users": {}}, f)
+
+        # Inicializar managers
+        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
+        from projects.progress_manager import ProgressManager
+
+        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+
+        user_id = "test_user"
+
+        # Gerar ordem de desbloqueio aleatória
+        num_to_unlock = unlock_order.draw(st.integers(min_value=1, max_value=len(achievements)))
+        unlock_indices = unlock_order.draw(
+            st.lists(
+                st.integers(min_value=0, max_value=len(achievements) - 1),
+                min_size=num_to_unlock,
+                max_size=num_to_unlock,
+                unique=True,
+            )
+        )
+
+        # Desbloquear conquistas na ordem especificada e registrar timestamps
+        unlocked_achievements_in_order = []
+        for idx in unlock_indices:
+            achievement_id = achievements[idx]["id"]
+            achievement_mgr.unlock_achievement(user_id, achievement_id, progress_mgr)
+
+            # Obter dados da conquista desbloqueada
+            user_data = progress_mgr.get_user_progress(user_id)
+            # achievements é uma lista, não um dicionário
+            achievement_data = next((a for a in user_data.get("achievements", []) if a["id"] == achievement_id), None)
+            if achievement_data:
+                unlocked_achievements_in_order.append(
+                    {
+                        "id": achievement_id,
+                        "unlocked_at": achievement_data["unlocked_at"],
+                        "achievement": achievements[idx],
+                    }
+                )
+
+        # Obter conquistas recém-desbloqueadas através do método que seria usado pela API
+        user_achievements = achievement_mgr.get_user_achievements(user_id, progress_mgr)
+        unlocked_list = user_achievements["unlocked"]
+
+        # Verificar que todas as conquistas desbloqueadas estão na lista
+        unlocked_ids = [a["id"] for a in unlocked_list]
+        expected_ids = [a["id"] for a in unlocked_achievements_in_order]
+
+        assert set(unlocked_ids) == set(
+            expected_ids
+        ), f"Conjunto de IDs desbloqueados não corresponde. Esperado: {set(expected_ids)}, Obtido: {set(unlocked_ids)}"
+
+        # Verificar que a ordem está correta (ordenado por timestamp)
+        # A lista deve estar ordenada por unlocked_at (ordem cronológica)
+        for i in range(len(unlocked_list) - 1):
+            current_timestamp = unlocked_list[i]["unlocked_at"]
+            next_timestamp = unlocked_list[i + 1]["unlocked_at"]
+
+            assert current_timestamp <= next_timestamp, (
+                f"Conquistas não estão ordenadas por timestamp. "
+                f"Conquista {i} ({unlocked_list[i]['id']}): {current_timestamp}, "
+                f"Conquista {i + 1} ({unlocked_list[i + 1]['id']}): {next_timestamp}"
+            )
+
+        # Verificar que a ordem de desbloqueio é preservada
+        # (conquistas desbloqueadas primeiro devem aparecer primeiro na lista)
+        unlocked_timestamps = [a["unlocked_at"] for a in unlocked_list]
+        sorted_timestamps = sorted(unlocked_timestamps)
+
+        assert unlocked_timestamps == sorted_timestamps, (
+            f"A ordem das conquistas não corresponde à ordem cronológica de desbloqueio. "
+            f"Ordem obtida: {unlocked_timestamps}, Ordem esperada: {sorted_timestamps}"
+        )
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# ============================================
+# Propriedade 14: Estrutura de dados de notificação
+# ============================================
+
+
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(achievement=valid_achievement())
+def test_property_14_notification_data_structure(achievement):
+    """
+    **Feature: achievements-badges, Property 14: Estrutura de dados de notificação**
+
+    **Valida: Requisitos 3.2**
+
+    Para qualquer notificação de conquista, os dados da notificação devem incluir
+    o ícone da conquista, nome e uma mensagem de parabéns.
+
+    Este teste valida que quando uma conquista é desbloqueada, os dados retornados
+    pela API contêm todos os campos necessários para exibir uma notificação completa.
+    """
+    # Criar diretório temporário para dados de teste
+    tmp_dir = tempfile.mkdtemp()
+
+    try:
+        # Criar estrutura de diretórios
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir(parents=True, exist_ok=True)
+
+        # Salvar conquista no arquivo JSON
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            json.dump({"achievements": [achievement]}, f, ensure_ascii=False, indent=2)
+
+        # Criar arquivo de progresso vazio
+        progress_file = data_dir / "user_progress.json"
+        with open(progress_file, "w", encoding="utf-8") as f:
+            json.dump({"users": {}}, f)
+
+        # Inicializar managers
+        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
+        from projects.progress_manager import ProgressManager
+
+        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+
+        user_id = "test_user"
+
+        # Desbloquear a conquista
+        achievement_mgr.unlock_achievement(user_id, achievement["id"], progress_mgr)
+
+        # Obter dados da conquista desbloqueada
+        user_achievements = achievement_mgr.get_user_achievements(user_id, progress_mgr)
+        unlocked_list = user_achievements["unlocked"]
+
+        # Deve haver exatamente uma conquista desbloqueada
+        assert len(unlocked_list) == 1, f"Esperado 1 conquista desbloqueada, obtido {len(unlocked_list)}"
+
+        unlocked_achievement = unlocked_list[0]
+
+        # Verificar que todos os campos necessários para notificação estão presentes
+        required_fields = ["id", "name", "icon"]
+
+        for field in required_fields:
+            assert field in unlocked_achievement, (
+                f"Campo obrigatório '{field}' não encontrado nos dados da conquista desbloqueada. "
+                f"Campos disponíveis: {list(unlocked_achievement.keys())}"
+            )
+
+        # Verificar que os campos não estão vazios
+        assert unlocked_achievement["id"], "Campo 'id' não pode estar vazio"
+        assert unlocked_achievement["name"], "Campo 'name' não pode estar vazio"
+        assert unlocked_achievement["icon"], "Campo 'icon' não pode estar vazio"
+
+        # Verificar que os valores correspondem à definição original
+        assert (
+            unlocked_achievement["id"] == achievement["id"]
+        ), f"ID não corresponde. Esperado: {achievement['id']}, Obtido: {unlocked_achievement['id']}"
+
+        assert (
+            unlocked_achievement["name"] == achievement["name"]
+        ), f"Nome não corresponde. Esperado: {achievement['name']}, Obtido: {unlocked_achievement['name']}"
+
+        assert (
+            unlocked_achievement["icon"] == achievement["icon"]
+        ), f"Ícone não corresponde. Esperado: {achievement['icon']}, Obtido: {unlocked_achievement['icon']}"
+
+        # Verificar que há um timestamp de desbloqueio (necessário para mensagem de parabéns contextual)
+        assert "unlocked_at" in unlocked_achievement, "Campo 'unlocked_at' não encontrado nos dados da conquista"
+        assert unlocked_achievement["unlocked_at"], "Campo 'unlocked_at' não pode estar vazio"
+
+        # Verificar que campos adicionais úteis para notificação também estão presentes
+        optional_but_useful_fields = ["description", "category"]
+
+        for field in optional_but_useful_fields:
+            if field in achievement:
+                assert (
+                    field in unlocked_achievement
+                ), f"Campo útil '{field}' presente na definição mas ausente nos dados desbloqueados"
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)

@@ -126,7 +126,7 @@
   - **Propriedade 15: Precisão do cálculo de estatísticas**
   - **Valida: Requisitos 1.5**
 
-- [ ] 10. Criar estilos CSS de conquistas
+- [x] 10. Criar estilos CSS de conquistas
   - Criar `projects/static/css/achievements.css`
   - Estilizar cards de conquistas (estados bloqueado/desbloqueado)
   - Adicionar efeitos de hover e animações
@@ -134,7 +134,7 @@
   - Estilizar seção de estatísticas
   - _Requisitos: 1.2_
 
-- [ ] 11. Implementar sistema de notificações de conquistas
+- [x] 11. Implementar sistema de notificações de conquistas
   - Criar `projects/static/js/achievements.js`
   - Implementar classe `AchievementNotification`
   - Adicionar método `show()` para exibir notificação com animação
@@ -143,11 +143,11 @@
   - Adicionar auto-dismiss após 5 segundos
   - _Requisitos: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 11.1 Escrever teste de propriedade para ordenação da fila de notificações
+- [x] 11.1 Escrever teste de propriedade para ordenação da fila de notificações
   - **Propriedade 13: Ordenação da fila de notificações**
   - **Valida: Requisitos 3.4**
 
-- [ ] 11.2 Escrever teste de propriedade para estrutura de dados de notificação
+- [x] 11.2 Escrever teste de propriedade para estrutura de dados de notificação
   - **Propriedade 14: Estrutura de dados de notificação**
   - **Valida: Requisitos 3.2**
 

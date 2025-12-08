@@ -179,6 +179,9 @@ class AchievementManager:
             else:
                 locked.append({**achievement, "unlocked": False})
 
+        # Ordenar conquistas desbloqueadas por timestamp (ordem cronológica)
+        unlocked.sort(key=lambda x: x.get("unlocked_at", ""))
+
         total = len(self.achievements)
         unlocked_count = len(unlocked)
         percentage = (unlocked_count / total * 100) if total > 0 else 0.0
