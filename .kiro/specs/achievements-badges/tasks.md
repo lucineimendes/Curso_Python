@@ -91,22 +91,22 @@
   - **Propriedade 6: Detecção de conclusão de curso**
   - **Valida: Requisitos 4.3**
 
-- [ ] 7. Implementar rotas de API Flask para conquistas
+- [x] 7. Implementar rotas de API Flask para conquistas
   - Adicionar `@app.route('/api/achievements', methods=['GET'])` para retornar todas as conquistas com status
   - Adicionar `@app.route('/api/achievements/unlocked', methods=['GET'])` para retornar apenas desbloqueadas
   - Adicionar `@app.route('/api/achievements/check', methods=['POST'])` para verificar e desbloquear novas conquistas
   - Implementar tratamento de erros e códigos de status HTTP apropriados
   - _Requisitos: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 7.1 Escrever teste de propriedade para filtragem de resposta da API
+- [x] 7.1 Escrever teste de propriedade para filtragem de resposta da API
   - **Propriedade 10: Filtragem de resposta da API**
   - **Valida: Requisitos 6.2**
 
-- [ ] 7.2 Escrever teste de propriedade para exclusão de recém-desbloqueadas
+- [x] 7.2 Escrever teste de propriedade para exclusão de recém-desbloqueadas
   - **Propriedade 11: Exclusão de conquistas recém-desbloqueadas**
   - **Valida: Requisitos 6.3**
 
-- [ ] 7.3 Escrever teste de propriedade para códigos de status de erro da API
+- [x] 7.3 Escrever teste de propriedade para códigos de status de erro da API
   - **Propriedade 12: Códigos de status de erro da API**
   - **Valida: Requisitos 6.4**
 

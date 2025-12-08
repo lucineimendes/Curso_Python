@@ -822,34 +822,170 @@ def achievements_page():
 
 @app.route("/api/achievements", methods=["GET"])
 def api_get_achievements():
-    """Retorna todas as conquistas e seu status para o usuário."""
+    """API endpoint para obter todas as conquistas com status de desbloqueio.
+
+    Retorna todas as definições de conquistas com status de desbloqueio para o usuário atual.
+
+    Query Parameters:
+        user_id (str): ID do usuário (opcional, padrão: 'default')
+
+    Returns:
+        Response: JSON com todas as conquistas e seus status.
+            Sucesso (200 OK):
+                {
+                    "success": true,
+                    "achievements": {
+                        "unlocked": [{"id": "...", "name": "...", "unlocked_at": "...", ...}],
+                        "locked": [{"id": "...", "name": "...", "unlock_condition": {...}, ...}],
+                        "stats": {"total": 10, "unlocked": 3, "percentage": 30.0}
+                    }
+                }
+            Erro (500 Internal Server Error):
+                {"success": false, "message": "Erro: <mensagem>"}
+    """
+    logger.info("GET /api/achievements - Obtendo todas as conquistas com status")
     user_id = request.args.get("user_id", "default")
-    all_achievements = achievement_mgr.get_all_achievements()
-    unlocked_achievements = progress_mgr.get_unlocked_achievements(user_id)
-    unlocked_ids = {a["id"] for a in unlocked_achievements}
 
-    # Combinar dados
-    response_list = []
-    for ach in all_achievements:
-        ach_data = ach.copy()
-        ach_data["unlocked"] = ach["id"] in unlocked_ids
-        if ach_data["unlocked"]:
-            # Encontrar timestamp
-            for unlocked in unlocked_achievements:
-                if unlocked["id"] == ach["id"]:
-                    ach_data["unlocked_at"] = unlocked.get("unlocked_at")
-                    break
-        response_list.append(ach_data)
+    try:
+        # Obter todas as conquistas e conquistas desbloqueadas
+        all_achievements = achievement_mgr.get_all_achievements()
+        unlocked_achievements = progress_mgr.get_unlocked_achievements(user_id)
+        unlocked_ids = {a["id"] for a in unlocked_achievements}
 
-    return jsonify(response_list)
+        # Separar conquistas desbloqueadas e bloqueadas
+        unlocked_list = []
+        locked_list = []
+
+        for ach in all_achievements:
+            if ach["id"] in unlocked_ids:
+                # Encontrar timestamp de desbloqueio
+                ach_data = ach.copy()
+                for unlocked in unlocked_achievements:
+                    if unlocked["id"] == ach["id"]:
+                        ach_data["unlocked_at"] = unlocked.get("unlocked_at")
+                        break
+                unlocked_list.append(ach_data)
+            else:
+                locked_list.append(ach.copy())
+
+        # Calcular estatísticas
+        total = len(all_achievements)
+        unlocked_count = len(unlocked_list)
+        percentage = (unlocked_count / total * 100) if total > 0 else 0.0
+
+        return jsonify(
+            {
+                "success": True,
+                "achievements": {
+                    "unlocked": unlocked_list,
+                    "locked": locked_list,
+                    "stats": {"total": total, "unlocked": unlocked_count, "percentage": round(percentage, 2)},
+                },
+            }
+        )
+    except Exception as e:
+        logger.error(f"Erro ao obter conquistas: {e}", exc_info=True)
+        return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
+
+
+@app.route("/api/achievements/unlocked", methods=["GET"])
+def api_get_unlocked_achievements():
+    """API endpoint para obter apenas conquistas desbloqueadas.
+
+    Retorna apenas as conquistas que o usuário já desbloqueou com timestamps.
+
+    Query Parameters:
+        user_id (str): ID do usuário (opcional, padrão: 'default')
+
+    Returns:
+        Response: JSON com conquistas desbloqueadas.
+            Sucesso (200 OK):
+                {
+                    "success": true,
+                    "unlocked": [{"id": "...", "name": "...", "unlocked_at": "...", ...}]
+                }
+            Erro (500 Internal Server Error):
+                {"success": false, "message": "Erro: <mensagem>"}
+    """
+    logger.info("GET /api/achievements/unlocked - Obtendo conquistas desbloqueadas")
+    user_id = request.args.get("user_id", "default")
+
+    try:
+        # Obter conquistas desbloqueadas do progresso
+        unlocked_achievements = progress_mgr.get_unlocked_achievements(user_id)
+        unlocked_ids = {a["id"] for a in unlocked_achievements}
+
+        # Obter definições completas das conquistas desbloqueadas
+        all_achievements = achievement_mgr.get_all_achievements()
+        unlocked_list = []
+
+        for ach in all_achievements:
+            if ach["id"] in unlocked_ids:
+                ach_data = ach.copy()
+                # Adicionar timestamp de desbloqueio
+                for unlocked in unlocked_achievements:
+                    if unlocked["id"] == ach["id"]:
+                        ach_data["unlocked_at"] = unlocked.get("unlocked_at")
+                        break
+                unlocked_list.append(ach_data)
+
+        return jsonify({"success": True, "unlocked": unlocked_list})
+    except Exception as e:
+        logger.error(f"Erro ao obter conquistas desbloqueadas: {e}", exc_info=True)
+        return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
 
 @app.route("/api/achievements/check", methods=["POST"])
 def api_check_achievements():
-    """Força verificação de novas conquistas (útil para polling ou manual)."""
-    user_id = request.get_json().get("user_id", "default") if request.is_json else "default"
-    new_achievements = achievement_mgr.check_new_achievements(user_id, progress_mgr)
-    return jsonify({"new_achievements": new_achievements})
+    """API endpoint para verificar e desbloquear novas conquistas.
+
+    Avalia condições de desbloqueio baseadas no progresso atual do usuário
+    e retorna conquistas recém-desbloqueadas.
+
+    JSON de Requisição:
+        {
+            "user_id": "str (opcional, padrão: 'default')"
+        }
+
+    Returns:
+        Response: JSON com conquistas recém-desbloqueadas.
+            Sucesso (200 OK):
+                {
+                    "success": true,
+                    "newly_unlocked": [{"id": "...", "name": "...", ...}],
+                    "message": "X novas conquistas desbloqueadas"
+                }
+            Payload inválido (400 Bad Request):
+                {"success": false, "message": "Payload inválido"}
+            Erro (500 Internal Server Error):
+                {"success": false, "message": "Erro: <mensagem>"}
+    """
+    logger.info("POST /api/achievements/check - Verificando novas conquistas")
+
+    try:
+        # Obter user_id do JSON ou usar padrão
+        data = request.get_json() if request.is_json else {}
+        if data is None:
+            return jsonify({"success": False, "message": "Payload inválido"}), 400
+
+        user_id = data.get("user_id", "default")
+
+        # Verificar novas conquistas
+        new_achievements = achievement_mgr.check_new_achievements(user_id, progress_mgr)
+
+        # Preparar mensagem
+        count = len(new_achievements)
+        if count == 0:
+            message = "Nenhuma nova conquista desbloqueada"
+        elif count == 1:
+            message = "1 nova conquista desbloqueada"
+        else:
+            message = f"{count} novas conquistas desbloqueadas"
+
+        return jsonify({"success": True, "newly_unlocked": new_achievements, "message": message})
+    except Exception as e:
+        logger.error(f"Erro ao verificar conquistas: {e}", exc_info=True)
+        return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
 
 # --- Rota Legada (Manter por compatibilidade ou remover se não for mais usada) ---
