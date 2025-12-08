@@ -267,3 +267,71 @@ class AchievementManager:
             List[Dict]: Lista de conquistas recém-desbloqueadas.
         """
         return self.check_unlocks(user_id, progress_manager)
+
+    def _is_course_complete(self, progress_data: Dict, course_id: str) -> bool:
+        """
+        Verifica se todas as lições em um curso estão completas.
+
+        Args:
+            progress_data (Dict): Dados de progresso do usuário.
+            course_id (str): ID do curso a verificar.
+
+        Returns:
+            bool: True se todas as lições do curso estão completas, False caso contrário.
+        """
+        courses = progress_data.get("courses", {})
+        course_progress = courses.get(course_id, {})
+
+        # Um curso é considerado completo se tem o campo 'completed' como True
+        # ou se todas as suas lições estão completas
+        if course_progress.get("completed", False):
+            return True
+
+        # Verificar se todas as lições estão completas
+        lessons = course_progress.get("lessons", {})
+        if not lessons:
+            return False
+
+        # Todas as lições devem estar marcadas como completas
+        return all(lesson.get("completed", False) for lesson in lessons.values())
+
+    def _are_all_courses_complete(self, progress_data: Dict) -> bool:
+        """
+        Verifica se todos os três cursos estão completos.
+
+        Args:
+            progress_data (Dict): Dados de progresso do usuário.
+
+        Returns:
+            bool: True se todos os três cursos (básico, intermediário, avançado) estão completos.
+        """
+        required_courses = ["python-basico", "python-intermediario", "python-avancado"]
+
+        for course_id in required_courses:
+            if not self._is_course_complete(progress_data, course_id):
+                return False
+
+        return True
+
+    def _has_exercise_after_attempts(self, progress_data: Dict, min_attempts: int) -> bool:
+        """
+        Verifica se o usuário completou algum exercício após um número mínimo de tentativas.
+
+        Args:
+            progress_data (Dict): Dados de progresso do usuário.
+            min_attempts (int): Número mínimo de tentativas necessárias.
+
+        Returns:
+            bool: True se existe pelo menos um exercício completado após min_attempts tentativas.
+        """
+        courses = progress_data.get("courses", {})
+
+        for course_progress in courses.values():
+            exercises = course_progress.get("exercises", {})
+
+            for exercise_data in exercises.values():
+                # Verificar se o exercício está completo e teve pelo menos min_attempts tentativas
+                if exercise_data.get("completed", False) and exercise_data.get("attempts", 0) >= min_attempts:
+                    return True
+
+        return False

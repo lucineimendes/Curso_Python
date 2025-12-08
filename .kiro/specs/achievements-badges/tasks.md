@@ -41,53 +41,53 @@
   - **Propriedade 18: Todos os tipos de condição suportados**
   - **Valida: Requisitos 5.5**
 
-- [ ] 4. Estender ProgressManager para rastreamento de conquistas
+- [x] 4. Estender ProgressManager para rastreamento de conquistas
   - Adicionar campo `achievements` à estrutura de dados de progresso do usuário
   - Adicionar campo `achievement_stats` para rastrear contadores (perfect_exercises_count, lessons_in_day, last_activity_date)
   - Implementar função de migração de dados para arquivos user_progress.json existentes
   - _Requisitos: 8.1, 8.3_
   - **Nota**: Considerar refatoração do ProgressManager seguindo princípios SOLID (ver docs/refactoring/PROGRESS_MANAGER.md)
 
-- [ ] 4.1 Implementar rastreamento de estatísticas de conquistas
+- [x] 4.1 Implementar rastreamento de estatísticas de conquistas
   - Atualizar `mark_exercise_attempt()` para rastrear exercícios perfeitos (first_attempt_success)
   - Atualizar `mark_lesson_complete()` para rastrear contagem diária de lições
   - Adicionar métodos auxiliares para calcular estatísticas relacionadas a conquistas
   - _Requisitos: 4.4, 4.7_
 
-- [ ] 4.2 Escrever teste de propriedade para contador de exercícios perfeitos
+- [x] 4.2 Escrever teste de propriedade para contador de exercícios perfeitos
   - **Propriedade 7: Incremento do contador de exercícios perfeitos**
   - **Valida: Requisitos 4.4**
 
-- [ ] 4.3 Escrever teste de propriedade para rastreamento de lições diárias
+- [x] 4.3 Escrever teste de propriedade para rastreamento de lições diárias
   - **Propriedade 8: Rastreamento de lições diárias**
   - **Valida: Requisitos 4.7**
 
-- [ ] 5. Implementar lógica de desbloqueio e persistência de conquistas
+- [x] 5. Implementar lógica de desbloqueio e persistência de conquistas
   - Adicionar método `get_user_achievements()` para retornar status de conquistas do usuário
   - Adicionar método `unlock_achievement()` para desbloquear e persistir conquistas
   - Adicionar método `check_unlocks()` para avaliar todas as condições e desbloquear conquistas elegíveis
   - Implementar registro de timestamp para conquistas desbloqueadas
   - _Requisitos: 2.1, 2.2, 2.3, 2.5_
 
-- [ ] 5.1 Escrever teste de propriedade para persistência de desbloqueio de conquista
+- [x] 5.1 Escrever teste de propriedade para persistência de desbloqueio de conquista
   - **Propriedade 1: Persistência round-trip de desbloqueio de conquista**
   - **Valida: Requisitos 2.2, 8.1, 8.2**
 
-- [ ] 5.2 Escrever teste de propriedade para desbloqueio de múltiplas conquistas
+- [x] 5.2 Escrever teste de propriedade para desbloqueio de múltiplas conquistas
   - **Propriedade 3: Completude de desbloqueio de múltiplas conquistas**
   - **Valida: Requisitos 2.1, 2.5**
 
-- [ ] 5.3 Escrever teste de propriedade para timestamps de desbloqueio
+- [x] 5.3 Escrever teste de propriedade para timestamps de desbloqueio
   - **Propriedade 5: Conquistas desbloqueadas têm timestamps**
   - **Valida: Requisitos 2.3, 8.3**
 
-- [ ] 6. Implementar detecção de conclusão de curso
+- [x] 6. Implementar detecção de conclusão de curso
   - Adicionar helper `_is_course_complete()` para verificar se todas as lições em um curso estão completas
   - Adicionar helper `_are_all_courses_complete()` para verificar se todos os três cursos estão completos
   - Adicionar helper `_has_exercise_after_attempts()` para verificar conquista persistente
   - _Requisitos: 4.3, 4.6_
 
-- [ ] 6.1 Escrever teste de propriedade para detecção de conclusão de curso
+- [x] 6.1 Escrever teste de propriedade para detecção de conclusão de curso
   - **Propriedade 6: Detecção de conclusão de curso**
   - **Valida: Requisitos 4.3**
 

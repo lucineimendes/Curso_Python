@@ -818,3 +818,91 @@ def test_property_5_unlocked_achievements_have_timestamps(user_id, achievements)
     finally:
         # Limpar o diretório temporário
         shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 6: Detecção de conclusão de curso**
+# **Valida: Requisitos 4.3**
+@settings(max_examples=50, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=5000)
+@given(
+    user_id=st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"))),
+    course_id=st.sampled_from(["python-basico", "python-intermediario", "python-avancado"]),
+    num_lessons=st.integers(min_value=1, max_value=10),
+)
+def test_property_6_course_completion_detection(user_id, course_id, num_lessons):
+    """
+    Propriedade 6: Detecção de conclusão de curso.
+
+    Para qualquer curso onde todas as lições estão marcadas como completas
+    no progresso do usuário, a condição de conclusão de curso deve avaliar
+    como verdadeira.
+
+    **Feature: achievements-badges, Property 6: Detecção de conclusão de curso**
+    **Valida: Requisitos 4.3**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        from projects.progress_manager import ProgressManager
+
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar managers
+        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
+
+        # Completar todas as lições do curso
+        for i in range(num_lessons):
+            lesson_id = f"lesson_{i}"
+            progress_mgr.mark_lesson_complete(user_id, course_id, lesson_id)
+
+        # Obter dados de progresso
+        progress_data = progress_mgr.get_user_progress(user_id)
+
+        # Verificar que _is_course_complete retorna True
+        is_complete = achievement_mgr._is_course_complete(progress_data, course_id)
+        assert is_complete, (
+            f"Curso '{course_id}' deveria estar completo após completar "
+            f"{num_lessons} lições, mas _is_course_complete retornou False"
+        )
+
+        # Verificar que a condição de desbloqueio também funciona
+        condition = {"type": "course_complete", "course_id": course_id}
+        condition_result = achievement_mgr._evaluate_condition(condition, progress_data)
+        assert condition_result, (
+            f"Condição de conclusão de curso não foi satisfeita para curso '{course_id}' "
+            f"após completar {num_lessons} lições"
+        )
+
+        # Teste negativo: curso sem lições não deve estar completo
+        empty_course_id = "python-vazio"
+        is_empty_complete = achievement_mgr._is_course_complete(progress_data, empty_course_id)
+        assert (
+            not is_empty_complete
+        ), f"Curso vazio '{empty_course_id}' não deveria estar completo, mas _is_course_complete retornou True"
+
+        # Teste negativo: curso com lições incompletas não deve estar completo
+        incomplete_course_id = "python-incompleto"
+        # Adicionar uma lição incompleta
+        progress_mgr.mark_lesson_complete(user_id, incomplete_course_id, "lesson_0")
+        # Adicionar uma lição incompleta manualmente
+        progress_data_updated = progress_mgr.get_user_progress(user_id)
+        if incomplete_course_id not in progress_data_updated["courses"]:
+            progress_data_updated["courses"][incomplete_course_id] = {"lessons": {}, "exercises": {}}
+        progress_data_updated["courses"][incomplete_course_id]["lessons"]["lesson_incomplete"] = {
+            "completed": False,
+            "completed_at": None,
+        }
+        progress_mgr._save_progress()
+
+        # Recarregar dados
+        progress_data_updated = progress_mgr.get_user_progress(user_id)
+        is_incomplete_complete = achievement_mgr._is_course_complete(progress_data_updated, incomplete_course_id)
+        assert not is_incomplete_complete, (
+            f"Curso '{incomplete_course_id}' com lições incompletas não deveria estar completo, "
+            f"mas _is_course_complete retornou True"
+        )
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
