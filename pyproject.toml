@@ -3,6 +3,9 @@ name = "curso-interativo-python"
 version = "1.0.0"
 description = "Plataforma de aprendizado interativo de Python"
 requires-python = ">=3.8"
+dependencies = [
+    "markdown>=3.7",
+]
 
 [tool.ruff]
 # Comprimento máximo de linha
