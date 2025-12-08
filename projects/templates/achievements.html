@@ -1,36 +1,49 @@
 {% extends 'base.html' %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/achievements.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
-    <div class="row mb-4">
+    <!-- Header Section -->
+    <div class="row mb-5">
         <div class="col-12 text-center">
-            <h1 class="display-4 fw-bold text-gradient">Minhas Conquistas</h1>
-            <p class="text-muted lead">Acompanhe seu progresso e desbloqueie medalhas exclusivas!</p>
+            <h1 class="display-3 fw-bold text-gradient mb-3">🏆 Minhas Conquistas</h1>
+            <p class="text-muted lead fs-5">Acompanhe seu progresso e desbloqueie medalhas exclusivas!</p>
         </div>
     </div>
 
+    <!-- Stats Section -->
     <div class="row mb-5">
-        <div class="col-md-8 mx-auto">
-            <div class="card bg-glass border-0 shadow-sm">
+        <div class="col-lg-8 col-xl-6 mx-auto">
+            <div class="card bg-glass border-0 shadow-lg achievement-stats-card">
                 <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0">Progresso de Conquistas</h4>
-                        <span class="badge bg-primary rounded-pill fs-6" id="achievement-counter">0 / 0</span>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="mb-1 fw-bold">Progresso de Conquistas</h4>
+                            <p class="text-muted small mb-0">Continue aprendendo para desbloquear mais!</p>
+                        </div>
+                        <span class="badge rounded-pill fs-5 px-4 py-2" id="achievement-counter">0 / 0</span>
                     </div>
-                    <div class="progress" style="height: 20px;">
-                        <div class="progress-bar bg-gradient-primary" role="progressbar" style="width: 0%;" id="achievement-progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div class="progress" style="height: 24px;">
+                        <div class="progress-bar animated" role="progressbar" style="width: 0%;" id="achievement-progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            <span class="fw-semibold">0%</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="achievements-grid">
+    <!-- Achievements Grid -->
+    <div id="achievements-grid">
         <!-- Achievements will be loaded here via JS -->
-        <div class="col text-center py-5">
-            <div class="spinner-border text-primary" role="status">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
                 <span class="visually-hidden">Carregando...</span>
             </div>
+            <p class="text-muted mt-3">Carregando conquistas...</p>
         </div>
     </div>
 </div>
@@ -52,33 +65,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { unlocked, locked, stats } = data.achievements;
         const allAchievements = [...unlocked, ...locked];
 
+        // Update stats
         counter.textContent = `${stats.unlocked} / ${stats.total}`;
+        const percentage = Math.round(stats.percentage);
         progressBar.style.width = `${stats.percentage}%`;
-        progressBar.textContent = `${Math.round(stats.percentage)}%`;
+        progressBar.querySelector('span').textContent = `${percentage}%`;
+        progressBar.setAttribute('aria-valuenow', percentage);
 
+        // Render achievements
         grid.innerHTML = allAchievements.map(ach => {
             const isUnlocked = ach.unlocked_at !== undefined;
+            const unlockedDate = isUnlocked ? new Date(ach.unlocked_at).toLocaleDateString('pt-BR') : '';
+
             return `
-            <div class="col">
-                <div class="card h-100 border-0 shadow-sm achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
-                    <div class="card-body text-center p-4">
-                        <div class="achievement-icon mb-3 display-3">
+                <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}" data-category="${ach.category || 'general'}" tabindex="0">
+                    <div class="achievement-card-inner">
+                        <div class="achievement-icon">
                             ${ach.icon}
                         </div>
-                        <h5 class="card-title fw-bold">${ach.name}</h5>
-                        <p class="card-text text-muted small">${ach.description}</p>
-                        ${isUnlocked
-                            ? `<span class="badge bg-success-subtle text-success rounded-pill mt-2">
-                                <i class="bi bi-check-circle-fill me-1"></i> Desbloqueado em ${new Date(ach.unlocked_at).toLocaleDateString()}
-                               </span>`
-                            : `<span class="badge bg-secondary-subtle text-secondary rounded-pill mt-2">
-                                <i class="bi bi-lock-fill me-1"></i> Bloqueado
-                               </span>`
-                        }
+                        <h5 class="achievement-title">${ach.name}</h5>
+                        <p class="achievement-description">${ach.description}</p>
+                        <div class="achievement-status mt-auto">
+                            ${isUnlocked
+                                ? `<span class="badge bg-success-subtle text-success rounded-pill">
+                                    <i class="bi bi-check-circle-fill me-1"></i>
+                                    Desbloqueado em ${unlockedDate}
+                                   </span>`
+                                : `<span class="badge bg-secondary-subtle text-secondary rounded-pill">
+                                    <i class="bi bi-lock-fill me-1"></i>
+                                    Bloqueado
+                                   </span>`
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
         }).join('');
 
     } catch (error) {
@@ -87,36 +108,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 </script>
-
-<style>
-.achievement-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden;
-}
-
-.achievement-card.locked {
-    filter: grayscale(100%);
-    opacity: 0.7;
-}
-
-.achievement-card.unlocked {
-    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-    border: 1px solid rgba(var(--bs-primary-rgb), 0.1) !important;
-}
-
-.dark-mode .achievement-card.unlocked {
-    background: linear-gradient(145deg, #2b3035 0%, #212529 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
-.achievement-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-}
-
-.achievement-card.locked:hover {
-    transform: none;
-    box-shadow: none;
-}
-</style>
 {% endblock %}
