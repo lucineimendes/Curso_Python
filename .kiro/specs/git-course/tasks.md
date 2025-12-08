@@ -5,7 +5,7 @@
   - Escrever `docs/git-course/01-basic/lab-first-commit.md`
   - _Requisito: Básico_
 
-- [ ] 0.2 Criar conteúdo para Módulo Intermediário
+- [x] 0.2 Criar conteúdo para Módulo Intermediário
   - Escrever `docs/git-course/02-intermediario/theory-branches.md`
   - Escrever `docs/git-course/02-intermediario/lab-merge-conflict.md`
   - _Requisito: Intermediário_

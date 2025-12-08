@@ -6,7 +6,7 @@
                     "lessons": {
                         "intro-programacao-python": {
                             "completed": true,
-                            "completed_at": "2025-12-08T12:52:10.183678",
+                            "completed_at": "2025-12-08T16:03:00.633019",
                             "times_viewed": 1
                         },
                         "configurando-ambiente-python": {
@@ -21,7 +21,7 @@
                         },
                         "variaveis-tipos-dados-numericos": {
                             "completed": true,
-                            "completed_at": "2025-12-07T09:59:26.784684",
+                            "completed_at": "2025-12-08T16:03:42.729217",
                             "times_viewed": 1
                         },
                         "operadores-python": {
@@ -31,7 +31,7 @@
                         },
                         "introducao-python": {
                             "completed": true,
-                            "completed_at": "2025-12-08T12:44:23.662133",
+                            "completed_at": "2025-12-08T13:12:59.444286",
                             "times_viewed": 1
                         },
                         "tipos-dados-string-booleano": {
@@ -52,11 +52,11 @@
                         "ex-intro-prog-1": {
                             "completed": true,
                             "completed_at": "2025-12-03T18:01:50.848728",
-                            "attempts": 6,
+                            "attempts": 7,
                             "successful_attempts": 1,
-                            "failed_attempts": 5,
+                            "failed_attempts": 6,
                             "first_attempt_success": false,
-                            "last_attempt_at": "2025-12-08T12:52:45.218298"
+                            "last_attempt_at": "2025-12-08T16:03:16.923845"
                         },
                         "ex-config-env-1": {
                             "completed": true,
@@ -70,24 +70,24 @@
                         "ex-variaveis-1": {
                             "completed": true,
                             "completed_at": "2025-12-04T22:06:05.097847",
-                            "attempts": 1,
-                            "successful_attempts": 1,
+                            "attempts": 2,
+                            "successful_attempts": 2,
                             "failed_attempts": 0,
                             "first_attempt_success": true,
-                            "last_attempt_at": "2025-12-04T22:06:05.097834"
+                            "last_attempt_at": "2025-12-08T16:04:02.323799"
                         },
                         "ex-introducao-5": {
                             "completed": true,
                             "completed_at": "2025-12-08T12:44:23.688782",
-                            "attempts": 2,
-                            "successful_attempts": 1,
-                            "failed_attempts": 1,
+                            "attempts": 4,
+                            "successful_attempts": 2,
+                            "failed_attempts": 2,
                             "first_attempt_success": true,
-                            "last_attempt_at": "2025-12-08T12:44:23.694662"
+                            "last_attempt_at": "2025-12-08T13:12:59.474960"
                         }
                     },
                     "started_at": "2025-12-03T17:48:26.625604",
-                    "last_accessed": "2025-12-08T12:53:26.560025",
+                    "last_accessed": "2025-12-08T16:04:02.323812",
                     "completed": false
                 }
             },
@@ -117,8 +117,608 @@
                     "unlocked_at": "2025-12-08T12:44:23.692146"
                 }
             ]
+        },
+        "0": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.191545"
+        },
+        "ꮛuŉĠŵû6ĹⲦ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.199107"
+        },
+        "ĈŻ𑋱šWVEűÿ𝒢᧙ŋGL": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.206083"
+        },
+        "ᴉʯṴ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.213082"
+        },
+        "INF": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.220074"
+        },
+        "𝙆ø𐐘í𑄾ÈßÌŁ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.226870"
+        },
+        "İ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.233703"
+        },
+        "xĭ0ſŝÃŠÁQŻĻšŲÅü": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.240196"
+        },
+        "ØćÄcỼō": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.247197"
+        },
+        "ƁĶċPJx": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.253818"
+        },
+        "ř": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.259960"
+        },
+        "đ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.268070"
+        },
+        "𝓥𑑙": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.274634"
+        },
+        "ÙqùÑÑe": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.281695"
+        },
+        "t𝒯ĲᏰÞὖõŕzð": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.288615"
+        },
+        "2": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.295303"
+        },
+        "B𝑃ú𝘂èPũO𐳲t": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.304385"
+        },
+        "Cl": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.311150"
+        },
+        "Ú𝙾ĸĞųfr": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.318780"
+        },
+        "𝓑Ô": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.325471"
+        },
+        "ϋQ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.332394"
+        },
+        "şŢŷļYĮƀ𝕳œ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.339264"
+        },
+        "percentage": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.346509"
+        },
+        "òĠčËąŞ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.353763"
+        },
+        "𑑕7": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.360621"
+        },
+        "ŵ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.367559"
+        },
+        "űõŝũĴŊĵ𝔰Ý": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.374599"
+        },
+        "ũꞭ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.381520"
+        },
+        "ŵŴ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.388699"
+        },
+        "Ūé𝖞𖹈ğŒŊ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.396013"
+        },
+        "FŋÏŨĿŨ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.404143"
+        },
+        "ÙæðÅⲯ𑜵೮𝘶åő2ÝRþùÎჂœ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.411318"
+        },
+        "courses": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.418815"
+        },
+        "ŲĀ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.425684"
+        },
+        "Ĝ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.432600"
+        },
+        "ŭAĽó꘢Ĝť7cų𝓯БWṵŅdè𝜟": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.440020"
+        },
+        "𞋶ŪGđҴⴉð": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.447204"
+        },
+        "Ņ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.454195"
+        },
+        "ć𝒥Š𝞆Τ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.461784"
+        },
+        "ùòņ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.469260"
+        },
+        "n": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.476370"
+        },
+        "AssertionError": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.483869"
+        },
+        "r": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.490773"
+        },
+        "ōĽỾûķâ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.498141"
+        },
+        "ø": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.505639"
+        },
+        "A7ÍŽƂыżĹQÍŒXģéĦĤĿĭ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.513276"
+        },
+        "ń": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.520677"
+        },
+        "ÀĉŐĀ6Ũ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.528563"
+        },
+        "ẮŖĐĻŕëãØċℙmyĉ𝑌Ĩ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.536341"
+        },
+        "𝕝𝐬Ħ": {
+            "courses": {},
+            "total_lessons_completed": 0,
+            "total_exercises_completed": 0,
+            "achievements": [],
+            "achievement_stats": {
+                "perfect_exercises_count": 0,
+                "lessons_in_day": 0,
+                "last_activity_date": null
+            },
+            "created_at": "2025-12-08T15:16:53.543743"
         }
     },
     "created_at": "2025-12-03T17:10:36.020197",
-    "last_updated": "2025-12-08T12:53:26.560029"
+    "last_updated": "2025-12-08T16:04:02.323817"
 }

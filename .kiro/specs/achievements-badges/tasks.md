@@ -110,10 +110,10 @@
   - **Propriedade 12: Códigos de status de erro da API**
   - **Valida: Requisitos 6.4**
 
-- [ ] 8. Checkpoint - Garantir que todos os testes backend passem
+- [x] 8. Checkpoint - Garantir que todos os testes backend passem
   - Garantir que todos os testes passem, perguntar ao usuário se surgirem questões.
 
-- [ ] 9. Criar página frontend de galeria de conquistas
+- [x] 9. Criar página frontend de galeria de conquistas
   - Criar template `projects/templates/achievements.html`
   - Exibir todas as conquistas em layout de grid
   - Mostrar conquistas desbloqueadas em cores completas, bloqueadas em escala de cinza
@@ -122,7 +122,7 @@
   - Exibir estatísticas: total desbloqueadas, porcentagem de conclusão
   - _Requisitos: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 9.1 Escrever teste de propriedade para cálculo de estatísticas
+- [x] 9.1 Escrever teste de propriedade para cálculo de estatísticas
   - **Propriedade 15: Precisão do cálculo de estatísticas**
   - **Valida: Requisitos 1.5**
 

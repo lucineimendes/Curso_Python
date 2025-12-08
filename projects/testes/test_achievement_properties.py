@@ -1157,3 +1157,105 @@ def test_property_12_api_error_status_codes(user_id):
     finally:
         # Limpar o diretório temporário
         shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 15: Precisão do cálculo de estatísticas**
+# **Valida: Requisitos 1.5**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=5000)
+@given(
+    user_id=st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"))),
+    achievements=st.lists(valid_achievement(), min_size=1, max_size=50, unique_by=lambda x: x["id"]),
+    num_to_unlock=st.integers(min_value=0, max_value=50),
+)
+def test_property_15_statistics_calculation_accuracy(user_id, achievements, num_to_unlock):
+    """
+    Propriedade 15: Precisão do cálculo de estatísticas.
+
+    Para qualquer usuário com N conquistas totais e M conquistas desbloqueadas,
+    a porcentagem de conclusão deve ser igual a (M / N) * 100.
+
+    **Feature: achievements-badges, Property 15: Precisão do cálculo de estatísticas**
+    **Valida: Requisitos 1.5**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        from projects.progress_manager import ProgressManager
+
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar arquivo de conquistas
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            json.dump({"achievements": achievements}, f, ensure_ascii=False, indent=4)
+
+        # Criar managers
+        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
+
+        # Desbloquear um subconjunto de conquistas
+        num_to_unlock = min(num_to_unlock, len(achievements))
+        for i in range(num_to_unlock):
+            achievement_id = achievements[i]["id"]
+            achievement_mgr.unlock_achievement(user_id, achievement_id, progress_mgr)
+
+        # Obter estatísticas através do método get_user_achievements
+        user_achievements = achievement_mgr.get_user_achievements(user_id, progress_mgr)
+        stats = user_achievements["stats"]
+
+        # Calcular valores esperados
+        total_expected = len(achievements)
+        unlocked_expected = num_to_unlock
+        percentage_expected = (unlocked_expected / total_expected * 100) if total_expected > 0 else 0.0
+
+        # Verificar que o total está correto
+        assert (
+            stats["total"] == total_expected
+        ), f"Total de conquistas incorreto. Esperado: {total_expected}, Obtido: {stats['total']}"
+
+        # Verificar que o número de desbloqueadas está correto
+        assert (
+            stats["unlocked"] == unlocked_expected
+        ), f"Número de conquistas desbloqueadas incorreto. Esperado: {unlocked_expected}, Obtido: {stats['unlocked']}"
+
+        # Verificar que a porcentagem está correta (com tolerância de 0.01 para arredondamento)
+        percentage_obtained = stats["percentage"]
+        assert abs(percentage_obtained - percentage_expected) < 0.01, (
+            f"Porcentagem de conclusão incorreta. "
+            f"Esperado: {percentage_expected:.2f}%, Obtido: {percentage_obtained}%, "
+            f"Total: {total_expected}, Desbloqueadas: {unlocked_expected}"
+        )
+
+        # Verificar que a porcentagem está no intervalo válido [0, 100]
+        assert 0 <= percentage_obtained <= 100, f"Porcentagem fora do intervalo válido: {percentage_obtained}%"
+
+        # Verificar casos extremos
+        if total_expected == 0:
+            assert percentage_obtained == 0.0, "Porcentagem deveria ser 0 quando não há conquistas"
+        elif unlocked_expected == 0:
+            assert percentage_obtained == 0.0, "Porcentagem deveria ser 0 quando nenhuma conquista está desbloqueada"
+        elif unlocked_expected == total_expected:
+            assert (
+                abs(percentage_obtained - 100.0) < 0.01
+            ), "Porcentagem deveria ser 100 quando todas as conquistas estão desbloqueadas"
+
+        # Verificar consistência entre listas e estatísticas
+        unlocked_list = user_achievements["unlocked"]
+        locked_list = user_achievements["locked"]
+
+        assert (
+            len(unlocked_list) == stats["unlocked"]
+        ), f"Tamanho da lista de desbloqueadas não corresponde às estatísticas. Lista: {len(unlocked_list)}, Stats: {stats['unlocked']}"
+
+        assert (
+            len(locked_list) == stats["total"] - stats["unlocked"]
+        ), f"Tamanho da lista de bloqueadas não corresponde às estatísticas. Lista: {len(locked_list)}, Esperado: {stats['total'] - stats['unlocked']}"
+
+        assert (
+            len(unlocked_list) + len(locked_list) == stats["total"]
+        ), f"Soma das listas não corresponde ao total. Desbloqueadas: {len(unlocked_list)}, Bloqueadas: {len(locked_list)}, Total: {stats['total']}"
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
