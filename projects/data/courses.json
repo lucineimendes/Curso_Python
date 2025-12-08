@@ -172,5 +172,24 @@
         ],
         "lessons_file": "advanced/lessons.json",
         "exercises_file": "advanced/exercises.json"
+    },
+    {
+        "id": "git-avancado",
+        "name": "Git Avançado",
+        "short_description": "Domine Git: desde o básico até internals, rebase interativo, workflows e ferramentas avançadas.",
+        "description": "Este curso completo de Git leva você do básico ao avançado. Aprenda como Git funciona internamente, domine rebase interativo, cherry-pick, reflog, e entenda workflows profissionais como GitFlow e Trunk-Based Development. Inclui laboratórios práticos para cada módulo.",
+        "level": "Avançado",
+        "duration": "15 horas",
+        "prerequisites": "Conhecimentos básicos de linha de comando",
+        "objectives": [
+            "Compreender como Git armazena dados internamente (blobs, trees, commits).",
+            "Dominar rebase interativo para reescrever histórico.",
+            "Utilizar reflog para recuperar commits perdidos.",
+            "Implementar workflows profissionais (GitFlow, GitHub Flow).",
+            "Usar ferramentas avançadas como bisect, hooks e blame.",
+            "Trabalhar com submódulos e Git LFS para arquivos grandes."
+        ],
+        "lessons_file": "git-advanced/lessons.json",
+        "exercises_file": "git-advanced/exercises.json"
     }
 ]
