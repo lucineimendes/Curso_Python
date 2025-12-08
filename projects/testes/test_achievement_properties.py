@@ -522,3 +522,299 @@ def test_property_8_daily_lessons_tracking(user_id, course_id, num_lessons):
     finally:
         # Limpar o diretório temporário
         shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 1: Persistência round-trip de desbloqueio de conquista**
+# **Valida: Requisitos 2.2, 8.1, 8.2**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(
+    user_id=st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"))),
+    achievements=st.lists(valid_achievement(), min_size=1, max_size=10, unique_by=lambda x: x["id"]),
+)
+def test_property_1_achievement_unlock_persistence_roundtrip(user_id, achievements):
+    """
+    Propriedade 1: Persistência round-trip de desbloqueio de conquista.
+
+    Para qualquer conquista que é desbloqueada e salva, ler os dados de volta
+    do armazenamento deve retornar uma conquista equivalente com o mesmo id
+    e timestamp de desbloqueio.
+
+    **Feature: achievements-badges, Property 1: Persistência round-trip de desbloqueio de conquista**
+    **Valida: Requisitos 2.2, 8.1, 8.2**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        from projects.progress_manager import ProgressManager
+
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar arquivo de conquistas
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            json.dump({"achievements": achievements}, f, ensure_ascii=False, indent=4)
+
+        # Criar managers
+        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
+
+        # Desbloquear cada conquista e verificar persistência
+        for achievement in achievements:
+            achievement_id = achievement["id"]
+
+            # Desbloquear a conquista
+            was_unlocked = achievement_mgr.unlock_achievement(user_id, achievement_id, progress_mgr)
+            assert was_unlocked, f"Falha ao desbloquear conquista '{achievement_id}'"
+
+            # Ler de volta do armazenamento
+            unlocked_achievements = progress_mgr.get_unlocked_achievements(user_id)
+
+            # Verificar que a conquista está presente
+            found = False
+            for unlocked in unlocked_achievements:
+                if unlocked["id"] == achievement_id:
+                    found = True
+                    # Verificar que tem timestamp
+                    assert "unlocked_at" in unlocked, f"Conquista desbloqueada '{achievement_id}' não tem timestamp"
+                    assert unlocked["unlocked_at"], f"Timestamp de conquista '{achievement_id}' está vazio"
+                    break
+
+            assert found, f"Conquista '{achievement_id}' não foi encontrada após desbloqueio"
+
+        # Verificar que todas as conquistas foram persistidas
+        all_unlocked = progress_mgr.get_unlocked_achievements(user_id)
+        assert len(all_unlocked) == len(
+            achievements
+        ), f"Número de conquistas persistidas incorreto. Esperado: {len(achievements)}, Obtido: {len(all_unlocked)}"
+
+        # Criar novo ProgressManager para simular reload
+        progress_mgr_reloaded = ProgressManager(data_dir_path_str=str(data_dir))
+        all_unlocked_reloaded = progress_mgr_reloaded.get_unlocked_achievements(user_id)
+
+        # Verificar que os dados persistiram após reload
+        assert (
+            len(all_unlocked_reloaded) == len(achievements)
+        ), f"Conquistas não persistiram após reload. Esperado: {len(achievements)}, Obtido: {len(all_unlocked_reloaded)}"
+
+        # Verificar que cada conquista tem os mesmos dados
+        for achievement in achievements:
+            achievement_id = achievement["id"]
+            found_original = next((a for a in all_unlocked if a["id"] == achievement_id), None)
+            found_reloaded = next((a for a in all_unlocked_reloaded if a["id"] == achievement_id), None)
+
+            assert found_original, f"Conquista '{achievement_id}' não encontrada nos dados originais"
+            assert found_reloaded, f"Conquista '{achievement_id}' não encontrada após reload"
+            assert (
+                found_original["unlocked_at"] == found_reloaded["unlocked_at"]
+            ), f"Timestamp mudou após reload para conquista '{achievement_id}'"
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 3: Completude de desbloqueio de múltiplas conquistas**
+# **Valida: Requisitos 2.1, 2.5**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(
+    user_id=st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"))),
+    num_lessons=st.integers(min_value=5, max_value=20),
+    num_exercises=st.integers(min_value=5, max_value=20),
+)
+def test_property_3_multiple_achievement_unlock_completeness(user_id, num_lessons, num_exercises):
+    """
+    Propriedade 3: Completude de desbloqueio de múltiplas conquistas.
+
+    Para qualquer estado de progresso do usuário onde múltiplas condições de conquista
+    são satisfeitas, verificar desbloqueios deve desbloquear todas as conquistas
+    que atendem seus critérios.
+
+    **Feature: achievements-badges, Property 3: Completude de desbloqueio de múltiplas conquistas**
+    **Valida: Requisitos 2.1, 2.5**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        from projects.progress_manager import ProgressManager
+
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar conquistas com condições que serão satisfeitas
+        achievements = [
+            {
+                "id": "first_lesson",
+                "name": "Primeira Lição",
+                "description": "Complete sua primeira lição",
+                "icon": "🎯",
+                "category": "beginner",
+                "unlock_condition": {"type": "lesson_count", "value": 1},
+            },
+            {
+                "id": "five_lessons",
+                "name": "Cinco Lições",
+                "description": "Complete 5 lições",
+                "icon": "📚",
+                "category": "progress",
+                "unlock_condition": {"type": "lesson_count", "value": 5},
+            },
+            {
+                "id": "first_exercise",
+                "name": "Primeiro Exercício",
+                "description": "Complete seu primeiro exercício",
+                "icon": "✅",
+                "category": "beginner",
+                "unlock_condition": {"type": "exercise_count", "value": 1},
+            },
+            {
+                "id": "five_exercises",
+                "name": "Cinco Exercícios",
+                "description": "Complete 5 exercícios",
+                "icon": "⚡",
+                "category": "progress",
+                "unlock_condition": {"type": "exercise_count", "value": 5},
+            },
+        ]
+
+        # Criar arquivo de conquistas
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            json.dump({"achievements": achievements}, f, ensure_ascii=False, indent=4)
+
+        # Criar managers
+        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
+
+        # Completar lições e exercícios para satisfazer múltiplas condições
+        course_id = "python-basico"
+        for i in range(num_lessons):
+            progress_mgr.mark_lesson_complete(user_id, course_id, f"lesson_{i}")
+
+        for i in range(num_exercises):
+            progress_mgr.mark_exercise_attempt(user_id, course_id, f"exercise_{i}", success=True)
+
+        # Verificar desbloqueios
+        newly_unlocked = achievement_mgr.check_unlocks(user_id, progress_mgr)
+
+        # Determinar quais conquistas deveriam ser desbloqueadas
+        expected_unlocks = []
+        if num_lessons >= 1:
+            expected_unlocks.append("first_lesson")
+        if num_lessons >= 5:
+            expected_unlocks.append("five_lessons")
+        if num_exercises >= 1:
+            expected_unlocks.append("first_exercise")
+        if num_exercises >= 5:
+            expected_unlocks.append("five_exercises")
+
+        # Verificar que todas as conquistas esperadas foram desbloqueadas
+        unlocked_ids = {a["id"] for a in newly_unlocked}
+        for expected_id in expected_unlocks:
+            assert (
+                expected_id in unlocked_ids
+            ), f"Conquista '{expected_id}' deveria ter sido desbloqueada mas não foi. Desbloqueadas: {unlocked_ids}"
+
+        # Verificar que não há desbloqueios extras
+        assert len(unlocked_ids) == len(
+            expected_unlocks
+        ), f"Número incorreto de desbloqueios. Esperado: {len(expected_unlocks)}, Obtido: {len(unlocked_ids)}"
+
+        # Verificar que uma segunda chamada não desbloqueia nada
+        newly_unlocked_second = achievement_mgr.check_unlocks(user_id, progress_mgr)
+        assert (
+            len(newly_unlocked_second) == 0
+        ), f"Segunda verificação desbloqueou conquistas já desbloqueadas: {newly_unlocked_second}"
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 5: Conquistas desbloqueadas têm timestamps**
+# **Valida: Requisitos 2.3, 8.3**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(
+    user_id=st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"))),
+    achievements=st.lists(valid_achievement(), min_size=1, max_size=10, unique_by=lambda x: x["id"]),
+)
+def test_property_5_unlocked_achievements_have_timestamps(user_id, achievements):
+    """
+    Propriedade 5: Conquistas desbloqueadas têm timestamps.
+
+    Para qualquer conquista que é desbloqueada, a estrutura de dados resultante
+    deve incluir um timestamp de desbloqueio válido.
+
+    **Feature: achievements-badges, Property 5: Conquistas desbloqueadas têm timestamps**
+    **Valida: Requisitos 2.3, 8.3**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        from datetime import datetime
+
+        from projects.progress_manager import ProgressManager
+
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar arquivo de conquistas
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            json.dump({"achievements": achievements}, f, ensure_ascii=False, indent=4)
+
+        # Criar managers
+        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
+
+        # Desbloquear cada conquista
+        for achievement in achievements:
+            achievement_id = achievement["id"]
+
+            # Capturar tempo antes do desbloqueio
+            time_before = datetime.now()
+
+            # Desbloquear a conquista
+            was_unlocked = achievement_mgr.unlock_achievement(user_id, achievement_id, progress_mgr)
+            assert was_unlocked, f"Falha ao desbloquear conquista '{achievement_id}'"
+
+            # Capturar tempo depois do desbloqueio
+            time_after = datetime.now()
+
+            # Obter conquistas desbloqueadas
+            unlocked_achievements = progress_mgr.get_unlocked_achievements(user_id)
+
+            # Encontrar a conquista desbloqueada
+            found = None
+            for unlocked in unlocked_achievements:
+                if unlocked["id"] == achievement_id:
+                    found = unlocked
+                    break
+
+            assert found, f"Conquista '{achievement_id}' não encontrada após desbloqueio"
+
+            # Verificar que tem timestamp
+            assert "unlocked_at" in found, f"Conquista '{achievement_id}' não tem campo 'unlocked_at'"
+            assert found["unlocked_at"], f"Campo 'unlocked_at' está vazio para conquista '{achievement_id}'"
+
+            # Verificar que o timestamp é uma string válida no formato ISO
+            try:
+                unlocked_time = datetime.fromisoformat(found["unlocked_at"])
+            except (ValueError, TypeError) as e:
+                raise AssertionError(
+                    f"Timestamp inválido para conquista '{achievement_id}': {found['unlocked_at']}"
+                ) from e
+
+            # Verificar que o timestamp está dentro do intervalo esperado (com margem de 1 segundo)
+            from datetime import timedelta
+
+            time_before_with_margin = time_before - timedelta(seconds=1)
+            time_after_with_margin = time_after + timedelta(seconds=1)
+
+            assert (
+                time_before_with_margin <= unlocked_time <= time_after_with_margin
+            ), f"Timestamp fora do intervalo esperado para conquista '{achievement_id}'. Timestamp: {unlocked_time}, Intervalo: [{time_before}, {time_after}]"
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)

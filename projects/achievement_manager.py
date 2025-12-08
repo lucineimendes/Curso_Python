@@ -147,9 +147,74 @@ class AchievementManager:
         """
         return self._evaluator.evaluate(condition, progress_data)
 
-    def check_new_achievements(self, user_id: str, progress_manager) -> List[Dict]:
+    def get_user_achievements(self, user_id: str, progress_manager) -> Dict:
         """
-        Verifica e desbloqueia novas conquistas para o usuário.
+        Retorna conquistas do usuário com status de desbloqueio.
+
+        Args:
+            user_id (str): ID do usuário.
+            progress_manager: Instância do ProgressManager para acessar dados do usuário.
+
+        Returns:
+            Dict: Dicionário contendo:
+                - unlocked: Lista de conquistas desbloqueadas com timestamps
+                - locked: Lista de conquistas bloqueadas
+                - stats: Estatísticas (total, unlocked, percentage)
+        """
+        user_progress = progress_manager.get_user_progress(user_id)
+        unlocked_achievements_data = user_progress.get("achievements", [])
+        unlocked_ids = {a["id"] for a in unlocked_achievements_data}
+
+        unlocked = []
+        locked = []
+
+        for achievement in self.achievements:
+            ach_id = achievement["id"]
+            if ach_id in unlocked_ids:
+                # Encontrar dados de desbloqueio
+                unlock_data = next((a for a in unlocked_achievements_data if a["id"] == ach_id), None)
+                unlocked_at = unlock_data.get("unlocked_at") if unlock_data else None
+
+                unlocked.append({**achievement, "unlocked": True, "unlocked_at": unlocked_at})
+            else:
+                locked.append({**achievement, "unlocked": False})
+
+        total = len(self.achievements)
+        unlocked_count = len(unlocked)
+        percentage = (unlocked_count / total * 100) if total > 0 else 0.0
+
+        return {
+            "unlocked": unlocked,
+            "locked": locked,
+            "stats": {"total": total, "unlocked": unlocked_count, "percentage": round(percentage, 2)},
+        }
+
+    def unlock_achievement(self, user_id: str, achievement_id: str, progress_manager) -> bool:
+        """
+        Desbloqueia uma conquista específica para um usuário.
+
+        Args:
+            user_id (str): ID do usuário.
+            achievement_id (str): ID da conquista a ser desbloqueada.
+            progress_manager: Instância do ProgressManager para persistir o desbloqueio.
+
+        Returns:
+            bool: True se desbloqueou (era nova), False se já estava desbloqueada.
+        """
+        # Verificar se a conquista existe
+        achievement_exists = any(a["id"] == achievement_id for a in self.achievements)
+        if not achievement_exists:
+            logger.warning(f"Tentativa de desbloquear conquista inexistente: {achievement_id}")
+            return False
+
+        # Delegar para o ProgressManager que já implementa a persistência
+        return progress_manager.unlock_achievement(user_id, achievement_id)
+
+    def check_unlocks(self, user_id: str, progress_manager) -> List[Dict]:
+        """
+        Verifica quais conquistas devem ser desbloqueadas baseado no progresso.
+
+        Avalia todas as condições de desbloqueio e desbloqueia conquistas elegíveis.
 
         Args:
             user_id (str): ID do usuário.
@@ -175,8 +240,30 @@ class AchievementManager:
 
             if self._evaluate_condition(condition, user_progress):
                 # Tenta desbloquear (retorna True se foi desbloqueado agora)
-                if progress_manager.unlock_achievement(user_id, ach_id):
-                    newly_unlocked.append(achievement)
+                if self.unlock_achievement(user_id, ach_id, progress_manager):
+                    # Adicionar timestamp ao achievement retornado
+                    unlocked_achievement = {
+                        **achievement,
+                        "unlocked_at": progress_manager.get_user_progress(user_id)
+                        .get("achievements", [])[-1]
+                        .get("unlocked_at"),
+                    }
+                    newly_unlocked.append(unlocked_achievement)
                     unlocked_ids.add(ach_id)  # Atualiza conjunto local
 
         return newly_unlocked
+
+    def check_new_achievements(self, user_id: str, progress_manager) -> List[Dict]:
+        """
+        Verifica e desbloqueia novas conquistas para o usuário.
+
+        Método legado - use check_unlocks() para nova implementação.
+
+        Args:
+            user_id (str): ID do usuário.
+            progress_manager: Instância do ProgressManager para acessar dados e salvar desbloqueios.
+
+        Returns:
+            List[Dict]: Lista de conquistas recém-desbloqueadas.
+        """
+        return self.check_unlocks(user_id, progress_manager)
