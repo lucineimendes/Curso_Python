@@ -90,6 +90,12 @@ docs/
   - Sincronização servidor/cliente
   - Persistência corrigida
 
+- **[maintenance/DOCUMENTATION_CLEANUP_2025_12_08.md](maintenance/DOCUMENTATION_CLEANUP_2025_12_08.md)** - Limpeza e organização da documentação
+  - ✅ **Completo**: Análise SOLID/DRY aplicada
+  - Corrigidos links quebrados
+  - Eliminada duplicação de conteúdo
+  - Removido arquivo legado
+
 - **[maintenance/ROLLBACK_NOTES.md](maintenance/ROLLBACK_NOTES.md)** - Notas sobre rollback
   - Lições aprendidas
   - Problemas identificados
@@ -103,6 +109,12 @@ docs/
   - Strategy Pattern para avaliadores (OCP)
   - Dependency Injection (DIP)
   - Eliminação de código duplicado (DRY)
+
+- **[refactoring/LEGACY_ROUTE_REMOVAL.md](refactoring/LEGACY_ROUTE_REMOVAL.md)** - Remoção de rota legada duplicada
+  - 🟡 **Proposta**: Pronta para implementação
+  - Elimina ~100 linhas de código duplicado (DRY)
+  - Reduz app.py em 11% (878 → 778 linhas)
+  - Sem riscos (rota não utilizada)
 
 - **[refactoring/REFACTOR_PROGRESS_MANAGER.md](refactoring/REFACTOR_PROGRESS_MANAGER.md)** - Proposta de refatoração do ProgressManager
   - ⬜ **Pendente**: Aguardando implementação

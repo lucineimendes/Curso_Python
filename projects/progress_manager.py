@@ -1,17 +1,18 @@
-# -*- coding: utf-8 -*-
 """
 Módulo para gerenciamento de progresso do usuário.
 
 Este módulo gerencia o progresso do usuário através dos cursos,
 lições e exercícios, incluindo estatísticas e histórico.
 """
+
 import json
 import logging
-from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Optional
+from pathlib import Path
+from typing import Dict, List
 
 logger = logging.getLogger(__name__)
+
 
 class ProgressManager:
     """
@@ -30,7 +31,7 @@ class ProgressManager:
         """
         self.base_dir = Path(__file__).resolve().parent
         self.data_dir = self.base_dir / data_dir_path_str
-        self.progress_file = self.data_dir / 'user_progress.json'
+        self.progress_file = self.data_dir / "user_progress.json"
 
         self._ensure_progress_file_exists()
         self.progress_data = self._load_progress()
@@ -43,9 +44,9 @@ class ProgressManager:
                 initial_data = {
                     "users": {},
                     "created_at": datetime.now().isoformat(),
-                    "last_updated": datetime.now().isoformat()
+                    "last_updated": datetime.now().isoformat(),
                 }
-                with open(self.progress_file, 'w', encoding='utf-8') as f:
+                with open(self.progress_file, "w", encoding="utf-8") as f:
                     json.dump(initial_data, f, ensure_ascii=False, indent=4)
                 logger.info(f"Arquivo de progresso criado em: {self.progress_file}")
         except OSError as e:
@@ -57,12 +58,12 @@ class ProgressManager:
             return {"users": {}}
 
         try:
-            with open(self.progress_file, 'r', encoding='utf-8') as f:
+            with open(self.progress_file, encoding="utf-8") as f:
                 return json.load(f)
         except json.JSONDecodeError:
             logger.error(f"Erro ao decodificar JSON de '{self.progress_file}'", exc_info=True)
             return {"users": {}}
-        except IOError as e:
+        except OSError as e:
             logger.error(f"Erro de I/O ao ler '{self.progress_file}': {e}", exc_info=True)
             return {"users": {}}
 
@@ -70,10 +71,10 @@ class ProgressManager:
         """Salva dados de progresso no arquivo JSON."""
         try:
             self.progress_data["last_updated"] = datetime.now().isoformat()
-            with open(self.progress_file, 'w', encoding='utf-8') as f:
+            with open(self.progress_file, "w", encoding="utf-8") as f:
                 json.dump(self.progress_data, f, indent=4, ensure_ascii=False)
             logger.info(f"Progresso salvo em {self.progress_file}")
-        except IOError as e:
+        except OSError as e:
             logger.error(f"Erro ao salvar progresso: {e}", exc_info=True)
 
     def get_user_progress(self, user_id: str = "default") -> dict:
@@ -91,7 +92,9 @@ class ProgressManager:
                 "courses": {},
                 "total_lessons_completed": 0,
                 "total_exercises_completed": 0,
-                "created_at": datetime.now().isoformat()
+                "achievements": [],
+                "achievement_stats": {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_lesson_date": None},
+                "created_at": datetime.now().isoformat(),
             }
             self._save_progress()
 
@@ -116,7 +119,7 @@ class ProgressManager:
                 "exercises": {},
                 "started_at": datetime.now().isoformat(),
                 "last_accessed": datetime.now().isoformat(),
-                "completed": False
+                "completed": False,
             }
             self._save_progress()
 
@@ -140,12 +143,25 @@ class ProgressManager:
             course_progress["lessons"][lesson_id] = {
                 "completed": True,
                 "completed_at": datetime.now().isoformat(),
-                "times_viewed": 1
+                "times_viewed": 1,
             }
 
             # Atualizar contador global
             user_progress = self.get_user_progress(user_id)
             user_progress["total_lessons_completed"] = user_progress.get("total_lessons_completed", 0) + 1
+
+            # Atualizar estatísticas de conquistas (lições por dia)
+            stats = user_progress.setdefault(
+                "achievement_stats", {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_lesson_date": None}
+            )
+
+            today = datetime.now().date().isoformat()
+            if stats.get("last_lesson_date") != today:
+                stats["lessons_in_day"] = 1
+                stats["last_lesson_date"] = today
+            else:
+                stats["lessons_in_day"] = stats.get("lessons_in_day", 0) + 1
+
         else:
             course_progress["lessons"][lesson_id]["completed"] = True
             course_progress["lessons"][lesson_id]["completed_at"] = datetime.now().isoformat()
@@ -156,8 +172,7 @@ class ProgressManager:
         logger.info(f"Lição '{lesson_id}' marcada como completa para usuário '{user_id}'")
         return course_progress
 
-    def mark_exercise_attempt(self, user_id: str, course_id: str, exercise_id: str,
-                              success: bool = False) -> dict:
+    def mark_exercise_attempt(self, user_id: str, course_id: str, exercise_id: str, success: bool = False) -> dict:
         """
         Registra uma tentativa de exercício (sucesso ou falha).
 
@@ -180,7 +195,7 @@ class ProgressManager:
                 "successful_attempts": 0,
                 "failed_attempts": 0,
                 "first_attempt_success": False,
-                "last_attempt_at": None
+                "last_attempt_at": None,
             }
 
         exercise_data = course_progress["exercises"][exercise_id]
@@ -199,17 +214,28 @@ class ProgressManager:
                 # Atualizar contador global
                 user_progress = self.get_user_progress(user_id)
                 user_progress["total_exercises_completed"] = user_progress.get("total_exercises_completed", 0) + 1
+
+                # Atualizar estatísticas de conquistas (exercícios perfeitos)
+                if exercise_data["first_attempt_success"]:
+                    stats = user_progress.setdefault(
+                        "achievement_stats",
+                        {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_lesson_date": None},
+                    )
+                    stats["perfect_exercises_count"] = stats.get("perfect_exercises_count", 0) + 1
         else:
             exercise_data["failed_attempts"] = exercise_data.get("failed_attempts", 0) + 1
 
         course_progress["last_accessed"] = datetime.now().isoformat()
         self._save_progress()
 
-        logger.info(f"Tentativa de exercício '{exercise_id}' registrada - Sucesso: {success}, Total tentativas: {exercise_data['attempts']}")
+        logger.info(
+            f"Tentativa de exercício '{exercise_id}' registrada - Sucesso: {success}, Total tentativas: {exercise_data['attempts']}"
+        )
         return course_progress
 
-    def mark_exercise_complete(self, user_id: str, course_id: str, exercise_id: str,
-                               success: bool = True, attempts: int = 1) -> dict:
+    def mark_exercise_complete(
+        self, user_id: str, course_id: str, exercise_id: str, success: bool = True, attempts: int = 1
+    ) -> dict:
         """
         Marca um exercício como completo (método legado, use mark_exercise_attempt).
 
@@ -225,8 +251,9 @@ class ProgressManager:
         """
         return self.mark_exercise_attempt(user_id, course_id, exercise_id, success)
 
-    def _mark_exercise_complete_old(self, user_id: str, course_id: str, exercise_id: str,
-                               success: bool = True, attempts: int = 1) -> dict:
+    def _mark_exercise_complete_old(
+        self, user_id: str, course_id: str, exercise_id: str, success: bool = True, attempts: int = 1
+    ) -> dict:
         """Método antigo mantido para compatibilidade."""
         course_progress = self.get_course_progress(user_id, course_id)
 
@@ -235,7 +262,7 @@ class ProgressManager:
                 "completed": success,
                 "completed_at": datetime.now().isoformat() if success else None,
                 "attempts": attempts,
-                "first_attempt_success": success and attempts == 1
+                "first_attempt_success": success and attempts == 1,
             }
 
             if success:
@@ -258,8 +285,7 @@ class ProgressManager:
         logger.info(f"Exercício '{exercise_id}' atualizado para usuário '{user_id}'")
         return course_progress
 
-    def get_course_statistics(self, user_id: str, course_id: str,
-                              total_lessons: int, total_exercises: int) -> dict:
+    def get_course_statistics(self, user_id: str, course_id: str, total_lessons: int, total_exercises: int) -> dict:
         """
         Calcula estatísticas de progresso de um curso.
 
@@ -275,13 +301,11 @@ class ProgressManager:
         course_progress = self.get_course_progress(user_id, course_id)
 
         completed_lessons = sum(
-            1 for lesson in course_progress.get("lessons", {}).values()
-            if lesson.get("completed", False)
+            1 for lesson in course_progress.get("lessons", {}).values() if lesson.get("completed", False)
         )
 
         completed_exercises = sum(
-            1 for exercise in course_progress.get("exercises", {}).values()
-            if exercise.get("completed", False)
+            1 for exercise in course_progress.get("exercises", {}).values() if exercise.get("completed", False)
         )
 
         lessons_percentage = (completed_lessons / total_lessons * 100) if total_lessons > 0 else 0
@@ -299,7 +323,7 @@ class ProgressManager:
             "overall_percentage": round(overall_percentage, 2),
             "is_complete": completed_lessons == total_lessons and completed_exercises == total_exercises,
             "started_at": course_progress.get("started_at"),
-            "last_accessed": course_progress.get("last_accessed")
+            "last_accessed": course_progress.get("last_accessed"),
         }
 
     def get_all_statistics(self, user_id: str = "default") -> dict:
@@ -316,8 +340,7 @@ class ProgressManager:
 
         total_courses = len(user_progress.get("courses", {}))
         completed_courses = sum(
-            1 for course in user_progress.get("courses", {}).values()
-            if course.get("completed", False)
+            1 for course in user_progress.get("courses", {}).values() if course.get("completed", False)
         )
 
         return {
@@ -326,5 +349,44 @@ class ProgressManager:
             "total_courses_completed": completed_courses,
             "total_lessons_completed": user_progress.get("total_lessons_completed", 0),
             "total_exercises_completed": user_progress.get("total_exercises_completed", 0),
-            "created_at": user_progress.get("created_at")
+            "achievements_count": len(user_progress.get("achievements", [])),
+            "created_at": user_progress.get("created_at"),
         }
+
+    def unlock_achievement(self, user_id: str, achievement_id: str) -> bool:
+        """
+        Desbloqueia uma conquista para o usuário.
+
+        Args:
+            user_id (str): ID do usuário.
+            achievement_id (str): ID da conquista.
+
+        Returns:
+            bool: True se a conquista foi desbloqueada (era nova), False se já possuía.
+        """
+        user_progress = self.get_user_progress(user_id)
+        achievements = user_progress.setdefault("achievements", [])
+
+        # Verifica se já possui a conquista
+        for ach in achievements:
+            if ach["id"] == achievement_id:
+                return False
+
+        # Adiciona nova conquista
+        achievements.append({"id": achievement_id, "unlocked_at": datetime.now().isoformat()})
+        self._save_progress()
+        logger.info(f"Conquista '{achievement_id}' desbloqueada para usuário '{user_id}'")
+        return True
+
+    def get_unlocked_achievements(self, user_id: str) -> List[Dict]:
+        """
+        Retorna lista de conquistas desbloqueadas do usuário.
+
+        Args:
+            user_id (str): ID do usuário.
+
+        Returns:
+            List[Dict]: Lista de conquistas desbloqueadas.
+        """
+        user_progress = self.get_user_progress(user_id)
+        return user_progress.get("achievements", [])

@@ -10,23 +10,27 @@ e o executor de código (code_executor).
 # ... inicialização do app Flask ...
 
 import logging
-from flask import Flask, jsonify, request, render_template, abort
+
+from flask import Flask, abort, jsonify, render_template, request
 from flask_cors import CORS
+
+from . import code_executor
+from .achievement_manager import AchievementManager
+
 # Assume que estes módulos estão no mesmo diretório (projects/)
 # Corrigido para import relativo consistente
 from .course_manager import CourseManager
-from .lesson_manager import LessonManager
 from .exercise_manager import ExerciseManager
+from .lesson_manager import LessonManager
 from .progress_manager import ProgressManager
-from . import code_executor
 
 # Configuração básica de logging
 # Idealmente, esta configuração pode ser mais elaborada e centralizada
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app) # Habilita CORS para todas as rotas
+CORS(app)  # Habilita CORS para todas as rotas
 
 # Instancia os managers
 # Os managers agora carregam dados sob demanda ou na inicialização, conforme suas implementações.
@@ -34,10 +38,12 @@ course_mgr = CourseManager()
 lesson_mgr = LessonManager()
 exercise_mgr = ExerciseManager()
 progress_mgr = ProgressManager()
+achievement_mgr = AchievementManager()
 
 # --- Rotas de Apresentação (HTML) ---
 
-@app.route('/')
+
+@app.route("/")
 def home():
     """Renderiza a página inicial da aplicação.
 
@@ -52,10 +58,11 @@ def home():
     # Passa apenas os 3 primeiros cursos para a seção "Cursos em Destaque",
     # ou uma lista vazia se não houver cursos.
     courses_for_index = all_courses[:3] if all_courses else []
-    return render_template('index.html', courses=courses_for_index, title="Bem-vindo")
+    return render_template("index.html", courses=courses_for_index, title="Bem-vindo")
 
-@app.route('/courses', methods=['GET'])
-def list_courses_page(): # Renomeado para clareza (página vs API)
+
+@app.route("/courses", methods=["GET"])
+def list_courses_page():  # Renomeado para clareza (página vs API)
     """Renderiza a página de listagem de todos os cursos disponíveis.
 
     Returns:
@@ -63,10 +70,11 @@ def list_courses_page(): # Renomeado para clareza (página vs API)
     """
     logger.info("GET /courses - Solicitando página de listagem de cursos.")
     courses = course_mgr.get_courses()
-    return render_template('course_list.html', courses=courses, title="Cursos Disponíveis")
+    return render_template("course_list.html", courses=courses, title="Cursos Disponíveis")
 
-@app.route('/courses/<string:course_id>', methods=['GET'])
-def course_detail_page(course_id): # Renomeado para clareza
+
+@app.route("/courses/<string:course_id>", methods=["GET"])
+def course_detail_page(course_id):  # Renomeado para clareza
     """Renderiza a página de detalhes de um curso específico.
 
     Exibe informações sobre o curso e uma lista de suas lições.
@@ -83,7 +91,7 @@ def course_detail_page(course_id): # Renomeado para clareza
     course = course_mgr.get_course_by_id(course_id)
     if not course:
         logger.warning(f"GET /courses/{course_id} - Curso não encontrado.")
-        abort(404) # Usa abort para tratamento de erro padrão do Flask
+        abort(404)  # Usa abort para tratamento de erro padrão do Flask
 
     # As lições são carregadas aqui para serem passadas ao template
     # O frontend não precisará fazer uma chamada API separada para as lições nesta página.
@@ -94,9 +102,12 @@ def course_detail_page(course_id): # Renomeado para clareza
     else:
         logger.warning(f"Curso '{course_id}' não possui 'lessons_file' definido.")
 
-    return render_template('course_detail.html', course=course, lessons=lessons_for_course, title=course.get('name', 'Detalhes do Curso'))
+    return render_template(
+        "course_detail.html", course=course, lessons=lessons_for_course, title=course.get("name", "Detalhes do Curso")
+    )
 
-@app.route('/courses/<string:course_id>/roadmap', methods=['GET'])
+
+@app.route("/courses/<string:course_id>/roadmap", methods=["GET"])
 def course_roadmap_page(course_id):
     """Renderiza a página de roadmap visual de um curso específico.
 
@@ -121,14 +132,17 @@ def course_roadmap_page(course_id):
     lessons = lesson_mgr.load_lessons_from_file(lessons_file) if lessons_file else []
     exercises = exercise_mgr.load_exercises_from_file(exercises_file) if exercises_file else []
 
-    return render_template('course_roadmap.html',
-                          course=course,
-                          lessons=lessons,
-                          exercises=exercises,
-                          title=f"Roadmap - {course.get('name', 'Curso')}")
+    return render_template(
+        "course_roadmap.html",
+        course=course,
+        lessons=lessons,
+        exercises=exercises,
+        title=f"Roadmap - {course.get('name', 'Curso')}",
+    )
 
-@app.route('/courses/<string:course_id>/lessons/<string:lesson_id_str>', methods=['GET'])
-def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
+
+@app.route("/courses/<string:course_id>/lessons/<string:lesson_id_str>", methods=["GET"])
+def lesson_detail_page(course_id, lesson_id_str):  # Renomeado para clareza
     """Renderiza a página de detalhes de uma lição específica dentro de um curso.
 
     Exibe o conteúdo da lição, uma lista de exercícios associados a ela
@@ -159,7 +173,7 @@ def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
     current_lesson = None
     current_lesson_index = -1
     for i, lesson_item_loop in enumerate(all_lessons_for_course):
-        if isinstance(lesson_item_loop, dict) and str(lesson_item_loop.get('id')) == lesson_id_str:
+        if isinstance(lesson_item_loop, dict) and str(lesson_item_loop.get("id")) == lesson_id_str:
             current_lesson = lesson_item_loop
             current_lesson_index = i
             break
@@ -168,25 +182,29 @@ def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
         logger.warning(f"Lição com ID '{lesson_id_str}' não encontrada no curso '{course_id}'.")
         abort(404)
 
-    course_level_from_course_json = current_course.get('level')
+    course_level_from_course_json = current_course.get("level")
     expected_exercise_level = course_level_from_course_json.lower() if course_level_from_course_json else None
 
     exercises_for_lesson = []
     exercises_file_relative_path = current_course.get("exercises_file")
     if exercises_file_relative_path:
         all_exercises_for_course = exercise_mgr.load_exercises_from_file(exercises_file_relative_path)
-        lesson_actual_id = current_lesson.get('id') # ID da lição atual
+        lesson_actual_id = current_lesson.get("id")  # ID da lição atual
         if lesson_actual_id and all_exercises_for_course:
             for ex_item in all_exercises_for_course:
                 # Log para depuração
-                logger.debug(f"Verificando exercício: ID='{ex_item.get('id')}', "
-                             f"LessonID_Ex='{ex_item.get('lesson_id')}', LessonID_Atual='{lesson_actual_id}', "
-                             f"Level_Ex='{ex_item.get('level', '').lower()}', Level_Esperado='{expected_exercise_level}'")
+                logger.debug(
+                    f"Verificando exercício: ID='{ex_item.get('id')}', "
+                    f"LessonID_Ex='{ex_item.get('lesson_id')}', LessonID_Atual='{lesson_actual_id}', "
+                    f"Level_Ex='{ex_item.get('level', '').lower()}', Level_Esperado='{expected_exercise_level}'"
+                )
 
                 # Verifica se o exercício pertence à lição atual E ao nível esperado do curso
-                if isinstance(ex_item, dict) and \
-                   str(ex_item.get('lesson_id')) == str(lesson_actual_id) and \
-                   (not expected_exercise_level or ex_item.get('level', '').lower() == expected_exercise_level):
+                if (
+                    isinstance(ex_item, dict)
+                    and str(ex_item.get("lesson_id")) == str(lesson_actual_id)
+                    and (not expected_exercise_level or ex_item.get("level", "").lower() == expected_exercise_level)
+                ):
                     exercises_for_lesson.append(ex_item)
         logger.debug(f"Encontrados {len(exercises_for_lesson)} exercícios para a lição '{lesson_actual_id}'.")
     else:
@@ -198,21 +216,24 @@ def lesson_detail_page(course_id, lesson_id_str): # Renomeado para clareza
 
     # Marcar lição como completa quando o usuário acessa
     try:
-        user_id = 'default'  # TODO: Implementar autenticação de usuários
+        user_id = "default"  # TODO: Implementar autenticação de usuários
         progress_mgr.mark_lesson_complete(user_id, course_id, lesson_id_str)
         logger.info(f"Lição '{lesson_id_str}' marcada como completa para usuário '{user_id}'")
     except Exception as prog_error:
         logger.error(f"Erro ao marcar progresso da lição: {prog_error}", exc_info=True)
 
-    return render_template('lesson_detail.html', # Assumindo que o template se chama lesson_detail.html
-                           course=current_course,
-                           lesson=current_lesson,
-                           exercises=exercises_for_lesson,
-                           next_lesson=next_lesson_obj,
-                           title=current_lesson.get('title', 'Lição'))
+    return render_template(
+        "lesson_detail.html",  # Assumindo que o template se chama lesson_detail.html
+        course=current_course,
+        lesson=current_lesson,
+        exercises=exercises_for_lesson,
+        next_lesson=next_lesson_obj,
+        title=current_lesson.get("title", "Lição"),
+    )
 
-@app.route('/courses/<string:course_id>/exercise/<string:exercise_id_str>/editor', methods=['GET'])
-def exercise_code_editor_page(course_id, exercise_id_str): # Renomeado para clareza
+
+@app.route("/courses/<string:course_id>/exercise/<string:exercise_id_str>/editor", methods=["GET"])
+def exercise_code_editor_page(course_id, exercise_id_str):  # Renomeado para clareza
     """Renderiza a página do editor de código para um exercício específico.
 
     Apresenta o enunciado do exercício e uma área para o usuário inserir
@@ -238,32 +259,36 @@ def exercise_code_editor_page(course_id, exercise_id_str): # Renomeado para clar
         logger.error(f"Editor: 'exercises_file' não definido para o curso '{course_id}'.")
         abort(500, description="Configuração de exercícios ausente para este curso.")
 
-    course_level_from_course_json = current_course.get('level')
+    course_level_from_course_json = current_course.get("level")
     expected_exercise_level = course_level_from_course_json.lower() if course_level_from_course_json else None
 
     all_exercises_for_course = exercise_mgr.load_exercises_from_file(exercises_file_relative_path)
     current_exercise = None
     for ex_item in all_exercises_for_course:
-        if isinstance(ex_item, dict) and str(ex_item.get('id')) == exercise_id_str:
-            if not expected_exercise_level or ex_item.get('level', '').lower() == expected_exercise_level:
+        if isinstance(ex_item, dict) and str(ex_item.get("id")) == exercise_id_str:
+            if not expected_exercise_level or ex_item.get("level", "").lower() == expected_exercise_level:
                 current_exercise = ex_item
                 break
             else:
-                logger.warning(f"Editor: Exercício '{exercise_id_str}' encontrado, mas seu nível '{ex_item.get('level')}' não corresponde ao nível esperado do curso '{expected_exercise_level}'.")
+                logger.warning(
+                    f"Editor: Exercício '{exercise_id_str}' encontrado, mas seu nível '{ex_item.get('level')}' não corresponde ao nível esperado do curso '{expected_exercise_level}'."
+                )
 
     if not current_exercise:
-        logger.warning(f"Editor: Exercício ID '{exercise_id_str}' não encontrado no curso '{course_id}' ou nível incompatível.")
+        logger.warning(
+            f"Editor: Exercício ID '{exercise_id_str}' não encontrado no curso '{course_id}' ou nível incompatível."
+        )
         abort(404)
 
     # Encontrar a lição do exercício
-    lesson_id = current_exercise.get('lesson_id')
+    lesson_id = current_exercise.get("lesson_id")
     current_lesson = None
     if lesson_id:
         lessons_file = current_course.get("lessons_file")
         if lessons_file:
             all_lessons = lesson_mgr.load_lessons_from_file(lessons_file)
             for lesson in all_lessons:
-                if str(lesson.get('id')) == str(lesson_id):
+                if str(lesson.get("id")) == str(lesson_id):
                     current_lesson = lesson
                     break
 
@@ -273,7 +298,7 @@ def exercise_code_editor_page(course_id, exercise_id_str): # Renomeado para clar
     current_exercise_index = -1
 
     for i, ex in enumerate(all_exercises_for_course):
-        if str(ex.get('id')) == exercise_id_str:
+        if str(ex.get("id")) == exercise_id_str:
             current_exercise_index = i
             break
 
@@ -281,7 +306,7 @@ def exercise_code_editor_page(course_id, exercise_id_str): # Renomeado para clar
     if current_exercise_index != -1 and current_exercise_index < len(all_exercises_for_course) - 1:
         for i in range(current_exercise_index + 1, len(all_exercises_for_course)):
             next_ex = all_exercises_for_course[i]
-            if str(next_ex.get('lesson_id')) == str(lesson_id):
+            if str(next_ex.get("lesson_id")) == str(lesson_id):
                 next_exercise = next_ex
                 break
 
@@ -291,20 +316,23 @@ def exercise_code_editor_page(course_id, exercise_id_str): # Renomeado para clar
         if lessons_file:
             all_lessons = lesson_mgr.load_lessons_from_file(lessons_file)
             for i, lesson in enumerate(all_lessons):
-                if str(lesson.get('id')) == str(lesson_id):
+                if str(lesson.get("id")) == str(lesson_id):
                     if i < len(all_lessons) - 1:
                         next_lesson = all_lessons[i + 1]
                     break
 
-    return render_template('exercise_editor.html',
-                           course=current_course,
-                           exercise=current_exercise,
-                           lesson=current_lesson,
-                           next_exercise=next_exercise,
-                           next_lesson=next_lesson,
-                           title=f"Editor: {current_exercise.get('title', 'Exercício')}")
+    return render_template(
+        "exercise_editor.html",
+        course=current_course,
+        exercise=current_exercise,
+        lesson=current_lesson,
+        next_exercise=next_exercise,
+        next_lesson=next_lesson,
+        title=f"Editor: {current_exercise.get('title', 'Exercício')}",
+    )
 
-@app.route('/editor', methods=['GET'])
+
+@app.route("/editor", methods=["GET"])
 def generic_code_editor_page():
     """Renderiza uma página de editor de código genérico.
 
@@ -314,11 +342,13 @@ def generic_code_editor_page():
         str: O conteúdo HTML da página do editor de código genérico renderizada.
     """
     logger.info("GET /editor - Acessando editor de código genérico.")
-    return render_template('code_editor.html', course=None, exercise=None, title="Editor de Código")
+    return render_template("code_editor.html", course=None, exercise=None, title="Editor de Código")
+
 
 # --- Rotas de API (JSON) ---
 
-@app.route('/api/courses/<string:course_id>/lessons', methods=['GET'])
+
+@app.route("/api/courses/<string:course_id>/lessons", methods=["GET"])
 def api_get_lessons_for_course(course_id):
     """API endpoint para obter as lições de um curso específico.
 
@@ -349,7 +379,8 @@ def api_get_lessons_for_course(course_id):
     lessons = lesson_mgr.load_lessons_from_file(lessons_file_relative_path)
     return jsonify(lessons)
 
-@app.route('/api/courses/<string:course_id>/exercises', methods=['GET'])
+
+@app.route("/api/courses/<string:course_id>/exercises", methods=["GET"])
 def api_get_exercises_for_course(course_id):
     """API endpoint para obter os exercícios de um curso específico.
 
@@ -380,7 +411,8 @@ def api_get_exercises_for_course(course_id):
     exercises = exercise_mgr.load_exercises_from_file(exercises_file_relative_path)
     return jsonify(exercises)
 
-@app.route('/api/execute-code', methods=['POST'])
+
+@app.route("/api/execute-code", methods=["POST"])
 def api_execute_code():
     """API endpoint para executar um trecho de código Python.
 
@@ -404,11 +436,11 @@ def api_execute_code():
     """
     logger.info("POST /api/execute-code - Recebida requisição para executar código.")
     data = request.get_json()
-    if not data or 'code' not in data:
+    if not data or "code" not in data:
         logger.warning("POST /api/execute-code - Payload inválido ou 'code' ausente.")
         return jsonify({"success": False, "output": "", "details": "Payload inválido ou campo 'code' ausente."}), 400
 
-    user_code = data['code']
+    user_code = data["code"]
     try:
         exec_result = code_executor.execute_code(user_code)
         success = exec_result["returncode"] == 0
@@ -425,7 +457,8 @@ def api_execute_code():
         logger.error(f"POST /api/execute-code - Erro inesperado: {e}", exc_info=True)
         return jsonify({"success": False, "output": "", "details": f"Erro interno do servidor: {str(e)}"}), 500
 
-@app.route('/api/check-exercise', methods=['POST'])
+
+@app.route("/api/check-exercise", methods=["POST"])
 def api_check_exercise():
     """API endpoint para verificar a solução de um exercício submetida pelo usuário.
 
@@ -460,13 +493,19 @@ def api_check_exercise():
     """
     logger.info("POST /api/check-exercise - Recebida requisição para verificar exercício.")
     data = request.get_json()
-    if not data or not all(k in data for k in ['course_id', 'exercise_id', 'code']):
+    if not data or not all(k in data for k in ["course_id", "exercise_id", "code"]):
         logger.warning("POST /api/check-exercise - Payload inválido ou campos ausentes.")
-        return jsonify({"success": False, "output": "", "details": "Payload inválido. 'course_id', 'exercise_id', e 'code' são obrigatórios."}), 400
+        return jsonify(
+            {
+                "success": False,
+                "output": "",
+                "details": "Payload inválido. 'course_id', 'exercise_id', e 'code' são obrigatórios.",
+            }
+        ), 400
 
-    course_id = data['course_id']
-    exercise_id_str = str(data['exercise_id'])
-    user_code = data['code']
+    course_id = data["course_id"]
+    exercise_id_str = str(data["exercise_id"])
+    user_code = data["code"]
 
     course = course_mgr.get_course_by_id(course_id)
     if not course:
@@ -476,22 +515,32 @@ def api_check_exercise():
     exercises_file_relative_path = course.get("exercises_file")
     if not exercises_file_relative_path:
         logger.error(f"POST /api/check-exercise - 'exercises_file' não definido para o curso '{course_id}'.")
-        return jsonify({"success": False, "output": "", "details": "Arquivo de exercícios não definido para este curso."}), 500
+        return jsonify(
+            {"success": False, "output": "", "details": "Arquivo de exercícios não definido para este curso."}
+        ), 500
 
-    course_level_from_course_json = course.get('level')
+    course_level_from_course_json = course.get("level")
     expected_exercise_level = course_level_from_course_json.lower() if course_level_from_course_json else None
 
     exercises = exercise_mgr.load_exercises_from_file(exercises_file_relative_path)
     exercise_details_to_check = None
     for ex_item in exercises:
-        if isinstance(ex_item, dict) and str(ex_item.get('id')) == exercise_id_str:
-            if not expected_exercise_level or ex_item.get('level', '').lower() == expected_exercise_level:
+        if isinstance(ex_item, dict) and str(ex_item.get("id")) == exercise_id_str:
+            if not expected_exercise_level or ex_item.get("level", "").lower() == expected_exercise_level:
                 exercise_details_to_check = ex_item
                 break
 
     if not exercise_details_to_check:
-        logger.warning(f"POST /api/check-exercise - Exercício '{exercise_id_str}' não encontrado no curso '{course_id}' ou nível incompatível.") # No Linter: Adicionar espaço antes do #
-        return jsonify({"success": False, "output": "", "details": f"Exercício '{exercise_id_str}' não encontrado no curso '{course_id}'."}), 404
+        logger.warning(
+            f"POST /api/check-exercise - Exercício '{exercise_id_str}' não encontrado no curso '{course_id}' ou nível incompatível."
+        )  # No Linter: Adicionar espaço antes do #
+        return jsonify(
+            {
+                "success": False,
+                "output": "",
+                "details": f"Exercício '{exercise_id_str}' não encontrado no curso '{course_id}'.",
+            }
+        ), 404
 
     test_code = exercise_details_to_check.get("test_code", "")
     # full_code_to_execute = user_code.rstrip() + "\n\n" + test_code # Lógica antiga
@@ -506,8 +555,8 @@ def api_check_exercise():
         # Inicializa 'output' com a saída do código do usuário.
         # Será sobrescrito pela saída do test_code se este for executado.
         api_output_response = user_stdout
-        details = user_stderr # Detalhes podem vir do erro do usuário ou do teste
-        success = False # Assume que falha até que o test_code passe ou não haja test_code
+        details = user_stderr  # Detalhes podem vir do erro do usuário ou do teste
+        success = False  # Assume que falha até que o test_code passe ou não haja test_code
 
         if not user_success:
             # Se o código do usuário já falhou (ex: SyntaxError), não precisamos rodar o test_code
@@ -517,10 +566,14 @@ def api_check_exercise():
             # Se não há test_code, o sucesso depende apenas da execução do user_code
             success = user_success
             # 'api_output_response' já é user_stdout
-            details = "Código executado (sem testes automáticos)." if success else (details or "Erro na execução do código do usuário.")
+            details = (
+                "Código executado (sem testes automáticos)."
+                if success
+                else (details or "Erro na execução do código do usuário.")
+            )
         else:
             # 2. Preparar e executar o test_code com a saída do user_code disponível
-            test_globals = {'output': user_stdout} # Disponibiliza a saída do user_code para o test_code
+            test_globals = {"output": user_stdout}  # Disponibiliza a saída do user_code para o test_code
             test_exec_result = code_executor.execute_code(test_code, execution_globals=test_globals)
             success = test_exec_result["returncode"] == 0
 
@@ -537,7 +590,11 @@ def api_check_exercise():
             if error_type_from_test:
                 details = f"{error_type_from_test}: {details_from_test_code}"
             else:
-                details = details_from_test_code if details_from_test_code else ("Teste falhou sem stderr específico." if not success else "Teste passou.")
+                details = (
+                    details_from_test_code
+                    if details_from_test_code
+                    else ("Teste falhou sem stderr específico." if not success else "Teste passou.")
+                )
             # Se o user_code teve stderr, mas o test_code passou, podemos querer limpar os detalhes ou priorizar os do teste.
 
         if not test_code and success:
@@ -547,7 +604,7 @@ def api_check_exercise():
 
         # Registrar tentativa do exercício (sucesso ou falha)
         try:
-            user_id = data.get('user_id', 'default')
+            user_id = data.get("user_id", "default")
             exercise_progress = progress_mgr.mark_exercise_attempt(user_id, course_id, exercise_id_str, success=success)
 
             # Adicionar estatísticas de tentativas na resposta
@@ -556,7 +613,9 @@ def api_check_exercise():
             successful_attempts = exercise_stats.get("successful_attempts", 0)
             failed_attempts = exercise_stats.get("failed_attempts", 0)
 
-            logger.info(f"Exercício '{exercise_id_str}' - Tentativa registrada. Total: {attempts_count}, Sucesso: {successful_attempts}, Falhas: {failed_attempts}")
+            logger.info(
+                f"Exercício '{exercise_id_str}' - Tentativa registrada. Total: {attempts_count}, Sucesso: {successful_attempts}, Falhas: {failed_attempts}"
+            )
         except Exception as prog_error:
             logger.error(f"Erro ao registrar tentativa do exercício: {prog_error}", exc_info=True)
             attempts_count = 1
@@ -564,6 +623,9 @@ def api_check_exercise():
             failed_attempts = 0 if success else 1
 
         logger.info(f"POST /api/check-exercise - Verificação: success={success}")
+
+        # Verificar novas conquistas
+        new_achievements = achievement_mgr.check_new_achievements(user_id, progress_mgr)
 
         # Preparar resposta com estatísticas
         response_data = {
@@ -574,18 +636,23 @@ def api_check_exercise():
                 "attempts": attempts_count,
                 "successful_attempts": successful_attempts,
                 "failed_attempts": failed_attempts,
-                "first_try": attempts_count == 1 and success
-            }
+                "first_try": attempts_count == 1 and success,
+            },
+            "new_achievements": new_achievements,
         }
 
         return jsonify(response_data)
     except Exception as e:
         logger.error(f"POST /api/check-exercise - Erro inesperado: {e}", exc_info=True)
-        return jsonify({"success": False, "output": "", "details": f"Erro interno do servidor ao verificar: {str(e)}"}), 500 # No Linter: Adicionar espaço antes do #
+        return jsonify(
+            {"success": False, "output": "", "details": f"Erro interno do servidor ao verificar: {str(e)}"}
+        ), 500
+
 
 # --- Rotas de API de Progresso ---
 
-@app.route('/api/progress/lesson', methods=['POST'])
+
+@app.route("/api/progress/lesson", methods=["POST"])
 def api_mark_lesson_complete():
     """API endpoint para marcar uma lição como completa.
 
@@ -602,25 +669,33 @@ def api_mark_lesson_complete():
     logger.info("POST /api/progress/lesson - Marcando lição como completa")
     data = request.get_json()
 
-    if not data or not all(k in data for k in ['course_id', 'lesson_id']):
+    if not data or not all(k in data for k in ["course_id", "lesson_id"]):
         return jsonify({"success": False, "message": "Campos obrigatórios: course_id, lesson_id"}), 400
 
-    user_id = data.get('user_id', 'default')
-    course_id = data['course_id']
-    lesson_id = data['lesson_id']
+    user_id = data.get("user_id", "default")
+    course_id = data["course_id"]
+    lesson_id = data["lesson_id"]
 
     try:
         course_progress = progress_mgr.mark_lesson_complete(user_id, course_id, lesson_id)
-        return jsonify({
-            "success": True,
-            "message": "Lição marcada como completa",
-            "progress": course_progress
-        })
+
+        # Verificar novas conquistas
+        new_achievements = achievement_mgr.check_new_achievements(user_id, progress_mgr)
+
+        return jsonify(
+            {
+                "success": True,
+                "message": "Lição marcada como completa",
+                "progress": course_progress,
+                "new_achievements": new_achievements,
+            }
+        )
     except Exception as e:
         logger.error(f"Erro ao marcar lição como completa: {e}", exc_info=True)
         return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
-@app.route('/api/progress/exercise', methods=['POST'])
+
+@app.route("/api/progress/exercise", methods=["POST"])
 def api_mark_exercise_complete():
     """API endpoint para marcar um exercício como completo.
 
@@ -639,29 +714,34 @@ def api_mark_exercise_complete():
     logger.info("POST /api/progress/exercise - Marcando exercício como completo")
     data = request.get_json()
 
-    if not data or not all(k in data for k in ['course_id', 'exercise_id']):
+    if not data or not all(k in data for k in ["course_id", "exercise_id"]):
         return jsonify({"success": False, "message": "Campos obrigatórios: course_id, exercise_id"}), 400
 
-    user_id = data.get('user_id', 'default')
-    course_id = data['course_id']
-    exercise_id = data['exercise_id']
-    success = data.get('success', True)
-    attempts = data.get('attempts', 1)
+    user_id = data.get("user_id", "default")
+    course_id = data["course_id"]
+    exercise_id = data["exercise_id"]
+    success = data.get("success", True)
+    attempts = data.get("attempts", 1)
 
     try:
-        course_progress = progress_mgr.mark_exercise_complete(
-            user_id, course_id, exercise_id, success, attempts
+        course_progress = progress_mgr.mark_exercise_complete(user_id, course_id, exercise_id, success, attempts)
+        # Verificar novas conquistas
+        new_achievements = achievement_mgr.check_new_achievements(user_id, progress_mgr)
+
+        return jsonify(
+            {
+                "success": True,
+                "message": "Exercício atualizado",
+                "progress": course_progress,
+                "new_achievements": new_achievements,
+            }
         )
-        return jsonify({
-            "success": True,
-            "message": "Exercício atualizado",
-            "progress": course_progress
-        })
     except Exception as e:
         logger.error(f"Erro ao marcar exercício como completo: {e}", exc_info=True)
         return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
-@app.route('/api/progress/course/<string:course_id>', methods=['GET'])
+
+@app.route("/api/progress/course/<string:course_id>", methods=["GET"])
 def api_get_course_progress(course_id):
     """API endpoint para obter o progresso de um curso.
 
@@ -675,7 +755,7 @@ def api_get_course_progress(course_id):
         Response: JSON com o progresso e estatísticas do curso.
     """
     logger.info(f"GET /api/progress/course/{course_id} - Obtendo progresso do curso")
-    user_id = request.args.get('user_id', 'default')
+    user_id = request.args.get("user_id", "default")
 
     try:
         # Obter informações do curso
@@ -692,23 +772,24 @@ def api_get_course_progress(course_id):
 
         # Obter progresso
         course_progress = progress_mgr.get_course_progress(user_id, course_id)
-        statistics = progress_mgr.get_course_statistics(
-            user_id, course_id, len(lessons), len(exercises)
-        )
+        statistics = progress_mgr.get_course_statistics(user_id, course_id, len(lessons), len(exercises))
 
-        return jsonify({
-            "success": True,
-            "course": course,
-            "progress": course_progress,
-            "statistics": statistics,
-            "lessons": lessons,
-            "exercises": exercises
-        })
+        return jsonify(
+            {
+                "success": True,
+                "course": course,
+                "progress": course_progress,
+                "statistics": statistics,
+                "lessons": lessons,
+                "exercises": exercises,
+            }
+        )
     except Exception as e:
         logger.error(f"Erro ao obter progresso do curso: {e}", exc_info=True)
         return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
-@app.route('/api/progress/user', methods=['GET'])
+
+@app.route("/api/progress/user", methods=["GET"])
 def api_get_user_progress():
     """API endpoint para obter o progresso geral do usuário.
 
@@ -719,20 +800,60 @@ def api_get_user_progress():
         Response: JSON com estatísticas gerais do usuário.
     """
     logger.info("GET /api/progress/user - Obtendo progresso do usuário")
-    user_id = request.args.get('user_id', 'default')
+    user_id = request.args.get("user_id", "default")
 
     try:
         statistics = progress_mgr.get_all_statistics(user_id)
-        return jsonify({
-            "success": True,
-            "statistics": statistics
-        })
+        return jsonify({"success": True, "statistics": statistics})
     except Exception as e:
         logger.error(f"Erro ao obter progresso do usuário: {e}", exc_info=True)
         return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
+
+# --- Rotas de Conquistas ---
+
+
+@app.route("/achievements")
+def achievements_page():
+    """Renderiza a página de conquistas."""
+    logger.info("GET /achievements - Acessando página de conquistas.")
+    return render_template("achievements.html", title="Minhas Conquistas")
+
+
+@app.route("/api/achievements", methods=["GET"])
+def api_get_achievements():
+    """Retorna todas as conquistas e seu status para o usuário."""
+    user_id = request.args.get("user_id", "default")
+    all_achievements = achievement_mgr.get_all_achievements()
+    unlocked_achievements = progress_mgr.get_unlocked_achievements(user_id)
+    unlocked_ids = {a["id"] for a in unlocked_achievements}
+
+    # Combinar dados
+    response_list = []
+    for ach in all_achievements:
+        ach_data = ach.copy()
+        ach_data["unlocked"] = ach["id"] in unlocked_ids
+        if ach_data["unlocked"]:
+            # Encontrar timestamp
+            for unlocked in unlocked_achievements:
+                if unlocked["id"] == ach["id"]:
+                    ach_data["unlocked_at"] = unlocked.get("unlocked_at")
+                    break
+        response_list.append(ach_data)
+
+    return jsonify(response_list)
+
+
+@app.route("/api/achievements/check", methods=["POST"])
+def api_check_achievements():
+    """Força verificação de novas conquistas (útil para polling ou manual)."""
+    user_id = request.get_json().get("user_id", "default") if request.is_json else "default"
+    new_achievements = achievement_mgr.check_new_achievements(user_id, progress_mgr)
+    return jsonify({"new_achievements": new_achievements})
+
+
 # --- Rota Legada (Manter por compatibilidade ou remover se não for mais usada) ---
-@app.route('/submit_exercise/<string:course_id>/<string:exercise_id_str>', methods=['POST'])
+@app.route("/submit_exercise/<string:course_id>/<string:exercise_id_str>", methods=["POST"])
 def submit_exercise_solution_legacy(course_id, exercise_id_str):
     """Rota legada para submissão de solução de exercício.
 
@@ -757,24 +878,19 @@ def submit_exercise_solution_legacy(course_id, exercise_id_str):
 
     data_from_request = request.get_json()
     user_code = None
-    if data_from_request and 'code' in data_from_request:
-        user_code = data_from_request['code']
-    elif request.form and 'code' in request.form: # Tenta pegar de formulário se não for JSON
-        user_code = request.form['code']
+    if data_from_request and "code" in data_from_request:
+        user_code = data_from_request["code"]
+    elif request.form and "code" in request.form:  # Tenta pegar de formulário se não for JSON
+        user_code = request.form["code"]
 
     if user_code is None:
         logger.warning("POST /submit_exercise (legacy) - 'code' ausente no payload.")
         return jsonify({"success": False, "output": "", "details": "O campo 'code' é obrigatório."}), 400
 
-    logger.warning(f"A rota LEGADA /submit_exercise/{course_id}/{exercise_id_str} foi chamada. "
-                   f"Redirecionando internamente para a lógica de /api/check-exercise.")
-
-    # Simula o payload para a nova API
-    api_payload = {
-        "course_id": course_id,
-        "exercise_id": exercise_id_str,
-        "code": user_code
-    }
+    logger.warning(
+        f"A rota LEGADA /submit_exercise/{course_id}/{exercise_id_str} foi chamada. "
+        f"Redirecionando internamente para a lógica de /api/check-exercise."
+    )
 
     # Chama a lógica da nova API internamente.
     # Isso requer que o contexto da aplicação Flask esteja disponível.
@@ -790,21 +906,25 @@ def submit_exercise_solution_legacy(course_id, exercise_id_str):
 
     exercises_file_relative_path = course.get("exercises_file")
     if not exercises_file_relative_path:
-        return jsonify({"success": False, "output": "", "details": "Arquivo de exercícios não definido para este curso."}), 500
+        return jsonify(
+            {"success": False, "output": "", "details": "Arquivo de exercícios não definido para este curso."}
+        ), 500
 
-    course_level_from_course_json = course.get('level')
+    course_level_from_course_json = course.get("level")
     expected_exercise_level = course_level_from_course_json.lower() if course_level_from_course_json else None
 
     exercises = exercise_mgr.load_exercises_from_file(exercises_file_relative_path)
     exercise_details_to_check = None
     for ex_item in exercises:
-        if isinstance(ex_item, dict) and str(ex_item.get('id')) == exercise_id_str:
-            if not expected_exercise_level or ex_item.get('level', '').lower() == expected_exercise_level:
+        if isinstance(ex_item, dict) and str(ex_item.get("id")) == exercise_id_str:
+            if not expected_exercise_level or ex_item.get("level", "").lower() == expected_exercise_level:
                 exercise_details_to_check = ex_item
                 break
 
     if not exercise_details_to_check:
-        return jsonify({"success": False, "output": "", "details": f"Exercício '{exercise_id_str}' não encontrado."}), 404
+        return jsonify(
+            {"success": False, "output": "", "details": f"Exercício '{exercise_id_str}' não encontrado."}
+        ), 404
 
     test_code = exercise_details_to_check.get("test_code", "")
     full_code_to_execute = user_code.rstrip() + "\n\n" + test_code
@@ -831,6 +951,7 @@ def submit_exercise_solution_legacy(course_id, exercise_id_str):
         return jsonify({"success": False, "output": "", "details": f"Erro interno: {str(e)}"}), 500
     # --- Fim da lógica duplicada ---
 
+
 # --- Tratador de Erros Padrão ---
 @app.errorhandler(404)
 def page_not_found(e):
@@ -849,7 +970,8 @@ def page_not_found(e):
     # Verifica se a requisição espera JSON ou HTML
     if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
         return jsonify(error=str(e.description or "Recurso não encontrado")), 404
-    return render_template('404.html', title="Página Não Encontrada", error_message=e.description), 404
+    return render_template("404.html", title="Página Não Encontrada", error_message=e.description), 404
+
 
 @app.errorhandler(500)
 def internal_server_error(e):
@@ -864,15 +986,20 @@ def internal_server_error(e):
     Returns:
         tuple: (Conteúdo da resposta, código de status HTTP).
     """
-    logger.error(f"Erro 500 - Erro interno do servidor: {request.path} (Descrição: {e.description or str(e.original_exception or e)})", exc_info=True)
+    logger.error(
+        f"Erro 500 - Erro interno do servidor: {request.path} (Descrição: {e.description or str(e.original_exception or e)})",
+        exc_info=True,
+    )
     if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
         return jsonify(error=str(e.description or "Erro interno do servidor")), 500
-    return render_template('500.html', title="Erro Interno", error_message=e.description or "Ocorreu um erro inesperado."), 500
+    return render_template(
+        "500.html", title="Erro Interno", error_message=e.description or "Ocorreu um erro inesperado."
+    ), 500
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Para desenvolvimento, debug=True é útil. Para produção, defina como False.
     # host='0.0.0.0' torna o servidor acessível externamente na rede.
     # A porta pode ser alterada se necessário.
     logger.info("Iniciando servidor Flask para desenvolvimento...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

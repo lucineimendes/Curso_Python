@@ -6,7 +6,7 @@
                     "lessons": {
                         "intro-programacao-python": {
                             "completed": true,
-                            "completed_at": "2025-12-07T10:00:03.969066",
+                            "completed_at": "2025-12-08T12:52:10.183678",
                             "times_viewed": 1
                         },
                         "configurando-ambiente-python": {
@@ -28,6 +28,16 @@
                             "completed": true,
                             "completed_at": "2025-12-07T10:07:45.382288",
                             "times_viewed": 1
+                        },
+                        "introducao-python": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T12:44:23.662133",
+                            "times_viewed": 1
+                        },
+                        "tipos-dados-string-booleano": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T12:53:26.559989",
+                            "times_viewed": 1
                         }
                     },
                     "exercises": {
@@ -42,11 +52,11 @@
                         "ex-intro-prog-1": {
                             "completed": true,
                             "completed_at": "2025-12-03T18:01:50.848728",
-                            "attempts": 5,
+                            "attempts": 6,
                             "successful_attempts": 1,
-                            "failed_attempts": 4,
+                            "failed_attempts": 5,
                             "first_attempt_success": false,
-                            "last_attempt_at": "2025-12-07T09:33:34.187480"
+                            "last_attempt_at": "2025-12-08T12:52:45.218298"
                         },
                         "ex-config-env-1": {
                             "completed": true,
@@ -65,18 +75,50 @@
                             "failed_attempts": 0,
                             "first_attempt_success": true,
                             "last_attempt_at": "2025-12-04T22:06:05.097834"
+                        },
+                        "ex-introducao-5": {
+                            "completed": true,
+                            "completed_at": "2025-12-08T12:44:23.688782",
+                            "attempts": 2,
+                            "successful_attempts": 1,
+                            "failed_attempts": 1,
+                            "first_attempt_success": true,
+                            "last_attempt_at": "2025-12-08T12:44:23.694662"
                         }
                     },
                     "started_at": "2025-12-03T17:48:26.625604",
-                    "last_accessed": "2025-12-07T10:07:45.382307",
+                    "last_accessed": "2025-12-08T12:53:26.560025",
                     "completed": false
                 }
             },
-            "total_lessons_completed": 5,
-            "total_exercises_completed": 4,
-            "created_at": "2025-12-03T17:48:26.625209"
+            "total_lessons_completed": 7,
+            "total_exercises_completed": 5,
+            "created_at": "2025-12-03T17:48:26.625209",
+            "achievement_stats": {
+                "perfect_exercises_count": 1,
+                "lessons_in_day": 2,
+                "last_lesson_date": "2025-12-08"
+            },
+            "achievements": [
+                {
+                    "id": "first_lesson",
+                    "unlocked_at": "2025-12-08T12:44:23.689839"
+                },
+                {
+                    "id": "first_exercise",
+                    "unlocked_at": "2025-12-08T12:44:23.690583"
+                },
+                {
+                    "id": "course_basic_complete",
+                    "unlocked_at": "2025-12-08T12:44:23.691367"
+                },
+                {
+                    "id": "persistent",
+                    "unlocked_at": "2025-12-08T12:44:23.692146"
+                }
+            ]
         }
     },
     "created_at": "2025-12-03T17:10:36.020197",
-    "last_updated": "2025-12-07T10:07:45.382312"
+    "last_updated": "2025-12-08T12:53:26.560029"
 }

@@ -146,3 +146,37 @@ class AchievementManager:
             bool: True se a condição foi satisfeita, False caso contrário.
         """
         return self._evaluator.evaluate(condition, progress_data)
+
+    def check_new_achievements(self, user_id: str, progress_manager) -> List[Dict]:
+        """
+        Verifica e desbloqueia novas conquistas para o usuário.
+
+        Args:
+            user_id (str): ID do usuário.
+            progress_manager: Instância do ProgressManager para acessar dados e salvar desbloqueios.
+
+        Returns:
+            List[Dict]: Lista de conquistas recém-desbloqueadas.
+        """
+        user_progress = progress_manager.get_user_progress(user_id)
+        # Obter lista de IDs já desbloqueados para otimização
+        unlocked_ids = {a["id"] for a in user_progress.get("achievements", [])}
+
+        newly_unlocked = []
+
+        for achievement in self.achievements:
+            ach_id = achievement["id"]
+            if ach_id in unlocked_ids:
+                continue
+
+            condition = achievement.get("unlock_condition")
+            if not condition:
+                continue
+
+            if self._evaluate_condition(condition, user_progress):
+                # Tenta desbloquear (retorna True se foi desbloqueado agora)
+                if progress_manager.unlock_achievement(user_id, ach_id):
+                    newly_unlocked.append(achievement)
+                    unlocked_ids.add(ach_id)  # Atualiza conjunto local
+
+        return newly_unlocked

@@ -17,7 +17,7 @@
         </ul>
     </div>
     {% endif %}
-    
+
     {% if lesson.key_concepts and lesson.key_concepts|length > 0 %}
     <div class="mt-3">
         <h4>Conceitos Chave:</h4>
@@ -28,12 +28,12 @@
         </ul>
     </div>
     {% endif %}
-    
+
     <div class="mt-3">
         <h4>Conteúdo da Lição:</h4>
         {{ lesson.content | safe }}
     </div>
-    
+
     {% if lesson.examples and lesson.examples|length > 0 %}
     <div class="mt-3">
         <h4>Exemplos:</h4>
@@ -56,7 +56,7 @@
         {% endfor %}
     </div>
     {% endif %}
-    
+
     {% if lesson.summary %}
     <div class="mt-3">
         <h4>Resumo:</h4>
@@ -90,7 +90,7 @@
         </ul>
     </div>
     {% endif %}
-    
+
     <div class="mt-3 d-flex justify-content-between align-items-center">
         {% if prev_lesson %}
         <a href="{{ url_for('lesson_detail_page', course_id=course.id, lesson_id_str=prev_lesson.id) }}" class="btn btn-secondary">Anterior: {{ prev_lesson.title }}</a>
@@ -105,4 +105,27 @@
         {% endif %}
     </div>
 </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Verificar se há novas conquistas (polling único ao carregar a página)
+        // Isso cobre o caso onde a lição foi marcada como completa no backend ao carregar
+        try {
+            const response = await fetch('/api/achievements/check', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: 'default' }) // TODO: Usar ID real
+            });
+            const data = await response.json();
+            if (data.new_achievements && typeof handleNewAchievements === 'function') {
+                handleNewAchievements(data.new_achievements);
+            }
+        } catch (error) {
+            console.error('Erro ao verificar conquistas na lição:', error);
+        }
+    });
+</script>
+{% endblock %}
 {% endblock %}

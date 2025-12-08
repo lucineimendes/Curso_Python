@@ -345,6 +345,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (window.courseRoadmap) {
                     window.courseRoadmap.markExerciseComplete(exerciseData.exerciseId);
                 }
+
+                // Verificar conquistas desbloqueadas
+                if (data.new_achievements && typeof handleNewAchievements === 'function') {
+                    handleNewAchievements(data.new_achievements);
+                }
             } else {
                 const encouragement = data.stats && data.stats.attempts === 1
                     ? 'Não desista! Revise as instruções e tente novamente.'

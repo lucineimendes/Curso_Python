@@ -139,12 +139,13 @@ Para mais informações sobre contribuição, veja [CONTRIBUTING.md](CONTRIBUTIN
 - [Sistema de Roadmap](docs/architecture/ROADMAP_SYSTEM.md) - Roadmap visual e rastreamento de progresso
 
 #### Guias Práticos
-- [Guia do UV](docs/guides/UV_GUIDE.md) - Gerenciador de pacotes Python
+- [Guia do UV](docs/guides/GUIDE_UV_SETUP.md) - Gerenciador de pacotes Python
 
 #### Refatorações
-- [SOLID/DRY - Sistema de Conquistas](docs/refactoring/SOLID_DRY_ACHIEVEMENTS.md) - Refatoração aplicando princípios SOLID
-- [ProgressManager](docs/refactoring/PROGRESS_MANAGER.md) - Proposta de refatoração
-- [Rotas da Aplicação](docs/refactoring/APP_ROUTES.md) - Proposta de refatoração
+- [SOLID/DRY - Sistema de Conquistas](docs/refactoring/REFACTOR_ACHIEVEMENTS_SOLID_DRY.md) - Refatoração aplicando princípios SOLID
+- [Remoção de Rota Legada](docs/refactoring/LEGACY_ROUTE_REMOVAL.md) - Elimina código duplicado
+- [ProgressManager](docs/refactoring/REFACTOR_PROGRESS_MANAGER.md) - Proposta de refatoração
+- [Rotas da Aplicação](docs/refactoring/REFACTOR_APP_ROUTES.md) - Proposta de refatoração
 
 #### Implementações
 - [Roadmap Implementation](docs/implementation/ROADMAP_IMPLEMENTATION.md) - Sistema de roadmap visual

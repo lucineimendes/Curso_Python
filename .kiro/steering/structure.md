@@ -108,7 +108,6 @@ projects/                    # Pacote principal da aplicação
 ## Pontos de Atenção
 
 - Rota legada `/submit_exercise` mantida para compatibilidade (considerar refatoração)
-- `courses_file` vs `couses.json` (typo no nome do arquivo - verificar se é usado)
 - Escalabilidade: JSON funciona para escala atual, considerar BD para crescimento futuro
 - Sistema de progresso usa `user_id="default"` - implementar autenticação para multi-usuário
 - Progresso salvo em localStorage pode ser perdido - sincronizar com backend regularmente

@@ -112,15 +112,16 @@ projects/
 - **[DOCUMENTATION_STANDARDS.md](DOCUMENTATION_STANDARDS.md)** - Padrões de documentação
 
 ### Refatorações
-- **[refactoring/SOLID_DRY_ACHIEVEMENTS.md](refactoring/SOLID_DRY_ACHIEVEMENTS.md)** - Refatoração de conquistas ✅
-- **[refactoring/PROGRESS_MANAGER.md](refactoring/PROGRESS_MANAGER.md)** - Proposta ProgressManager ⬜
-- **[refactoring/APP_ROUTES.md](refactoring/APP_ROUTES.md)** - Proposta rotas ⬜
+- **[refactoring/REFACTOR_ACHIEVEMENTS_SOLID_DRY.md](refactoring/REFACTOR_ACHIEVEMENTS_SOLID_DRY.md)** - Refatoração de conquistas ✅
+- **[refactoring/LEGACY_ROUTE_REMOVAL.md](refactoring/LEGACY_ROUTE_REMOVAL.md)** - Remoção de rota legada 🟡
+- **[refactoring/REFACTOR_PROGRESS_MANAGER.md](refactoring/REFACTOR_PROGRESS_MANAGER.md)** - Proposta ProgressManager ⬜
+- **[refactoring/REFACTOR_APP_ROUTES.md](refactoring/REFACTOR_APP_ROUTES.md)** - Proposta rotas ⬜
 
 ### Arquitetura
 - **[architecture/ROADMAP_SYSTEM.md](architecture/ROADMAP_SYSTEM.md)** - Sistema de roadmap
 
 ### Guias
-- **[guides/UV_GUIDE.md](guides/UV_GUIDE.md)** - Guia UV
+- **[guides/GUIDE_UV_SETUP.md](guides/GUIDE_UV_SETUP.md)** - Guia UV
 
 ### Implementações
 - **[implementation/ROADMAP_IMPLEMENTATION.md](implementation/ROADMAP_IMPLEMENTATION.md)** - Implementação do roadmap ✅
