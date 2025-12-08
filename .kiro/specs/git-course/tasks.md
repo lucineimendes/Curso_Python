@@ -31,7 +31,7 @@
   - Escrever `docs/git-course/03-avancado/04-tools/lab-bisect.md`
   - _Requisito: 4_
 
-- [ ] 5. Criar conteúdo para Módulo 5: Estruturas Complexas
+- [x] 5. Criar conteúdo para Módulo 5: Estruturas Complexas
   - Escrever `docs/git-course/03-avancado/05-complex-structures/theory-submodules.md`
   - Escrever `docs/git-course/03-avancado/05-complex-structures/theory-lfs.md`
   - _Requisito: 5_
