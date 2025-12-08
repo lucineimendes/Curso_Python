@@ -403,3 +403,122 @@ def test_property_18_all_condition_types_supported(condition, progress):
     finally:
         # Limpar o diretório temporário
         shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 7: Incremento do contador de exercícios perfeitos**
+# **Valida: Requisitos 4.4**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(
+    user_id=st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"))),
+    course_id=st.sampled_from(["python-basico", "python-intermediario", "python-avancado"]),
+    num_perfect_exercises=st.integers(min_value=1, max_value=20),
+)
+def test_property_7_perfect_exercises_counter_increment(user_id, course_id, num_perfect_exercises):
+    """
+    Propriedade 7: Incremento do contador de exercícios perfeitos.
+
+    Para qualquer exercício completado na primeira tentativa,
+    o contador de exercícios perfeitos deve aumentar exatamente 1.
+
+    **Feature: achievements-badges, Property 7: Incremento do contador de exercícios perfeitos**
+    **Valida: Requisitos 4.4**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        # Importar ProgressManager
+        from projects.progress_manager import ProgressManager
+
+        # Criar ProgressManager temporário
+        progress_mgr = ProgressManager(data_dir_path_str=tmp_dir)
+
+        # Obter contador inicial
+        initial_count = progress_mgr.get_perfect_exercises_count(user_id)
+
+        # Completar num_perfect_exercises exercícios na primeira tentativa
+        for i in range(num_perfect_exercises):
+            exercise_id = f"exercise_perfect_{i}"
+            # Marcar exercício como sucesso na primeira tentativa
+            progress_mgr.mark_exercise_attempt(user_id, course_id, exercise_id, success=True)
+
+        # Obter contador final
+        final_count = progress_mgr.get_perfect_exercises_count(user_id)
+
+        # Verificar que o contador aumentou exatamente num_perfect_exercises
+        assert (
+            final_count == initial_count + num_perfect_exercises
+        ), f"Contador de exercícios perfeitos não incrementou corretamente. Inicial: {initial_count}, Final: {final_count}, Esperado: {initial_count + num_perfect_exercises}"
+
+        # Verificar que exercícios não-perfeitos não incrementam o contador
+        exercise_id_imperfect = "exercise_imperfect"
+        # Primeira tentativa falha
+        progress_mgr.mark_exercise_attempt(user_id, course_id, exercise_id_imperfect, success=False)
+        # Segunda tentativa sucesso
+        progress_mgr.mark_exercise_attempt(user_id, course_id, exercise_id_imperfect, success=True)
+
+        # Contador não deve ter mudado
+        count_after_imperfect = progress_mgr.get_perfect_exercises_count(user_id)
+        assert (
+            count_after_imperfect == final_count
+        ), f"Contador de exercícios perfeitos incrementou incorretamente para exercício não-perfeito. Antes: {final_count}, Depois: {count_after_imperfect}"
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 8: Rastreamento de lições diárias**
+# **Valida: Requisitos 4.7**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+@given(
+    user_id=st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"))),
+    course_id=st.sampled_from(["python-basico", "python-intermediario", "python-avancado"]),
+    num_lessons=st.integers(min_value=1, max_value=20),
+)
+def test_property_8_daily_lessons_tracking(user_id, course_id, num_lessons):
+    """
+    Propriedade 8: Rastreamento de lições diárias.
+
+    Para qualquer conjunto de lições completadas no mesmo dia do calendário,
+    o contador lessons_in_day deve ser igual à contagem dessas lições.
+
+    **Feature: achievements-badges, Property 8: Rastreamento de lições diárias**
+    **Valida: Requisitos 4.7**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        # Importar ProgressManager
+        from projects.progress_manager import ProgressManager
+
+        # Criar ProgressManager temporário
+        progress_mgr = ProgressManager(data_dir_path_str=tmp_dir)
+
+        # Completar num_lessons lições no mesmo dia
+        for i in range(num_lessons):
+            lesson_id = f"lesson_day_{i}"
+            progress_mgr.mark_lesson_complete(user_id, course_id, lesson_id)
+
+        # Obter contador de lições diárias
+        lessons_today = progress_mgr.get_lessons_completed_today(user_id)
+
+        # Verificar que o contador é igual ao número de lições completadas
+        assert (
+            lessons_today == num_lessons
+        ), f"Contador de lições diárias incorreto. Esperado: {num_lessons}, Obtido: {lessons_today}"
+
+        # Verificar que o campo last_activity_date está definido para hoje
+        stats = progress_mgr.get_achievement_stats(user_id)
+        from datetime import datetime
+
+        today = datetime.now().date().isoformat()
+        assert (
+            stats.get("last_activity_date") == today
+        ), f"last_activity_date não está definido para hoje. Esperado: {today}, Obtido: {stats.get('last_activity_date')}"
+
+        # Verificar que o contador lessons_in_day está correto
+        assert (
+            stats.get("lessons_in_day") == num_lessons
+        ), f"lessons_in_day incorreto. Esperado: {num_lessons}, Obtido: {stats.get('lessons_in_day')}"
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)

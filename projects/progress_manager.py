@@ -93,7 +93,7 @@ class ProgressManager:
                 "total_lessons_completed": 0,
                 "total_exercises_completed": 0,
                 "achievements": [],
-                "achievement_stats": {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_lesson_date": None},
+                "achievement_stats": {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_activity_date": None},
                 "created_at": datetime.now().isoformat(),
             }
             self._save_progress()
@@ -152,13 +152,13 @@ class ProgressManager:
 
             # Atualizar estatísticas de conquistas (lições por dia)
             stats = user_progress.setdefault(
-                "achievement_stats", {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_lesson_date": None}
+                "achievement_stats", {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_activity_date": None}
             )
 
             today = datetime.now().date().isoformat()
-            if stats.get("last_lesson_date") != today:
+            if stats.get("last_activity_date") != today:
                 stats["lessons_in_day"] = 1
-                stats["last_lesson_date"] = today
+                stats["last_activity_date"] = today
             else:
                 stats["lessons_in_day"] = stats.get("lessons_in_day", 0) + 1
 
@@ -219,7 +219,7 @@ class ProgressManager:
                 if exercise_data["first_attempt_success"]:
                     stats = user_progress.setdefault(
                         "achievement_stats",
-                        {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_lesson_date": None},
+                        {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_activity_date": None},
                     )
                     stats["perfect_exercises_count"] = stats.get("perfect_exercises_count", 0) + 1
         else:
@@ -390,3 +390,87 @@ class ProgressManager:
         """
         user_progress = self.get_user_progress(user_id)
         return user_progress.get("achievements", [])
+
+    def get_achievement_stats(self, user_id: str) -> Dict:
+        """
+        Retorna estatísticas de conquistas do usuário.
+
+        Args:
+            user_id (str): ID do usuário.
+
+        Returns:
+            Dict: Estatísticas de conquistas incluindo perfect_exercises_count,
+                  lessons_in_day e last_activity_date.
+        """
+        user_progress = self.get_user_progress(user_id)
+        return user_progress.get(
+            "achievement_stats", {"perfect_exercises_count": 0, "lessons_in_day": 0, "last_activity_date": None}
+        )
+
+    def get_perfect_exercises_count(self, user_id: str) -> int:
+        """
+        Retorna o número de exercícios perfeitos (primeira tentativa) do usuário.
+
+        Args:
+            user_id (str): ID do usuário.
+
+        Returns:
+            int: Número de exercícios completados na primeira tentativa.
+        """
+        stats = self.get_achievement_stats(user_id)
+        return stats.get("perfect_exercises_count", 0)
+
+    def get_lessons_completed_today(self, user_id: str) -> int:
+        """
+        Retorna o número de lições completadas hoje pelo usuário.
+
+        Args:
+            user_id (str): ID do usuário.
+
+        Returns:
+            int: Número de lições completadas hoje.
+        """
+        stats = self.get_achievement_stats(user_id)
+        today = datetime.now().date().isoformat()
+
+        # Se a última atividade foi hoje, retornar o contador
+        if stats.get("last_activity_date") == today:
+            return stats.get("lessons_in_day", 0)
+        return 0
+
+    def is_course_complete(self, user_id: str, course_id: str, total_lessons: int) -> bool:
+        """
+        Verifica se um curso está completo (todas as lições completadas).
+
+        Args:
+            user_id (str): ID do usuário.
+            course_id (str): ID do curso.
+            total_lessons (int): Número total de lições no curso.
+
+        Returns:
+            bool: True se todas as lições estão completas, False caso contrário.
+        """
+        course_progress = self.get_course_progress(user_id, course_id)
+        completed_lessons = sum(
+            1 for lesson in course_progress.get("lessons", {}).values() if lesson.get("completed", False)
+        )
+        return completed_lessons >= total_lessons
+
+    def has_exercise_after_attempts(self, user_id: str, min_attempts: int) -> bool:
+        """
+        Verifica se o usuário completou algum exercício após um número mínimo de tentativas.
+
+        Args:
+            user_id (str): ID do usuário.
+            min_attempts (int): Número mínimo de tentativas.
+
+        Returns:
+            bool: True se existe pelo menos um exercício completado após min_attempts tentativas.
+        """
+        user_progress = self.get_user_progress(user_id)
+
+        for course_progress in user_progress.get("courses", {}).values():
+            for exercise in course_progress.get("exercises", {}).values():
+                if exercise.get("completed", False) and exercise.get("attempts", 0) >= min_attempts:
+                    return True
+        return False
