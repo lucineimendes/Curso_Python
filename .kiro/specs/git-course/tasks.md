@@ -26,7 +26,7 @@
   - Escrever `docs/git-course/03-avancado/03-workflows/lab-workflow-sim.md`
   - _Requisito: 3_
 
-- [ ] 4. Criar conteúdo para Módulo 4: Ferramentas
+- [x] 4. Criar conteúdo para Módulo 4: Ferramentas
   - Escrever `docs/git-course/03-avancado/04-tools/theory-hooks.md`
   - Escrever `docs/git-course/03-avancado/04-tools/lab-bisect.md`
   - _Requisito: 4_
