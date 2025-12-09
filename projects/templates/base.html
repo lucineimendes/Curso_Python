@@ -36,7 +36,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('generic_code_editor_page') }}">Editor de Código</a>
                     </li>
-                </ul>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('achievements_page') }}">
                             <i class="bi bi-trophy me-1"></i>Conquistas
@@ -70,6 +69,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/achievements.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/badge_counter.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

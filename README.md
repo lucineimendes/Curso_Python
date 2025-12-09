@@ -123,6 +123,25 @@ uv run pytest
 uv run pytest --cov=projects
 ```
 
+### Migração de Dados
+
+Se você está atualizando de uma versão anterior sem suporte a conquistas, execute a migração de dados:
+
+```bash
+# Migração interativa (recomendado)
+./scripts/migrate_user_progress.sh
+
+# Migração direta
+python projects/data_migration.py
+
+# Migração de arquivo específico
+python projects/data_migration.py /caminho/para/user_progress.json
+```
+
+A migração adiciona campos de conquistas preservando todos os dados existentes. Um backup é criado automaticamente.
+
+Para mais detalhes, consulte: [Guia de Migração](docs/guides/MIGRATION_USER_PROGRESS.md)
+
 Para mais informações sobre contribuição, veja [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Documentação
@@ -140,6 +159,7 @@ Para mais informações sobre contribuição, veja [CONTRIBUTING.md](CONTRIBUTIN
 
 #### Guias Práticos
 - [Guia do UV](docs/guides/GUIDE_UV_SETUP.md) - Gerenciador de pacotes Python
+- [Migração de Dados](docs/guides/MIGRATION_USER_PROGRESS.md) - Migração de progresso do usuário
 
 #### Refatorações
 - [SOLID/DRY - Sistema de Conquistas](docs/refactoring/REFACTOR_ACHIEVEMENTS_SOLID_DRY.md) - Refatoração aplicando princípios SOLID

@@ -207,11 +207,25 @@ class AchievementManager:
         # Verificar se a conquista existe
         achievement_exists = any(a["id"] == achievement_id for a in self.achievements)
         if not achievement_exists:
-            logger.warning(f"Tentativa de desbloquear conquista inexistente: {achievement_id}")
+            logger.warning(
+                f"Tentativa de desbloquear conquista inexistente: achievement_id='{achievement_id}', user_id='{user_id}'"
+            )
             return False
 
         # Delegar para o ProgressManager que já implementa a persistência
-        return progress_manager.unlock_achievement(user_id, achievement_id)
+        was_unlocked = progress_manager.unlock_achievement(user_id, achievement_id)
+
+        if was_unlocked:
+            # Obter nome da conquista para logging mais informativo
+            achievement_name = next((a["name"] for a in self.achievements if a["id"] == achievement_id), achievement_id)
+            logger.info(
+                f"Conquista desbloqueada: achievement_id='{achievement_id}', "
+                f"achievement_name='{achievement_name}', user_id='{user_id}'"
+            )
+        else:
+            logger.debug(f"Conquista já estava desbloqueada: achievement_id='{achievement_id}', user_id='{user_id}'")
+
+        return was_unlocked
 
     def check_unlocks(self, user_id: str, progress_manager) -> List[Dict]:
         """
@@ -226,11 +240,17 @@ class AchievementManager:
         Returns:
             List[Dict]: Lista de conquistas recém-desbloqueadas.
         """
+        import time
+
+        start_time = time.time()
+        logger.debug(f"Iniciando verificação de conquistas para user_id='{user_id}'")
+
         user_progress = progress_manager.get_user_progress(user_id)
         # Obter lista de IDs já desbloqueados para otimização
         unlocked_ids = {a["id"] for a in user_progress.get("achievements", [])}
 
         newly_unlocked = []
+        conditions_evaluated = 0
 
         for achievement in self.achievements:
             ach_id = achievement["id"]
@@ -239,20 +259,37 @@ class AchievementManager:
 
             condition = achievement.get("unlock_condition")
             if not condition:
+                logger.warning(f"Conquista sem condição de desbloqueio: achievement_id='{ach_id}', user_id='{user_id}'")
                 continue
 
-            if self._evaluate_condition(condition, user_progress):
-                # Tenta desbloquear (retorna True se foi desbloqueado agora)
-                if self.unlock_achievement(user_id, ach_id, progress_manager):
-                    # Adicionar timestamp ao achievement retornado
-                    unlocked_achievement = {
-                        **achievement,
-                        "unlocked_at": progress_manager.get_user_progress(user_id)
-                        .get("achievements", [])[-1]
-                        .get("unlocked_at"),
-                    }
-                    newly_unlocked.append(unlocked_achievement)
-                    unlocked_ids.add(ach_id)  # Atualiza conjunto local
+            conditions_evaluated += 1
+
+            try:
+                if self._evaluate_condition(condition, user_progress):
+                    # Tenta desbloquear (retorna True se foi desbloqueado agora)
+                    if self.unlock_achievement(user_id, ach_id, progress_manager):
+                        # Adicionar timestamp ao achievement retornado
+                        unlocked_achievement = {
+                            **achievement,
+                            "unlocked_at": progress_manager.get_user_progress(user_id)
+                            .get("achievements", [])[-1]
+                            .get("unlocked_at"),
+                        }
+                        newly_unlocked.append(unlocked_achievement)
+                        unlocked_ids.add(ach_id)  # Atualiza conjunto local
+            except Exception as e:
+                logger.error(
+                    f"Erro ao avaliar condição de conquista: achievement_id='{ach_id}', "
+                    f"user_id='{user_id}', condition_type='{condition.get('type')}', error='{str(e)}'",
+                    exc_info=True,
+                )
+
+        elapsed_time = time.time() - start_time
+        logger.info(
+            f"Verificação de conquistas concluída: user_id='{user_id}', "
+            f"conditions_evaluated={conditions_evaluated}, newly_unlocked={len(newly_unlocked)}, "
+            f"elapsed_time={elapsed_time:.3f}s"
+        )
 
         return newly_unlocked
 

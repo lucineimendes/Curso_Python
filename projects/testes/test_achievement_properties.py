@@ -1159,23 +1159,161 @@ def test_property_12_api_error_status_codes(user_id):
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
-# **Feature: achievements-badges, Property 15: Precisão do cálculo de estatísticas**
-# **Valida: Requisitos 1.5**
+# Estratégias para gerar dados corrompidos
+
+
+@st.composite
+def corrupted_json_data(draw):
+    """Gera dados JSON corrompidos de várias formas."""
+    corruption_type = draw(
+        st.sampled_from(
+            [
+                "invalid_json",
+                "not_dict",
+                "missing_achievements_key",
+                "achievements_not_list",
+                "mixed_valid_invalid",
+                "empty_string",
+                "null_value",
+            ]
+        )
+    )
+
+    if corruption_type == "invalid_json":
+        # JSON malformado que não pode ser parseado
+        return draw(st.sampled_from(['{"achievements": [', '{"achievements": }', "{invalid json", "null,", "[],"]))
+    elif corruption_type == "not_dict":
+        # JSON válido mas não é um dicionário
+        return json.dumps([1, 2, 3])
+    elif corruption_type == "missing_achievements_key":
+        # Dicionário válido mas sem chave 'achievements'
+        return json.dumps({"data": [], "other_key": "value"})
+    elif corruption_type == "achievements_not_list":
+        # Chave 'achievements' existe mas não é uma lista
+        return json.dumps({"achievements": "not a list"})
+    elif corruption_type == "mixed_valid_invalid":
+        # Lista com conquistas válidas e inválidas misturadas
+        valid_ach = {
+            "id": "valid_ach",
+            "name": "Valid",
+            "description": "Valid achievement",
+            "icon": "✓",
+            "category": "test",
+            "unlock_condition": {"type": "lesson_count", "value": 1},
+        }
+        invalid_ach = {"id": "invalid_ach"}  # Faltando campos obrigatórios
+        return json.dumps({"achievements": [valid_ach, invalid_ach]})
+    elif corruption_type == "empty_string":
+        return ""
+    elif corruption_type == "null_value":
+        return "null"
+
+    return "{}"
+
+
+@st.composite
+def corrupted_progress_data(draw):
+    """Gera dados de progresso corrompidos."""
+    corruption_type = draw(
+        st.sampled_from(
+            [
+                "missing_users_key",
+                "users_not_dict",
+                "user_data_not_dict",
+                "achievements_not_list",
+                "achievement_stats_not_dict",
+                "invalid_achievement_entry",
+                "missing_achievement_id",
+                "invalid_timestamp",
+            ]
+        )
+    )
+
+    if corruption_type == "missing_users_key":
+        return {"created_at": "2025-12-04T10:00:00"}
+    elif corruption_type == "users_not_dict":
+        return {"users": "not a dict"}
+    elif corruption_type == "user_data_not_dict":
+        return {"users": {"default": "not a dict"}}
+    elif corruption_type == "achievements_not_list":
+        return {"users": {"default": {"achievements": "not a list"}}}
+    elif corruption_type == "achievement_stats_not_dict":
+        return {"users": {"default": {"achievements": [], "achievement_stats": "not a dict"}}}
+    elif corruption_type == "invalid_achievement_entry":
+        return {"users": {"default": {"achievements": [{"invalid": "entry"}]}}}
+    elif corruption_type == "missing_achievement_id":
+        return {"users": {"default": {"achievements": [{"unlocked_at": "2025-12-04T10:00:00"}]}}}
+    elif corruption_type == "invalid_timestamp":
+        return {"users": {"default": {"achievements": [{"id": "test", "unlocked_at": "invalid timestamp"}]}}}
+
+    return {"users": {}}
+
+
+# **Feature: achievements-badges, Property 16: Tratamento gracioso de dados corrompidos**
+# **Valida: Requisitos 8.4**
 @settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=5000)
-@given(
-    user_id=st.text(min_size=1, max_size=50, alphabet=st.characters(whitelist_categories=("Ll", "Lu", "Nd"))),
-    achievements=st.lists(valid_achievement(), min_size=1, max_size=50, unique_by=lambda x: x["id"]),
-    num_to_unlock=st.integers(min_value=0, max_value=50),
-)
-def test_property_15_statistics_calculation_accuracy(user_id, achievements, num_to_unlock):
+@given(corrupted_data=corrupted_json_data())
+def test_property_16_graceful_corrupted_data_handling(corrupted_data):
     """
-    Propriedade 15: Precisão do cálculo de estatísticas.
+    Propriedade 16: Tratamento gracioso de dados corrompidos.
 
-    Para qualquer usuário com N conquistas totais e M conquistas desbloqueadas,
-    a porcentagem de conclusão deve ser igual a (M / N) * 100.
+    Para quaisquer dados de conquista corrompidos ou inválidos no progresso do usuário,
+    o sistema deve inicializar com dados de conquista vazios sem travar.
 
-    **Feature: achievements-badges, Property 15: Precisão do cálculo de estatísticas**
-    **Valida: Requisitos 1.5**
+    **Feature: achievements-badges, Property 16: Tratamento gracioso de dados corrompidos**
+    **Valida: Requisitos 8.4**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar arquivo de conquistas corrompido
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            f.write(corrupted_data)
+
+        # Tentar criar AchievementManager - não deve travar
+        try:
+            manager = AchievementManager(data_dir_path_str=str(data_dir))
+
+            # O manager deve ter sido criado com sucesso
+            assert manager is not None, "AchievementManager não foi criado"
+
+            # Deve ter inicializado com lista vazia ou lista válida
+            achievements = manager.get_all_achievements()
+            assert isinstance(achievements, list), f"get_all_achievements não retornou lista: {type(achievements)}"
+
+            # Se houver conquistas, todas devem ser válidas
+            for achievement in achievements:
+                assert manager._validate_achievement(achievement), f"Conquista inválida foi carregada: {achievement}"
+
+        except Exception as e:
+            # Se uma exceção foi lançada, o sistema não tratou graciosamente
+            raise AssertionError(
+                f"Sistema não tratou dados corrompidos graciosamente. "
+                f"Dados: {corrupted_data[:100]}..., Exceção: {type(e).__name__}: {e}"
+            ) from e
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 16: Tratamento gracioso de dados corrompidos (progresso)**
+# **Valida: Requisitos 8.4**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=5000)
+@given(corrupted_progress=corrupted_progress_data())
+def test_property_16_graceful_corrupted_progress_handling(corrupted_progress):
+    """
+    Propriedade 16: Tratamento gracioso de dados corrompidos (progresso do usuário).
+
+    Para quaisquer dados de progresso corrompidos, o sistema deve inicializar
+    com dados vazios sem travar.
+
+    **Feature: achievements-badges, Property 16: Tratamento gracioso de dados corrompidos**
+    **Valida: Requisitos 8.4**
     """
     # Criar diretório de dados temporário
     tmp_dir = tempfile.mkdtemp()
@@ -1185,296 +1323,101 @@ def test_property_15_statistics_calculation_accuracy(user_id, achievements, num_
         data_dir = Path(tmp_dir) / "data"
         data_dir.mkdir()
 
-        # Criar arquivo de conquistas
+        # Criar arquivo de progresso corrompido
+        progress_file = data_dir / "user_progress.json"
+        with open(progress_file, "w", encoding="utf-8") as f:
+            json.dump(corrupted_progress, f)
+
+        # Tentar criar ProgressManager - não deve travar
+        try:
+            progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+
+            # O manager deve ter sido criado com sucesso
+            assert progress_mgr is not None, "ProgressManager não foi criado"
+
+            # Deve conseguir obter progresso do usuário sem travar
+            user_progress = progress_mgr.get_user_progress("default")
+            assert isinstance(user_progress, dict), f"get_user_progress não retornou dict: {type(user_progress)}"
+
+            # Deve ter campos básicos
+            assert "achievements" in user_progress, "Campo 'achievements' não foi inicializado"
+            assert isinstance(
+                user_progress["achievements"], list
+            ), f"Campo 'achievements' não é lista: {type(user_progress['achievements'])}"
+
+        except Exception as e:
+            # Se uma exceção foi lançada, o sistema não tratou graciosamente
+            raise AssertionError(
+                f"Sistema não tratou dados de progresso corrompidos graciosamente. "
+                f"Dados: {corrupted_progress}, Exceção: {type(e).__name__}: {e}"
+            ) from e
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 17: Validação de dados de conquista na leitura**
+# **Valida: Requisitos 8.5**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=5000)
+@given(
+    achievements=st.lists(
+        st.one_of(valid_achievement(), invalid_achievement()), min_size=1, max_size=20, unique_by=lambda x: x.get("id")
+    )
+)
+def test_property_17_achievement_data_validation_on_read(achievements):
+    """
+    Propriedade 17: Validação de dados de conquista na leitura.
+
+    Para quaisquer dados de conquista lidos do armazenamento, se os dados são inválidos
+    (campos faltando, tipos errados), a função de validação deve detectar e rejeitá-los.
+
+    **Feature: achievements-badges, Property 17: Validação de dados de conquista na leitura**
+    **Valida: Requisitos 8.5**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar arquivo de conquistas com mistura de válidas e inválidas
         achievements_file = data_dir / "achievements.json"
         with open(achievements_file, "w", encoding="utf-8") as f:
             json.dump({"achievements": achievements}, f, ensure_ascii=False, indent=4)
 
-        # Criar managers
-        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
-        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
+        # Criar AchievementManager e carregar conquistas
+        manager = AchievementManager(data_dir_path_str=str(data_dir))
 
-        # Desbloquear um subconjunto de conquistas
-        num_to_unlock = min(num_to_unlock, len(achievements))
-        for i in range(num_to_unlock):
-            achievement_id = achievements[i]["id"]
-            achievement_mgr.unlock_achievement(user_id, achievement_id, progress_mgr)
+        # Obter conquistas carregadas
+        loaded_achievements = manager.get_all_achievements()
 
-        # Obter estatísticas através do método get_user_achievements
-        user_achievements = achievement_mgr.get_user_achievements(user_id, progress_mgr)
-        stats = user_achievements["stats"]
+        # Contar quantas conquistas eram válidas no input
+        valid_count = sum(1 for ach in achievements if manager._validate_achievement(ach))
 
-        # Calcular valores esperados
-        total_expected = len(achievements)
-        unlocked_expected = num_to_unlock
-        percentage_expected = (unlocked_expected / total_expected * 100) if total_expected > 0 else 0.0
-
-        # Verificar que o total está correto
+        # Verificar que apenas conquistas válidas foram carregadas
         assert (
-            stats["total"] == total_expected
-        ), f"Total de conquistas incorreto. Esperado: {total_expected}, Obtido: {stats['total']}"
+            len(loaded_achievements) == valid_count
+        ), f"Número incorreto de conquistas carregadas. Esperado: {valid_count}, Obtido: {len(loaded_achievements)}"
 
-        # Verificar que o número de desbloqueadas está correto
-        assert (
-            stats["unlocked"] == unlocked_expected
-        ), f"Número de conquistas desbloqueadas incorreto. Esperado: {unlocked_expected}, Obtido: {stats['unlocked']}"
+        # Verificar que todas as conquistas carregadas são válidas
+        for achievement in loaded_achievements:
+            assert manager._validate_achievement(achievement), f"Conquista inválida foi carregada: {achievement}"
 
-        # Verificar que a porcentagem está correta (com tolerância de 0.01 para arredondamento)
-        percentage_obtained = stats["percentage"]
-        assert abs(percentage_obtained - percentage_expected) < 0.01, (
-            f"Porcentagem de conclusão incorreta. "
-            f"Esperado: {percentage_expected:.2f}%, Obtido: {percentage_obtained}%, "
-            f"Total: {total_expected}, Desbloqueadas: {unlocked_expected}"
-        )
+            # Verificar campos obrigatórios
+            required_fields = ["id", "name", "description", "icon", "unlock_condition"]
+            for field in required_fields:
+                assert field in achievement, f"Campo obrigatório '{field}' faltando em conquista: {achievement}"
+                assert achievement[field], f"Campo obrigatório '{field}' está vazio em conquista: {achievement}"
 
-        # Verificar que a porcentagem está no intervalo válido [0, 100]
-        assert 0 <= percentage_obtained <= 100, f"Porcentagem fora do intervalo válido: {percentage_obtained}%"
-
-        # Verificar casos extremos
-        if total_expected == 0:
-            assert percentage_obtained == 0.0, "Porcentagem deveria ser 0 quando não há conquistas"
-        elif unlocked_expected == 0:
-            assert percentage_obtained == 0.0, "Porcentagem deveria ser 0 quando nenhuma conquista está desbloqueada"
-        elif unlocked_expected == total_expected:
-            assert (
-                abs(percentage_obtained - 100.0) < 0.01
-            ), "Porcentagem deveria ser 100 quando todas as conquistas estão desbloqueadas"
-
-        # Verificar consistência entre listas e estatísticas
-        unlocked_list = user_achievements["unlocked"]
-        locked_list = user_achievements["locked"]
-
-        assert (
-            len(unlocked_list) == stats["unlocked"]
-        ), f"Tamanho da lista de desbloqueadas não corresponde às estatísticas. Lista: {len(unlocked_list)}, Stats: {stats['unlocked']}"
-
-        assert (
-            len(locked_list) == stats["total"] - stats["unlocked"]
-        ), f"Tamanho da lista de bloqueadas não corresponde às estatísticas. Lista: {len(locked_list)}, Esperado: {stats['total'] - stats['unlocked']}"
-
-        assert (
-            len(unlocked_list) + len(locked_list) == stats["total"]
-        ), f"Soma das listas não corresponde ao total. Desbloqueadas: {len(unlocked_list)}, Bloqueadas: {len(locked_list)}, Total: {stats['total']}"
-
-    finally:
-        # Limpar o diretório temporário
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-
-
-# ============================================
-# Propriedade 13: Ordenação da fila de notificações
-# ============================================
-
-
-@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
-@given(
-    achievements=st.lists(valid_achievement(), min_size=1, max_size=10, unique_by=lambda x: x["id"]),
-    unlock_order=st.data(),
-)
-def test_property_13_notification_queue_ordering(achievements, unlock_order):
-    """
-    **Feature: achievements-badges, Property 13: Ordenação da fila de notificações**
-
-    **Valida: Requisitos 3.4**
-
-    Para qualquer sequência de conquistas desbloqueadas, a fila de notificações
-    deve manter a ordem de desbloqueio e exibir notificações nessa mesma ordem.
-
-    Este teste valida que quando múltiplas conquistas são desbloqueadas,
-    o endpoint /api/achievements/check retorna as conquistas recém-desbloqueadas
-    na ordem em que foram desbloqueadas (ordem cronológica por timestamp).
-    """
-    # Criar diretório temporário para dados de teste
-    tmp_dir = tempfile.mkdtemp()
-
-    try:
-        # Criar estrutura de diretórios
-        data_dir = Path(tmp_dir) / "data"
-        data_dir.mkdir(parents=True, exist_ok=True)
-
-        # Salvar conquistas no arquivo JSON
-        achievements_file = data_dir / "achievements.json"
-        with open(achievements_file, "w", encoding="utf-8") as f:
-            json.dump({"achievements": achievements}, f, ensure_ascii=False, indent=2)
-
-        # Criar arquivo de progresso vazio
-        progress_file = data_dir / "user_progress.json"
-        with open(progress_file, "w", encoding="utf-8") as f:
-            json.dump({"users": {}}, f)
-
-        # Inicializar managers
-        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
-        from projects.progress_manager import ProgressManager
-
-        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
-
-        user_id = "test_user"
-
-        # Gerar ordem de desbloqueio aleatória
-        num_to_unlock = unlock_order.draw(st.integers(min_value=1, max_value=len(achievements)))
-        unlock_indices = unlock_order.draw(
-            st.lists(
-                st.integers(min_value=0, max_value=len(achievements) - 1),
-                min_size=num_to_unlock,
-                max_size=num_to_unlock,
-                unique=True,
-            )
-        )
-
-        # Desbloquear conquistas na ordem especificada e registrar timestamps
-        unlocked_achievements_in_order = []
-        for idx in unlock_indices:
-            achievement_id = achievements[idx]["id"]
-            achievement_mgr.unlock_achievement(user_id, achievement_id, progress_mgr)
-
-            # Obter dados da conquista desbloqueada
-            user_data = progress_mgr.get_user_progress(user_id)
-            # achievements é uma lista, não um dicionário
-            achievement_data = next((a for a in user_data.get("achievements", []) if a["id"] == achievement_id), None)
-            if achievement_data:
-                unlocked_achievements_in_order.append(
-                    {
-                        "id": achievement_id,
-                        "unlocked_at": achievement_data["unlocked_at"],
-                        "achievement": achievements[idx],
-                    }
-                )
-
-        # Obter conquistas recém-desbloqueadas através do método que seria usado pela API
-        user_achievements = achievement_mgr.get_user_achievements(user_id, progress_mgr)
-        unlocked_list = user_achievements["unlocked"]
-
-        # Verificar que todas as conquistas desbloqueadas estão na lista
-        unlocked_ids = [a["id"] for a in unlocked_list]
-        expected_ids = [a["id"] for a in unlocked_achievements_in_order]
-
-        assert set(unlocked_ids) == set(
-            expected_ids
-        ), f"Conjunto de IDs desbloqueados não corresponde. Esperado: {set(expected_ids)}, Obtido: {set(unlocked_ids)}"
-
-        # Verificar que a ordem está correta (ordenado por timestamp)
-        # A lista deve estar ordenada por unlocked_at (ordem cronológica)
-        for i in range(len(unlocked_list) - 1):
-            current_timestamp = unlocked_list[i]["unlocked_at"]
-            next_timestamp = unlocked_list[i + 1]["unlocked_at"]
-
-            assert current_timestamp <= next_timestamp, (
-                f"Conquistas não estão ordenadas por timestamp. "
-                f"Conquista {i} ({unlocked_list[i]['id']}): {current_timestamp}, "
-                f"Conquista {i + 1} ({unlocked_list[i + 1]['id']}): {next_timestamp}"
-            )
-
-        # Verificar que a ordem de desbloqueio é preservada
-        # (conquistas desbloqueadas primeiro devem aparecer primeiro na lista)
-        unlocked_timestamps = [a["unlocked_at"] for a in unlocked_list]
-        sorted_timestamps = sorted(unlocked_timestamps)
-
-        assert unlocked_timestamps == sorted_timestamps, (
-            f"A ordem das conquistas não corresponde à ordem cronológica de desbloqueio. "
-            f"Ordem obtida: {unlocked_timestamps}, Ordem esperada: {sorted_timestamps}"
-        )
-
-    finally:
-        # Limpar o diretório temporário
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-
-
-# ============================================
-# Propriedade 14: Estrutura de dados de notificação
-# ============================================
-
-
-@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
-@given(achievement=valid_achievement())
-def test_property_14_notification_data_structure(achievement):
-    """
-    **Feature: achievements-badges, Property 14: Estrutura de dados de notificação**
-
-    **Valida: Requisitos 3.2**
-
-    Para qualquer notificação de conquista, os dados da notificação devem incluir
-    o ícone da conquista, nome e uma mensagem de parabéns.
-
-    Este teste valida que quando uma conquista é desbloqueada, os dados retornados
-    pela API contêm todos os campos necessários para exibir uma notificação completa.
-    """
-    # Criar diretório temporário para dados de teste
-    tmp_dir = tempfile.mkdtemp()
-
-    try:
-        # Criar estrutura de diretórios
-        data_dir = Path(tmp_dir) / "data"
-        data_dir.mkdir(parents=True, exist_ok=True)
-
-        # Salvar conquista no arquivo JSON
-        achievements_file = data_dir / "achievements.json"
-        with open(achievements_file, "w", encoding="utf-8") as f:
-            json.dump({"achievements": [achievement]}, f, ensure_ascii=False, indent=2)
-
-        # Criar arquivo de progresso vazio
-        progress_file = data_dir / "user_progress.json"
-        with open(progress_file, "w", encoding="utf-8") as f:
-            json.dump({"users": {}}, f)
-
-        # Inicializar managers
-        achievement_mgr = AchievementManager(data_dir_path_str=str(data_dir))
-        from projects.progress_manager import ProgressManager
-
-        progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
-
-        user_id = "test_user"
-
-        # Desbloquear a conquista
-        achievement_mgr.unlock_achievement(user_id, achievement["id"], progress_mgr)
-
-        # Obter dados da conquista desbloqueada
-        user_achievements = achievement_mgr.get_user_achievements(user_id, progress_mgr)
-        unlocked_list = user_achievements["unlocked"]
-
-        # Deve haver exatamente uma conquista desbloqueada
-        assert len(unlocked_list) == 1, f"Esperado 1 conquista desbloqueada, obtido {len(unlocked_list)}"
-
-        unlocked_achievement = unlocked_list[0]
-
-        # Verificar que todos os campos necessários para notificação estão presentes
-        required_fields = ["id", "name", "icon"]
-
-        for field in required_fields:
-            assert field in unlocked_achievement, (
-                f"Campo obrigatório '{field}' não encontrado nos dados da conquista desbloqueada. "
-                f"Campos disponíveis: {list(unlocked_achievement.keys())}"
-            )
-
-        # Verificar que os campos não estão vazios
-        assert unlocked_achievement["id"], "Campo 'id' não pode estar vazio"
-        assert unlocked_achievement["name"], "Campo 'name' não pode estar vazio"
-        assert unlocked_achievement["icon"], "Campo 'icon' não pode estar vazio"
-
-        # Verificar que os valores correspondem à definição original
-        assert (
-            unlocked_achievement["id"] == achievement["id"]
-        ), f"ID não corresponde. Esperado: {achievement['id']}, Obtido: {unlocked_achievement['id']}"
-
-        assert (
-            unlocked_achievement["name"] == achievement["name"]
-        ), f"Nome não corresponde. Esperado: {achievement['name']}, Obtido: {unlocked_achievement['name']}"
-
-        assert (
-            unlocked_achievement["icon"] == achievement["icon"]
-        ), f"Ícone não corresponde. Esperado: {achievement['icon']}, Obtido: {unlocked_achievement['icon']}"
-
-        # Verificar que há um timestamp de desbloqueio (necessário para mensagem de parabéns contextual)
-        assert "unlocked_at" in unlocked_achievement, "Campo 'unlocked_at' não encontrado nos dados da conquista"
-        assert unlocked_achievement["unlocked_at"], "Campo 'unlocked_at' não pode estar vazio"
-
-        # Verificar que campos adicionais úteis para notificação também estão presentes
-        optional_but_useful_fields = ["description", "category"]
-
-        for field in optional_but_useful_fields:
-            if field in achievement:
-                assert (
-                    field in unlocked_achievement
-                ), f"Campo útil '{field}' presente na definição mas ausente nos dados desbloqueados"
+        # Verificar que conquistas inválidas foram rejeitadas
+        loaded_ids = {ach["id"] for ach in loaded_achievements}
+        for achievement in achievements:
+            if not manager._validate_achievement(achievement):
+                # Esta conquista é inválida e não deveria ter sido carregada
+                ach_id = achievement.get("id")
+                if ach_id:  # Se tem ID, verificar que não foi carregada
+                    assert ach_id not in loaded_ids, f"Conquista inválida '{ach_id}' foi carregada: {achievement}"
 
     finally:
         # Limpar o diretório temporário

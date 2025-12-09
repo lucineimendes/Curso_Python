@@ -5,8 +5,10 @@ Este módulo gerencia o progresso do usuário através dos cursos,
 lições e exercícios, incluindo estatísticas e histórico.
 """
 
+import copy
 import json
 import logging
+import threading
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
@@ -29,6 +31,7 @@ class ProgressManager:
         Args:
             data_dir_path_str (str): Caminho para o diretório de dados.
         """
+        self._lock = threading.Lock()  # Lock para thread-safety
         self.base_dir = Path(__file__).resolve().parent
         self.data_dir = self.base_dir / data_dir_path_str
         self.progress_file = self.data_dir / "user_progress.json"
@@ -59,7 +62,22 @@ class ProgressManager:
 
         try:
             with open(self.progress_file, encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+
+            # Validar estrutura básica dos dados
+            if not isinstance(data, dict):
+                logger.error("Dados de progresso não são um dicionário. Retornando dados vazios.")
+                return {"users": {}}
+
+            # Garantir que 'users' existe e é um dicionário
+            if "users" not in data:
+                logger.warning("Campo 'users' não encontrado nos dados de progresso. Inicializando vazio.")
+                data["users"] = {}
+            elif not isinstance(data["users"], dict):
+                logger.error("Campo 'users' não é um dicionário. Reinicializando.")
+                data["users"] = {}
+
+            return data
         except json.JSONDecodeError:
             logger.error(f"Erro ao decodificar JSON de '{self.progress_file}'", exc_info=True)
             return {"users": {}}
@@ -68,11 +86,18 @@ class ProgressManager:
             return {"users": {}}
 
     def _save_progress(self):
-        """Salva dados de progresso no arquivo JSON."""
+        """Salva dados de progresso no arquivo JSON.
+
+        Thread-safe: usa lock e deep copy para evitar erros de concorrência.
+        """
         try:
-            self.progress_data["last_updated"] = datetime.now().isoformat()
+            with self._lock:
+                self.progress_data["last_updated"] = datetime.now().isoformat()
+                # Fazer deep copy para evitar 'dictionary changed size during iteration'
+                data_to_save = copy.deepcopy(self.progress_data)
+
             with open(self.progress_file, "w", encoding="utf-8") as f:
-                json.dump(self.progress_data, f, indent=4, ensure_ascii=False)
+                json.dump(data_to_save, f, indent=4, ensure_ascii=False)
             logger.info(f"Progresso salvo em {self.progress_file}")
         except OSError as e:
             logger.error(f"Erro ao salvar progresso: {e}", exc_info=True)
@@ -87,8 +112,21 @@ class ProgressManager:
         Returns:
             dict: Dados de progresso do usuário.
         """
-        if user_id not in self.progress_data.get("users", {}):
-            self.progress_data.setdefault("users", {})[user_id] = {
+        # Garantir que progress_data tem estrutura válida
+        if not isinstance(self.progress_data, dict):
+            logger.warning("progress_data não é um dicionário. Inicializando com estrutura vazia.")
+            self.progress_data = {"users": {}}
+
+        if "users" not in self.progress_data:
+            logger.warning("Campo 'users' faltando em progress_data. Inicializando.")
+            self.progress_data["users"] = {}
+
+        if not isinstance(self.progress_data["users"], dict):
+            logger.warning("Campo 'users' não é um dicionário. Reinicializando.")
+            self.progress_data["users"] = {}
+
+        if user_id not in self.progress_data["users"]:
+            self.progress_data["users"][user_id] = {
                 "courses": {},
                 "total_lessons_completed": 0,
                 "total_exercises_completed": 0,
@@ -97,6 +135,53 @@ class ProgressManager:
                 "created_at": datetime.now().isoformat(),
             }
             self._save_progress()
+        else:
+            # Validar e corrigir dados do usuário se necessário
+            user_data = self.progress_data["users"][user_id]
+
+            # Se user_data não é um dicionário, reinicializar
+            if not isinstance(user_data, dict):
+                logger.warning(f"Dados do usuário '{user_id}' corrompidos. Reinicializando.")
+                self.progress_data["users"][user_id] = {
+                    "courses": {},
+                    "total_lessons_completed": 0,
+                    "total_exercises_completed": 0,
+                    "achievements": [],
+                    "achievement_stats": {
+                        "perfect_exercises_count": 0,
+                        "lessons_in_day": 0,
+                        "last_activity_date": None,
+                    },
+                    "created_at": datetime.now().isoformat(),
+                }
+                self._save_progress()
+            else:
+                # Validar campos obrigatórios
+                if "achievements" not in user_data or not isinstance(user_data["achievements"], list):
+                    logger.warning(
+                        f"Campo 'achievements' inválido para usuário '{user_id}'. Inicializando com lista vazia."
+                    )
+                    user_data["achievements"] = []
+
+                if "achievement_stats" not in user_data or not isinstance(user_data["achievement_stats"], dict):
+                    logger.warning(
+                        f"Campo 'achievement_stats' inválido para usuário '{user_id}'. Inicializando com valores padrão."
+                    )
+                    user_data["achievement_stats"] = {
+                        "perfect_exercises_count": 0,
+                        "lessons_in_day": 0,
+                        "last_activity_date": None,
+                    }
+
+                # Validar entradas de achievements
+                valid_achievements = []
+                for ach in user_data.get("achievements", []):
+                    if isinstance(ach, dict) and "id" in ach:
+                        valid_achievements.append(ach)
+                    else:
+                        logger.warning(f"Entrada de conquista inválida ignorada para usuário '{user_id}': {ach}")
+
+                user_data["achievements"] = valid_achievements
 
         return self.progress_data["users"][user_id]
 

@@ -57,6 +57,11 @@ docs/
 ### Guias Práticos
 
 - **[guides/GUIDE_UV_SETUP.md](guides/GUIDE_UV_SETUP.md)** - Guia de uso do gerenciador de pacotes UV
+- **[guides/MIGRATION_USER_PROGRESS.md](guides/MIGRATION_USER_PROGRESS.md)** - Guia de migração de dados de progresso do usuário
+  - ✅ **Completo**: Script de migração e testes
+  - Adiciona campos de conquistas
+  - Preserva dados existentes
+  - Backup automático
 
 ### Implementações
 

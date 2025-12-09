@@ -170,10 +170,26 @@ class ConditionEvaluator:
 
         strategy = self._strategies.get(condition_type)
         if not strategy:
-            logger.warning(f"Tipo de condição desconhecido: {condition_type}")
+            logger.warning(
+                f"Tipo de condição desconhecido: condition_type='{condition_type}', "
+                f"available_types={list(self._strategies.keys())}"
+            )
             return False
 
-        return strategy.evaluate(condition, progress_data)
+        try:
+            result = strategy.evaluate(condition, progress_data)
+            logger.debug(
+                f"Condição avaliada: condition_type='{condition_type}', "
+                f"condition_value={condition.get('value', condition.get('course_id', 'N/A'))}, "
+                f"result={result}"
+            )
+            return result
+        except Exception as e:
+            logger.error(
+                f"Erro ao avaliar condição: condition_type='{condition_type}', condition={condition}, error='{str(e)}'",
+                exc_info=True,
+            )
+            return False
 
     def register_strategy(self, condition_type: str, strategy: ConditionEvaluatorStrategy):
         """

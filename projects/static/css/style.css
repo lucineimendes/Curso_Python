@@ -360,3 +360,365 @@ hr {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--accent-color);
 }
+
+/* Badge Counter & Tooltip */
+#badge-counter {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    background: var(--primary-gradient) !important;
+    color: white !important;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#badge-counter:hover {
+    transform: scale(1.1);
+}
+
+#badge-counter.pulse {
+    animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.badge-tooltip {
+    position: fixed;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    padding: 1rem;
+    min-width: 280px;
+    max-width: 320px;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tooltip-header {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tooltip-achievements {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tooltip-achievement {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background: var(--bg-tertiary);
+    transition: all 0.2s ease;
+}
+
+.tooltip-achievement:hover {
+    background: var(--bg-primary);
+    transform: translateX(4px);
+}
+
+.tooltip-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.tooltip-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tooltip-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tooltip-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.125rem;
+}
+
+.tooltip-empty {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 1rem 0;
+    font-style: italic;
+}
+
+/* Achievement Notifications */
+.achievement-notification {
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    min-width: 320px;
+    max-width: 400px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+}
+
+.achievement-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.achievement-notification.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.achievement-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.achievement-notification-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+    animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.achievement-notification-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.achievement-notification-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-color);
+    margin-bottom: 0.25rem;
+}
+
+.achievement-notification-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.achievement-notification-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Toast Container */
+#achievement-toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+#achievement-toast-container .achievement-notification {
+    pointer-events: all;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .achievement-notification {
+        min-width: 280px;
+        max-width: calc(100vw - 2rem);
+    }
+
+    #achievement-toast-container {
+        left: 1rem;
+        right: 1rem;
+    }
+}
+
+/* Badge Counter - Contador de Conquistas na Navegação */
+#badge-counter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 50px;
+    background: var(--primary-gradient);
+    color: white;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#badge-counter:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+#badge-counter.pulse {
+    animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+/* Badge Tooltip */
+.badge-tooltip {
+    position: fixed;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    padding: 1rem;
+    min-width: 280px;
+    max-width: 320px;
+    z-index: 10000;
+    opacity: 0;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tooltip-header {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tooltip-empty {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.tooltip-achievements {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tooltip-achievement {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background-color: var(--bg-tertiary);
+    transition: background-color 0.2s ease;
+}
+
+.tooltip-achievement:hover {
+    background-color: var(--border-color);
+}
+
+.tooltip-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.tooltip-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tooltip-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tooltip-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Responsividade do Badge Tooltip */
+@media (max-width: 768px) {
+    .badge-tooltip {
+        min-width: 240px;
+        max-width: calc(100vw - 2rem);
+        left: 1rem !important;
+        right: 1rem !important;
+    }
+}

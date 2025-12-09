@@ -1,153 +1,133 @@
 /**
- * Achievement Notification System
- * Handles displaying achievement unlock notifications with animations and queueing
+ * AchievementNotification - Sistema de notificações de conquistas
+ * Exibe notificações visuais quando conquistas são desbloqueadas
  */
-
 class AchievementNotification {
     constructor() {
         this.queue = [];
         this.isShowing = false;
-        this.notificationElement = null;
-        this.AUTO_DISMISS_DELAY = 5000; // 5 seconds
-        this.FADE_IN_DURATION = 300; // ms
-        this.FADE_OUT_DURATION = 300; // ms
-        this.QUEUE_DELAY = 500; // ms between notifications
+        this.currentNotification = null;
     }
 
     /**
-     * Show a notification for an unlocked achievement
-     * @param {Object} achievement - Achievement data with id, name, description, icon
+     * Exibe uma notificação de conquista
+     * @param {Object} achievement - Dados da conquista desbloqueada
      */
     show(achievement) {
-        // Add to queue
         this.queue.push(achievement);
-
-        // Process queue if not already showing
         if (!this.isShowing) {
-            this._processQueue();
+            this.showNext();
         }
     }
 
     /**
-     * Process the notification queue sequentially
+     * Exibe a próxima notificação da fila
      */
-    async _processQueue() {
-        while (this.queue.length > 0) {
-            this.isShowing = true;
-            const achievement = this.queue.shift();
-            await this._displayNotification(achievement);
-
-            // Delay before next notification
-            if (this.queue.length > 0) {
-                await this._delay(this.QUEUE_DELAY);
-            }
+    showNext() {
+        if (this.queue.length === 0) {
+            this.isShowing = false;
+            return;
         }
-        this.isShowing = false;
+
+        this.isShowing = true;
+        const achievement = this.queue.shift();
+        this.displayNotification(achievement);
     }
 
     /**
-     * Display a single notification with animations
-     * @param {Object} achievement - Achievement data
+     * Cria e exibe o elemento de notificação
+     * @param {Object} achievement - Dados da conquista
      */
-    async _displayNotification(achievement) {
-        // Create notification element
-        this.notificationElement = this._createNotificationElement(achievement);
-        document.body.appendChild(this.notificationElement);
-
-        // Fade in
-        await this._delay(10); // Small delay for DOM to update
-        this.notificationElement.classList.add('show');
-
-        // Auto-dismiss after delay
-        await this._delay(this.AUTO_DISMISS_DELAY);
-
-        // Fade out
-        await this._dismissNotification();
-    }
-
-    /**
-     * Create the notification DOM element
-     * @param {Object} achievement - Achievement data
-     * @returns {HTMLElement} Notification element
-     */
-    _createNotificationElement(achievement) {
+    displayNotification(achievement) {
+        // Criar elemento de notificação
         const notification = document.createElement('div');
         notification.className = 'achievement-notification';
-
         notification.innerHTML = `
             <div class="achievement-notification-content">
-                <div class="achievement-notification-icon">${achievement.icon || '🏆'}</div>
+                <div class="achievement-notification-icon">${achievement.icon}</div>
                 <div class="achievement-notification-text">
                     <div class="achievement-notification-title">Conquista Desbloqueada!</div>
                     <div class="achievement-notification-name">${achievement.name}</div>
+                    <div class="achievement-notification-description">${achievement.description}</div>
                 </div>
             </div>
         `;
 
-        // Add click to dismiss
-        notification.addEventListener('click', () => {
-            this._dismissNotification();
-        });
+        // Adicionar ao container
+        const container = document.getElementById('achievement-toast-container');
+        if (container) {
+            container.appendChild(notification);
+            this.currentNotification = notification;
 
-        return notification;
-    }
+            // Animar entrada
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
 
-    /**
-     * Dismiss the current notification with fade out animation
-     */
-    async _dismissNotification() {
-        if (!this.notificationElement) return;
-
-        this.notificationElement.classList.remove('show');
-        await this._delay(this.FADE_OUT_DURATION);
-
-        if (this.notificationElement && this.notificationElement.parentNode) {
-            this.notificationElement.parentNode.removeChild(this.notificationElement);
+            // Auto-dismiss após 5 segundos
+            setTimeout(() => {
+                this.hideNotification(notification);
+            }, 5000);
         }
-        this.notificationElement = null;
     }
 
     /**
-     * Check for newly unlocked achievements and show notifications
-     * @param {string} userId - User ID (default: 'default')
+     * Esconde e remove a notificação
+     * @param {HTMLElement} notification - Elemento da notificação
      */
-    async checkNewAchievements(userId = 'default') {
+    hideNotification(notification) {
+        notification.classList.remove('show');
+        notification.classList.add('hide');
+
+        // Remover do DOM após animação
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+
+            // Mostrar próxima notificação após delay
+            setTimeout(() => {
+                this.showNext();
+            }, 500);
+        }, 300);
+    }
+
+    /**
+     * Verifica novas conquistas e exibe notificações
+     */
+    async checkNewAchievements() {
         try {
             const response = await fetch('/api/achievements/check', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ user_id: userId })
+                body: JSON.stringify({
+                    user_id: 'default'
+                }),
             });
 
-            if (!response.ok) {
-                console.error('Failed to check achievements:', response.statusText);
-                return;
-            }
+            if (response.ok) {
+                const data = await response.json();
 
-            const data = await response.json();
+                if (data.success && data.newly_unlocked && data.newly_unlocked.length > 0) {
+                    data.newly_unlocked.forEach(achievement => {
+                        this.show(achievement);
+                    });
 
-            if (data.success && data.newly_unlocked && data.newly_unlocked.length > 0) {
-                // Show notifications for each newly unlocked achievement
-                data.newly_unlocked.forEach(achievement => {
-                    this.show(achievement);
-                });
+                    // Atualizar contador de badges
+                    if (window.badgeCounter) {
+                        window.badgeCounter.forceUpdate();
+                    }
+                }
             }
         } catch (error) {
-            console.error('Error checking achievements:', error);
+            console.error('Erro ao verificar conquistas:', error);
         }
-    }
-
-    /**
-     * Utility function to create a delay promise
-     * @param {number} ms - Milliseconds to delay
-     * @returns {Promise} Promise that resolves after delay
-     */
-    _delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
 
-// Create global instance
-window.achievementNotification = new AchievementNotification();
+// Inicializar quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+    window.achievementNotifier = new AchievementNotification();
+});

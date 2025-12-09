@@ -151,7 +151,7 @@
   - **Propriedade 14: Estrutura de dados de notificação**
   - **Valida: Requisitos 3.2**
 
-- [ ] 12. Implementar contador de badges na navegação
+- [x] 12. Implementar contador de badges na navegação
   - Criar `projects/static/js/badge_counter.js`
   - Implementar classe `BadgeCounter`
   - Adicionar método `updateCount()` para buscar e exibir contagem de desbloqueadas
@@ -160,65 +160,65 @@
   - Adicionar handler de clique para navegar à página de conquistas
   - _Requisitos: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 13. Integrar verificações de conquistas nos fluxos existentes
+- [x] 13. Integrar verificações de conquistas nos fluxos existentes
   - Atualizar fluxo de conclusão de lição para disparar verificação de conquistas
   - Atualizar fluxo de conclusão de exercício para disparar verificação de conquistas
   - Chamar `checkNewAchievements()` após atualizações de progresso
   - Atualizar contador de badges após novas conquistas
   - _Requisitos: 2.1, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7_
 
-- [ ] 14. Adicionar link de navegação para página de conquistas
+- [x] 14. Adicionar link de navegação para página de conquistas
   - Atualizar navegação do template base para incluir link "Conquistas"
   - Adicionar indicador de ícone/badge na navegação
   - Garantir que link seja acessível de todas as páginas
   - _Requisitos: 7.3_
 
-- [ ] 15. Implementar tratamento de erros e validação
+- [x] 15. Implementar tratamento de erros e validação
   - Adicionar tratamento de erros para achievements.json corrompido
   - Adicionar tratamento de erros para dados de progresso do usuário corrompidos
   - Implementar degradação graciosa quando conquistas falham ao carregar
   - Adicionar validação para dados de conquista na leitura
   - _Requisitos: 5.3, 8.4, 8.5_
 
-- [ ] 15.1 Escrever teste de propriedade para tratamento de dados corrompidos
+- [x] 15.1 Escrever teste de propriedade para tratamento de dados corrompidos
   - **Propriedade 16: Tratamento gracioso de dados corrompidos**
   - **Valida: Requisitos 8.4**
 
-- [ ] 15.2 Escrever teste de propriedade para validação de dados na leitura
+- [x] 15.2 Escrever teste de propriedade para validação de dados na leitura
   - **Propriedade 17: Validação de dados de conquista na leitura**
   - **Valida: Requisitos 8.5**
 
-- [ ] 16. Implementar migração de dados para usuários existentes
+- [x] 16. Implementar migração de dados para usuários existentes
   - Criar script de migração para adicionar campo achievements ao user_progress.json existente
   - Adicionar campo achievement_stats com valores padrão
   - Testar migração com dados de teste existentes
   - Documentar processo de migração
   - _Requisitos: 8.1_
 
-- [ ] 16.1 Escrever testes unitários para migração de dados
+- [x] 16.1 Escrever testes unitários para migração de dados
   - Testar que migração adiciona campo achievements
   - Testar que migração preserva dados existentes
   - Testar que migração trata campos faltando
   - _Requisitos: 8.1_
 
-- [ ] 17. Adicionar logging e monitoramento
+- [x] 17. Adicionar logging e monitoramento
   - Adicionar logging para desbloqueios de conquistas
   - Adicionar logging para erros de validação
   - Adicionar logging para erros de API
   - Registrar performance de verificação de conquistas
   - _Requisitos: 5.3, 6.4_
 
-- [ ] 18. Checkpoint final - Garantir que todos os testes passem
+- [x] 18. Checkpoint final - Garantir que todos os testes passem
   - Garantir que todos os testes passem, perguntar ao usuário se surgirem questões.
 
-- [ ] 19. Escrever testes de integração
+- [x] 19. Escrever testes de integração
   - Testar fluxo completo: conclusão de lição → verificação de conquista → desbloqueio → notificação
   - Testar endpoints da API com cliente de teste Flask
   - Testar cenários de desbloqueio concorrente
   - Testar casos extremos: sem conquistas, todas as conquistas, limites exatos
   - _Requisitos: Todos_
 
-- [ ] 20. Testes de performance e otimização
+- [x] 20. Testes de performance e otimização
   - Testar performance de carregamento de conquistas
   - Testar tempos de resposta da API
   - Otimizar avaliação de condições se necessário
