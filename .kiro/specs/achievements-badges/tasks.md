@@ -188,14 +188,14 @@
   - **Propriedade 17: Validação de dados de conquista na leitura**
   - **Valida: Requisitos 8.5**
 
-- [ ] 16. Implementar migração de dados para usuários existentes
+- [x] 16. Implementar migração de dados para usuários existentes
   - Criar script de migração para adicionar campo achievements ao user_progress.json existente
   - Adicionar campo achievement_stats com valores padrão
   - Testar migração com dados de teste existentes
   - Documentar processo de migração
   - _Requisitos: 8.1_
 
-- [ ] 16.1 Escrever testes unitários para migração de dados
+- [x] 16.1 Escrever testes unitários para migração de dados
   - Testar que migração adiciona campo achievements
   - Testar que migração preserva dados existentes
   - Testar que migração trata campos faltando
