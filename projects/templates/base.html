@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Curso de Python{% endblock %}</title>
+
+    <!-- Meta tags para modo de leitura -->
+    <meta name="description" content="{% block description %}Plataforma interativa para aprender Python do básico ao avançado com exercícios práticos{% endblock %}">
+    <meta name="author" content="Curso de Python">
+
+    <!-- Open Graph para compartilhamento -->
+    <meta property="og:title" content="{% block og_title %}{% block title %}Curso de Python{% endblock %}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% block description %}Plataforma interativa para aprender Python{% endblock %}{% endblock %}">
+    <meta property="og:type" content="article">
+
+    <!-- Schema.org para artigos educacionais -->
+    <meta itemprop="name" content="{% block title %}Curso de Python{% endblock %}">
+    <meta itemprop="description" content="{% block description %}Plataforma interativa para aprender Python{% endblock %}">
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
