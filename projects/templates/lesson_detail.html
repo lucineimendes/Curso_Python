@@ -8,6 +8,10 @@
 
 {% block og_description %}{{ lesson.description }}{% endblock %}
 
+{% block schema_name %}{{ lesson.title }}{% endblock %}
+
+{% block schema_description %}{{ lesson.description }}{% endblock %}
+
 {% block content %}
 <article class="container mt-4">
     <header>
