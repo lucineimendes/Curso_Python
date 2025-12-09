@@ -1157,3 +1157,268 @@ def test_property_12_api_error_status_codes(user_id):
     finally:
         # Limpar o diretório temporário
         shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# Estratégias para gerar dados corrompidos
+
+
+@st.composite
+def corrupted_json_data(draw):
+    """Gera dados JSON corrompidos de várias formas."""
+    corruption_type = draw(
+        st.sampled_from(
+            [
+                "invalid_json",
+                "not_dict",
+                "missing_achievements_key",
+                "achievements_not_list",
+                "mixed_valid_invalid",
+                "empty_string",
+                "null_value",
+            ]
+        )
+    )
+
+    if corruption_type == "invalid_json":
+        # JSON malformado que não pode ser parseado
+        return draw(st.sampled_from(['{"achievements": [', '{"achievements": }', "{invalid json", "null,", "[],"]))
+    elif corruption_type == "not_dict":
+        # JSON válido mas não é um dicionário
+        return json.dumps([1, 2, 3])
+    elif corruption_type == "missing_achievements_key":
+        # Dicionário válido mas sem chave 'achievements'
+        return json.dumps({"data": [], "other_key": "value"})
+    elif corruption_type == "achievements_not_list":
+        # Chave 'achievements' existe mas não é uma lista
+        return json.dumps({"achievements": "not a list"})
+    elif corruption_type == "mixed_valid_invalid":
+        # Lista com conquistas válidas e inválidas misturadas
+        valid_ach = {
+            "id": "valid_ach",
+            "name": "Valid",
+            "description": "Valid achievement",
+            "icon": "✓",
+            "category": "test",
+            "unlock_condition": {"type": "lesson_count", "value": 1},
+        }
+        invalid_ach = {"id": "invalid_ach"}  # Faltando campos obrigatórios
+        return json.dumps({"achievements": [valid_ach, invalid_ach]})
+    elif corruption_type == "empty_string":
+        return ""
+    elif corruption_type == "null_value":
+        return "null"
+
+    return "{}"
+
+
+@st.composite
+def corrupted_progress_data(draw):
+    """Gera dados de progresso corrompidos."""
+    corruption_type = draw(
+        st.sampled_from(
+            [
+                "missing_users_key",
+                "users_not_dict",
+                "user_data_not_dict",
+                "achievements_not_list",
+                "achievement_stats_not_dict",
+                "invalid_achievement_entry",
+                "missing_achievement_id",
+                "invalid_timestamp",
+            ]
+        )
+    )
+
+    if corruption_type == "missing_users_key":
+        return {"created_at": "2025-12-04T10:00:00"}
+    elif corruption_type == "users_not_dict":
+        return {"users": "not a dict"}
+    elif corruption_type == "user_data_not_dict":
+        return {"users": {"default": "not a dict"}}
+    elif corruption_type == "achievements_not_list":
+        return {"users": {"default": {"achievements": "not a list"}}}
+    elif corruption_type == "achievement_stats_not_dict":
+        return {"users": {"default": {"achievements": [], "achievement_stats": "not a dict"}}}
+    elif corruption_type == "invalid_achievement_entry":
+        return {"users": {"default": {"achievements": [{"invalid": "entry"}]}}}
+    elif corruption_type == "missing_achievement_id":
+        return {"users": {"default": {"achievements": [{"unlocked_at": "2025-12-04T10:00:00"}]}}}
+    elif corruption_type == "invalid_timestamp":
+        return {"users": {"default": {"achievements": [{"id": "test", "unlocked_at": "invalid timestamp"}]}}}
+
+    return {"users": {}}
+
+
+# **Feature: achievements-badges, Property 16: Tratamento gracioso de dados corrompidos**
+# **Valida: Requisitos 8.4**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=5000)
+@given(corrupted_data=corrupted_json_data())
+def test_property_16_graceful_corrupted_data_handling(corrupted_data):
+    """
+    Propriedade 16: Tratamento gracioso de dados corrompidos.
+
+    Para quaisquer dados de conquista corrompidos ou inválidos no progresso do usuário,
+    o sistema deve inicializar com dados de conquista vazios sem travar.
+
+    **Feature: achievements-badges, Property 16: Tratamento gracioso de dados corrompidos**
+    **Valida: Requisitos 8.4**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar arquivo de conquistas corrompido
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            f.write(corrupted_data)
+
+        # Tentar criar AchievementManager - não deve travar
+        try:
+            manager = AchievementManager(data_dir_path_str=str(data_dir))
+
+            # O manager deve ter sido criado com sucesso
+            assert manager is not None, "AchievementManager não foi criado"
+
+            # Deve ter inicializado com lista vazia ou lista válida
+            achievements = manager.get_all_achievements()
+            assert isinstance(achievements, list), f"get_all_achievements não retornou lista: {type(achievements)}"
+
+            # Se houver conquistas, todas devem ser válidas
+            for achievement in achievements:
+                assert manager._validate_achievement(achievement), f"Conquista inválida foi carregada: {achievement}"
+
+        except Exception as e:
+            # Se uma exceção foi lançada, o sistema não tratou graciosamente
+            raise AssertionError(
+                f"Sistema não tratou dados corrompidos graciosamente. "
+                f"Dados: {corrupted_data[:100]}..., Exceção: {type(e).__name__}: {e}"
+            ) from e
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 16: Tratamento gracioso de dados corrompidos (progresso)**
+# **Valida: Requisitos 8.4**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=5000)
+@given(corrupted_progress=corrupted_progress_data())
+def test_property_16_graceful_corrupted_progress_handling(corrupted_progress):
+    """
+    Propriedade 16: Tratamento gracioso de dados corrompidos (progresso do usuário).
+
+    Para quaisquer dados de progresso corrompidos, o sistema deve inicializar
+    com dados vazios sem travar.
+
+    **Feature: achievements-badges, Property 16: Tratamento gracioso de dados corrompidos**
+    **Valida: Requisitos 8.4**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        from projects.progress_manager import ProgressManager
+
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar arquivo de progresso corrompido
+        progress_file = data_dir / "user_progress.json"
+        with open(progress_file, "w", encoding="utf-8") as f:
+            json.dump(corrupted_progress, f)
+
+        # Tentar criar ProgressManager - não deve travar
+        try:
+            progress_mgr = ProgressManager(data_dir_path_str=str(data_dir))
+
+            # O manager deve ter sido criado com sucesso
+            assert progress_mgr is not None, "ProgressManager não foi criado"
+
+            # Deve conseguir obter progresso do usuário sem travar
+            user_progress = progress_mgr.get_user_progress("default")
+            assert isinstance(user_progress, dict), f"get_user_progress não retornou dict: {type(user_progress)}"
+
+            # Deve ter campos básicos
+            assert "achievements" in user_progress, "Campo 'achievements' não foi inicializado"
+            assert isinstance(
+                user_progress["achievements"], list
+            ), f"Campo 'achievements' não é lista: {type(user_progress['achievements'])}"
+
+        except Exception as e:
+            # Se uma exceção foi lançada, o sistema não tratou graciosamente
+            raise AssertionError(
+                f"Sistema não tratou dados de progresso corrompidos graciosamente. "
+                f"Dados: {corrupted_progress}, Exceção: {type(e).__name__}: {e}"
+            ) from e
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+# **Feature: achievements-badges, Property 17: Validação de dados de conquista na leitura**
+# **Valida: Requisitos 8.5**
+@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture], deadline=5000)
+@given(
+    achievements=st.lists(
+        st.one_of(valid_achievement(), invalid_achievement()), min_size=1, max_size=20, unique_by=lambda x: x.get("id")
+    )
+)
+def test_property_17_achievement_data_validation_on_read(achievements):
+    """
+    Propriedade 17: Validação de dados de conquista na leitura.
+
+    Para quaisquer dados de conquista lidos do armazenamento, se os dados são inválidos
+    (campos faltando, tipos errados), a função de validação deve detectar e rejeitá-los.
+
+    **Feature: achievements-badges, Property 17: Validação de dados de conquista na leitura**
+    **Valida: Requisitos 8.5**
+    """
+    # Criar diretório de dados temporário
+    tmp_dir = tempfile.mkdtemp()
+    try:
+        data_dir = Path(tmp_dir) / "data"
+        data_dir.mkdir()
+
+        # Criar arquivo de conquistas com mistura de válidas e inválidas
+        achievements_file = data_dir / "achievements.json"
+        with open(achievements_file, "w", encoding="utf-8") as f:
+            json.dump({"achievements": achievements}, f, ensure_ascii=False, indent=4)
+
+        # Criar AchievementManager e carregar conquistas
+        manager = AchievementManager(data_dir_path_str=str(data_dir))
+
+        # Obter conquistas carregadas
+        loaded_achievements = manager.get_all_achievements()
+
+        # Contar quantas conquistas eram válidas no input
+        valid_count = sum(1 for ach in achievements if manager._validate_achievement(ach))
+
+        # Verificar que apenas conquistas válidas foram carregadas
+        assert (
+            len(loaded_achievements) == valid_count
+        ), f"Número incorreto de conquistas carregadas. Esperado: {valid_count}, Obtido: {len(loaded_achievements)}"
+
+        # Verificar que todas as conquistas carregadas são válidas
+        for achievement in loaded_achievements:
+            assert manager._validate_achievement(achievement), f"Conquista inválida foi carregada: {achievement}"
+
+            # Verificar campos obrigatórios
+            required_fields = ["id", "name", "description", "icon", "unlock_condition"]
+            for field in required_fields:
+                assert field in achievement, f"Campo obrigatório '{field}' faltando em conquista: {achievement}"
+                assert achievement[field], f"Campo obrigatório '{field}' está vazio em conquista: {achievement}"
+
+        # Verificar que conquistas inválidas foram rejeitadas
+        loaded_ids = {ach["id"] for ach in loaded_achievements}
+        for achievement in achievements:
+            if not manager._validate_achievement(achievement):
+                # Esta conquista é inválida e não deveria ter sido carregada
+                ach_id = achievement.get("id")
+                if ach_id:  # Se tem ID, verificar que não foi carregada
+                    assert ach_id not in loaded_ids, f"Conquista inválida '{ach_id}' foi carregada: {achievement}"
+
+    finally:
+        # Limpar o diretório temporário
+        shutil.rmtree(tmp_dir, ignore_errors=True)
