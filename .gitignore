@@ -12,3 +12,4 @@ ENV/
 *.sqlite3
 instance/
 user_progress.json
+.agent/
