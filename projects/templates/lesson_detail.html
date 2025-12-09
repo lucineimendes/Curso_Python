@@ -81,9 +81,9 @@
     {% endif %}
 
     {% if lesson.summary %}
-    <section class="mt-4">
-        <h2>Resumo</h2>
-        <div>
+    <section class="mt-5 lesson-summary-section">
+        <h2><i class="bi bi-lightbulb me-2 text-warning"></i>Resumo da Lição</h2>
+        <div class="summary-content">
             {{ lesson.summary | safe }}
         </div>
     </section>

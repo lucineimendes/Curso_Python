@@ -197,10 +197,13 @@ a:hover {
 }
 
 .lead {
+    font-family: 'Libre Baskerville', serif;
     color: var(--text-secondary);
-    font-size: 1.25rem;
+    font-size: 1.35rem;     /* Aumentado para melhor leitura */
+    line-height: 1.8;
     position: relative;
     z-index: 1;
+    font-weight: 400;
 }
 
 /* Botões Modernos */
@@ -269,9 +272,16 @@ a:hover {
     color: var(--text-primary);
 }
 
-/* Code Blocks & Examples */
-pre, code, .CodeMirror {
-    font-family: 'Fira Code', 'Courier New', monospace;
+.list-group-item span {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Code Blocks & Examples - Global Premium Mono */
+pre, code, kbd, samp, .CodeMirror {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-variant-ligatures: normal;
 }
 
 pre {
@@ -729,9 +739,9 @@ hr {
 
 /* Melhorar legibilidade do conteúdo principal */
 article {
-    max-width: 800px;
+    max-width: 68ch; /* Padrão áureo para leitura confortável (65-75 caracteres) */
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 4rem 1.5rem; /* Margens generosas para foco */
 }
 
 article header {
@@ -739,17 +749,21 @@ article header {
 }
 
 article h1 {
-    font-size: 2.5rem;
+    font-family: 'Outfit', sans-serif; /* Manter headings Sans-Serif para contraste */
+    font-size: 3rem;
     line-height: 1.2;
-    margin-bottom: 1rem;
-    font-weight: 700;
+    margin-bottom: 2rem;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
 }
 
 article .lead {
-    font-size: 1.25rem;
-    line-height: 1.6;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.5rem;
+    line-height: 1.8;
     color: var(--text-secondary);
-    margin-bottom: 1rem;
+    margin-bottom: 3rem;
+    font-weight: 400;
 }
 
 article section {
@@ -757,10 +771,14 @@ article section {
 }
 
 article section h2 {
-    font-size: 1.75rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    margin-top: 4rem; /* Mais respiro antes de novas seções */
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    border-bottom: 2px solid var(--accent-color); /* Indicador visual de seção */
+    padding-bottom: 0.5rem;
+    display: inline-block;
 }
 
 article section h3 {
@@ -770,41 +788,56 @@ article section h3 {
     font-weight: 600;
 }
 
-/* Melhorar parágrafos para leitura */
+/* Tipografia Serifada para o corpo do texto - Leitura Imersiva */
 article p {
-    font-size: 1.125rem;
-    line-height: 1.8;
-    margin-bottom: 1.25rem;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.25rem; /* 20px - Excelente para leitura web moderna */
+    line-height: 1.9; /* Entrelinha arejada */
+    margin-bottom: 2rem;
     color: var(--text-primary);
 }
 
 /* Listas mais legíveis */
 article ul,
 article ol {
-    font-size: 1.125rem;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.25rem;
+    line-height: 1.9;
+    margin-bottom: 2rem;
     padding-left: 2rem;
 }
 
 article li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    position: relative;
 }
 
-/* Código mais destacado */
+/* Código Premium */
 article pre {
-    background-color: var(--code-bg);
-    color: var(--code-text);
-    padding: 1.5rem;
-    border-radius: 8px;
-    overflow-x: auto;
-    margin: 1.5rem 0;
-    font-size: 0.95rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
     line-height: 1.6;
+    background-color: #1e1e1e; /* Fundo escuro padrão para código */
+    color: #d4d4d4;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin: 2.5rem 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 article code {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    background-color: rgba(99, 102, 241, 0.1); /* Touch de cor da marca */
+    color: var(--accent-color);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+}
+article pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
 }
 
 /* Melhorar contraste de links */
@@ -872,4 +905,52 @@ article blockquote {
     margin: 1.5rem 0;
     font-style: italic;
     color: var(--text-secondary);
+}
+
+/* ============================================
+   Estilos Específicos para Resumo de Lição
+   ============================================ */
+
+.lesson-summary-section {
+    background: linear-gradient(to right bottom, var(--bg-tertiary), var(--bg-secondary));
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin-top: 4rem !important; /* Força espaçamento extra */
+    border: 1px solid var(--border-color);
+    position: relative;
+    box-shadow: var(--shadow-md);
+}
+
+.lesson-summary-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--primary-gradient);
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+.lesson-summary-section h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.75rem;
+    margin-top: 0 !important;
+    margin-bottom: 1.5rem !important;
+    border-bottom: none !important;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+}
+
+.summary-content {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+
+.summary-content p:last-child {
+    margin-bottom: 0;
 }
