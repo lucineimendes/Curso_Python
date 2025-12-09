@@ -591,3 +591,134 @@ hr {
         right: 1rem;
     }
 }
+
+/* Badge Counter - Contador de Conquistas na Navegação */
+#badge-counter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 50px;
+    background: var(--primary-gradient);
+    color: white;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#badge-counter:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+#badge-counter.pulse {
+    animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+/* Badge Tooltip */
+.badge-tooltip {
+    position: fixed;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    padding: 1rem;
+    min-width: 280px;
+    max-width: 320px;
+    z-index: 10000;
+    opacity: 0;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tooltip-header {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tooltip-empty {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.tooltip-achievements {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tooltip-achievement {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background-color: var(--bg-tertiary);
+    transition: background-color 0.2s ease;
+}
+
+.tooltip-achievement:hover {
+    background-color: var(--border-color);
+}
+
+.tooltip-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.tooltip-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tooltip-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tooltip-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Responsividade do Badge Tooltip */
+@media (max-width: 768px) {
+    .badge-tooltip {
+        min-width: 240px;
+        max-width: calc(100vw - 2rem);
+        left: 1rem !important;
+        right: 1rem !important;
+    }
+}

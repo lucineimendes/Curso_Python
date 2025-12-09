@@ -167,24 +167,24 @@
   - Atualizar contador de badges após novas conquistas
   - _Requisitos: 2.1, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7_
 
-- [ ] 14. Adicionar link de navegação para página de conquistas
+- [x] 14. Adicionar link de navegação para página de conquistas
   - Atualizar navegação do template base para incluir link "Conquistas"
   - Adicionar indicador de ícone/badge na navegação
   - Garantir que link seja acessível de todas as páginas
   - _Requisitos: 7.3_
 
-- [ ] 15. Implementar tratamento de erros e validação
+- [x] 15. Implementar tratamento de erros e validação
   - Adicionar tratamento de erros para achievements.json corrompido
   - Adicionar tratamento de erros para dados de progresso do usuário corrompidos
   - Implementar degradação graciosa quando conquistas falham ao carregar
   - Adicionar validação para dados de conquista na leitura
   - _Requisitos: 5.3, 8.4, 8.5_
 
-- [ ] 15.1 Escrever teste de propriedade para tratamento de dados corrompidos
+- [x] 15.1 Escrever teste de propriedade para tratamento de dados corrompidos
   - **Propriedade 16: Tratamento gracioso de dados corrompidos**
   - **Valida: Requisitos 8.4**
 
-- [ ] 15.2 Escrever teste de propriedade para validação de dados na leitura
+- [x] 15.2 Escrever teste de propriedade para validação de dados na leitura
   - **Propriedade 17: Validação de dados de conquista na leitura**
   - **Valida: Requisitos 8.5**
 
