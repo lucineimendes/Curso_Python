@@ -201,7 +201,7 @@
   - Testar que migração trata campos faltando
   - _Requisitos: 8.1_
 
-- [ ] 17. Adicionar logging e monitoramento
+- [x] 17. Adicionar logging e monitoramento
   - Adicionar logging para desbloqueios de conquistas
   - Adicionar logging para erros de validação
   - Adicionar logging para erros de API

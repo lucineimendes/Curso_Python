@@ -51,35 +51,56 @@ class ConditionValidator:
             bool: True se a condição é válida, False caso contrário.
         """
         if not isinstance(condition, dict):
-            logger.warning(f"Conquista '{achievement_id}': unlock_condition não é um dicionário")
+            logger.warning(
+                f"Erro de validação: achievement_id='{achievement_id}', "
+                f"error='unlock_condition não é um dicionário', condition_type={type(condition).__name__}"
+            )
             return False
 
         if "type" not in condition:
-            logger.warning(f"Conquista '{achievement_id}': unlock_condition está faltando campo 'type'")
+            logger.warning(
+                f"Erro de validação: achievement_id='{achievement_id}', "
+                f"error='unlock_condition está faltando campo type', condition={condition}"
+            )
             return False
 
         condition_type = condition.get("type")
         if condition_type not in cls.VALID_CONDITION_TYPES:
-            logger.warning(f"Conquista '{achievement_id}': tipo de condição desconhecido '{condition_type}'")
+            logger.warning(
+                f"Erro de validação: achievement_id='{achievement_id}', "
+                f"error='tipo de condição desconhecido', condition_type='{condition_type}', "
+                f"valid_types={cls.VALID_CONDITION_TYPES}"
+            )
             return False
 
         # Validar que condições que precisam de 'value' o tenham
         if condition_type in cls.CONDITIONS_REQUIRING_VALUE:
             if "value" not in condition:
-                logger.warning(f"Conquista '{achievement_id}': condição '{condition_type}' requer campo 'value'")
+                logger.warning(
+                    f"Erro de validação: achievement_id='{achievement_id}', "
+                    f"error='condição requer campo value', condition_type='{condition_type}'"
+                )
                 return False
 
             # Validar que value é um número
             if not isinstance(condition.get("value"), (int, float)):
-                logger.warning(f"Conquista '{achievement_id}': campo 'value' deve ser um número")
+                logger.warning(
+                    f"Erro de validação: achievement_id='{achievement_id}', "
+                    f"error='campo value deve ser um número', condition_type='{condition_type}', "
+                    f"value_type={type(condition.get('value')).__name__}, value={condition.get('value')}"
+                )
                 return False
 
         # Validar que course_complete tem course_id
         if condition_type == "course_complete":
             if "course_id" not in condition:
-                logger.warning(f"Conquista '{achievement_id}': condição 'course_complete' requer campo 'course_id'")
+                logger.warning(
+                    f"Erro de validação: achievement_id='{achievement_id}', "
+                    f"error='condição course_complete requer campo course_id', condition={condition}"
+                )
                 return False
 
+        logger.debug(f"Validação bem-sucedida: achievement_id='{achievement_id}', condition_type='{condition_type}'")
         return True
 
 
@@ -104,22 +125,43 @@ class AchievementValidator:
             bool: True se a conquista é válida, False caso contrário.
         """
         if not isinstance(achievement, dict):
-            logger.warning("Conquista não é um dicionário")
+            logger.warning(
+                f"Erro de validação: error='conquista não é um dicionário', "
+                f"achievement_type={type(achievement).__name__}"
+            )
             return False
 
         achievement_id = achievement.get("id", "desconhecido")
 
         # Verificar campos obrigatórios
+        missing_fields = []
+        empty_fields = []
+
         for field in cls.REQUIRED_FIELDS:
             if field not in achievement:
-                logger.warning(f"Conquista '{achievement_id}' está faltando campo obrigatório: {field}")
-                return False
+                missing_fields.append(field)
+            elif not achievement[field]:
+                empty_fields.append(field)
 
-            # Verificar que campos não estão vazios
-            if not achievement[field]:
-                logger.warning(f"Conquista '{achievement_id}' tem campo vazio: {field}")
-                return False
+        if missing_fields:
+            logger.warning(
+                f"Erro de validação: achievement_id='{achievement_id}', "
+                f"error='campos obrigatórios faltando', missing_fields={missing_fields}"
+            )
+            return False
+
+        if empty_fields:
+            logger.warning(
+                f"Erro de validação: achievement_id='{achievement_id}', "
+                f"error='campos obrigatórios vazios', empty_fields={empty_fields}"
+            )
+            return False
 
         # Validar estrutura de unlock_condition
         unlock_condition = achievement.get("unlock_condition")
-        return ConditionValidator.validate_condition(unlock_condition, achievement_id)
+        is_valid = ConditionValidator.validate_condition(unlock_condition, achievement_id)
+
+        if is_valid:
+            logger.debug(f"Validação bem-sucedida: achievement_id='{achievement_id}', name='{achievement.get('name')}'")
+
+        return is_valid

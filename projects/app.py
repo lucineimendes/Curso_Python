@@ -843,8 +843,11 @@ def api_get_achievements():
             Erro (500 Internal Server Error):
                 {"success": false, "message": "Erro: <mensagem>"}
     """
-    logger.info("GET /api/achievements - Obtendo todas as conquistas com status")
+    import time
+
+    start_time = time.time()
     user_id = request.args.get("user_id", "default")
+    logger.info(f"GET /api/achievements - Obtendo todas as conquistas com status para user_id='{user_id}'")
 
     try:
         # Obter todas as conquistas e conquistas desbloqueadas
@@ -873,6 +876,13 @@ def api_get_achievements():
         unlocked_count = len(unlocked_list)
         percentage = (unlocked_count / total * 100) if total > 0 else 0.0
 
+        elapsed_time = time.time() - start_time
+        logger.info(
+            f"GET /api/achievements - Sucesso: user_id='{user_id}', "
+            f"total={total}, unlocked={unlocked_count}, percentage={percentage:.2f}%, "
+            f"elapsed_time={elapsed_time:.3f}s"
+        )
+
         return jsonify(
             {
                 "success": True,
@@ -884,7 +894,11 @@ def api_get_achievements():
             }
         )
     except Exception as e:
-        logger.error(f"Erro ao obter conquistas: {e}", exc_info=True)
+        elapsed_time = time.time() - start_time
+        logger.error(
+            f"GET /api/achievements - Erro: user_id='{user_id}', error='{str(e)}', elapsed_time={elapsed_time:.3f}s",
+            exc_info=True,
+        )
         return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
 
@@ -907,8 +921,11 @@ def api_get_unlocked_achievements():
             Erro (500 Internal Server Error):
                 {"success": false, "message": "Erro: <mensagem>"}
     """
-    logger.info("GET /api/achievements/unlocked - Obtendo conquistas desbloqueadas")
+    import time
+
+    start_time = time.time()
     user_id = request.args.get("user_id", "default")
+    logger.info(f"GET /api/achievements/unlocked - Obtendo conquistas desbloqueadas para user_id='{user_id}'")
 
     try:
         # Obter conquistas desbloqueadas do progresso
@@ -929,9 +946,20 @@ def api_get_unlocked_achievements():
                         break
                 unlocked_list.append(ach_data)
 
+        elapsed_time = time.time() - start_time
+        logger.info(
+            f"GET /api/achievements/unlocked - Sucesso: user_id='{user_id}', "
+            f"unlocked_count={len(unlocked_list)}, elapsed_time={elapsed_time:.3f}s"
+        )
+
         return jsonify({"success": True, "unlocked": unlocked_list})
     except Exception as e:
-        logger.error(f"Erro ao obter conquistas desbloqueadas: {e}", exc_info=True)
+        elapsed_time = time.time() - start_time
+        logger.error(
+            f"GET /api/achievements/unlocked - Erro: user_id='{user_id}', "
+            f"error='{str(e)}', elapsed_time={elapsed_time:.3f}s",
+            exc_info=True,
+        )
         return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
 
@@ -960,15 +988,20 @@ def api_check_achievements():
             Erro (500 Internal Server Error):
                 {"success": false, "message": "Erro: <mensagem>"}
     """
+    import time
+
+    start_time = time.time()
     logger.info("POST /api/achievements/check - Verificando novas conquistas")
 
     try:
         # Obter user_id do JSON ou usar padrão
         data = request.get_json() if request.is_json else {}
         if data is None:
+            logger.warning("POST /api/achievements/check - Payload inválido (não é JSON)")
             return jsonify({"success": False, "message": "Payload inválido"}), 400
 
         user_id = data.get("user_id", "default")
+        logger.debug(f"POST /api/achievements/check - Verificando para user_id='{user_id}'")
 
         # Verificar novas conquistas
         new_achievements = achievement_mgr.check_new_achievements(user_id, progress_mgr)
@@ -982,9 +1015,23 @@ def api_check_achievements():
         else:
             message = f"{count} novas conquistas desbloqueadas"
 
+        elapsed_time = time.time() - start_time
+        logger.info(
+            f"POST /api/achievements/check - Sucesso: user_id='{user_id}', "
+            f"newly_unlocked={count}, elapsed_time={elapsed_time:.3f}s"
+        )
+
+        if count > 0:
+            achievement_names = [a.get("name", a.get("id")) for a in new_achievements]
+            logger.info(f"Novas conquistas desbloqueadas: {', '.join(achievement_names)}")
+
         return jsonify({"success": True, "newly_unlocked": new_achievements, "message": message})
     except Exception as e:
-        logger.error(f"Erro ao verificar conquistas: {e}", exc_info=True)
+        elapsed_time = time.time() - start_time
+        logger.error(
+            f"POST /api/achievements/check - Erro: error='{str(e)}', elapsed_time={elapsed_time:.3f}s",
+            exc_info=True,
+        )
         return jsonify({"success": False, "message": f"Erro: {str(e)}"}), 500
 
 
