@@ -191,5 +191,52 @@
         ],
         "lessons_file": "git-advanced/lessons.json",
         "exercises_file": "git-advanced/exercises.json"
+    },
+    {
+        "id": "machine-learning",
+        "name": "Machine Learning com Python",
+        "short_description": "Do zero aos modelos avançados: aprenda a criar sistemas inteligentes com Python, Scikit-learn e TensorFlow.",
+        "description": "Este curso abrangente guia você pelo fascinante mundo do Machine Learning. Começando com os conceitos fundamentais e a preparação de dados, você avançará para a implementação de modelos de regressão, classificação, clustering e, finalmente, mergulhará em redes neurais e deep learning. O curso é prático, focado no uso das bibliotecas mais importantes do ecossistema de Data Science do Python, como NumPy, Pandas, Matplotlib, Scikit-learn e TensorFlow/Keras.",
+        "level": "Especialização",
+        "duration": "100 horas",
+        "prerequisites": "Conhecimentos intermediários de Python, familiaridade com NumPy e Pandas.",
+        "objectives": [
+            "Compreender os tipos de problemas de Machine Learning (Supervisionado, Não Supervisionado, etc.).",
+            "Realizar pré-processamento e limpeza de dados para modelos de ML.",
+            "Criar visualizações de dados para análise exploratória.",
+            "Implementar e avaliar modelos de regressão e classificação com Scikit-learn.",
+            "Aplicar algoritmos de clustering para encontrar padrões em dados.",
+            "Entender os fundamentos de redes neurais e deep learning.",
+            "Construir e treinar modelos de redes neurais com TensorFlow/Keras.",
+            "Avaliar a performance de modelos de ML usando métricas apropriadas."
+        ],
+        "learning_path": {
+            "stage1": {
+                "name": "Fundamentos e Ferramentas",
+                "modules": [
+                    {
+                        "id": "ml-fundamentos",
+                        "title": "Fundamentos de Machine Learning",
+                        "concepts": [
+                            "conceitos",
+                            "tipos de aprendizado",
+                            "workflow"
+                        ]
+                    },
+                    {
+                        "id": "ml-ferramentas",
+                        "title": "Ecossistema de Data Science",
+                        "concepts": [
+                            "numpy",
+                            "pandas",
+                            "matplotlib",
+                            "scikit-learn"
+                        ]
+                    }
+                ]
+            }
+        },
+        "lessons_file": "machine-learn/lessons.json",
+        "exercises_file": "machine-learn/exercises.json"
     }
 ]

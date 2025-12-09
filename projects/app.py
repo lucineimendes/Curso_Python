@@ -55,9 +55,8 @@ def home():
     """
     logger.info("Rota raiz '/' acessada.")
     all_courses = course_mgr.get_courses()
-    # Passa apenas os 4 primeiros cursos para a seção "Cursos em Destaque",
-    # ou uma lista vazia se não houver cursos.
-    courses_for_index = all_courses[:4] if all_courses else []
+    # Passa todos os cursos para a seção "Cursos em Destaque"
+    courses_for_index = all_courses if all_courses else []
     return render_template("index.html", courses=courses_for_index, title="Bem-vindo")
 
 
