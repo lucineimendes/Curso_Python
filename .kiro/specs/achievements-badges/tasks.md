@@ -208,7 +208,7 @@
   - Registrar performance de verificação de conquistas
   - _Requisitos: 5.3, 6.4_
 
-- [ ] 18. Checkpoint final - Garantir que todos os testes passem
+- [x] 18. Checkpoint final - Garantir que todos os testes passem
   - Garantir que todos os testes passem, perguntar ao usuário se surgirem questões.
 
 - [ ] 19. Escrever testes de integração
