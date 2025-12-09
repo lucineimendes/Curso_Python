@@ -5,8 +5,10 @@ Este módulo gerencia o progresso do usuário através dos cursos,
 lições e exercícios, incluindo estatísticas e histórico.
 """
 
+import copy
 import json
 import logging
+import threading
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
@@ -29,6 +31,7 @@ class ProgressManager:
         Args:
             data_dir_path_str (str): Caminho para o diretório de dados.
         """
+        self._lock = threading.Lock()  # Lock para thread-safety
         self.base_dir = Path(__file__).resolve().parent
         self.data_dir = self.base_dir / data_dir_path_str
         self.progress_file = self.data_dir / "user_progress.json"
@@ -83,11 +86,18 @@ class ProgressManager:
             return {"users": {}}
 
     def _save_progress(self):
-        """Salva dados de progresso no arquivo JSON."""
+        """Salva dados de progresso no arquivo JSON.
+
+        Thread-safe: usa lock e deep copy para evitar erros de concorrência.
+        """
         try:
-            self.progress_data["last_updated"] = datetime.now().isoformat()
+            with self._lock:
+                self.progress_data["last_updated"] = datetime.now().isoformat()
+                # Fazer deep copy para evitar 'dictionary changed size during iteration'
+                data_to_save = copy.deepcopy(self.progress_data)
+
             with open(self.progress_file, "w", encoding="utf-8") as f:
-                json.dump(self.progress_data, f, indent=4, ensure_ascii=False)
+                json.dump(data_to_save, f, indent=4, ensure_ascii=False)
             logger.info(f"Progresso salvo em {self.progress_file}")
         except OSError as e:
             logger.error(f"Erro ao salvar progresso: {e}", exc_info=True)
