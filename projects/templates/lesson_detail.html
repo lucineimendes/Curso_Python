@@ -13,15 +13,23 @@
 {% block schema_description %}{{ lesson.description }}{% endblock %}
 
 {% block content %}
-<article class="container mt-4">
+<div class="container mt-4">
+<article itemscope itemtype="http://schema.org/Article">
     <header>
-        <h1>{{ lesson.title }}</h1>
-        <p class="lead"><em>{{ lesson.description }}</em></p>
+        <h1 itemprop="headline">{{ lesson.title }}</h1>
+        <p class="lead" itemprop="description"><em>{{ lesson.description }}</em></p>
         {% if lesson.estimated_time_minutes %}
-        <p class="text-muted"><time>Tempo estimado: {{ lesson.estimated_time_minutes }} minutos</time></p>
+        <p class="text-muted">
+            <time itemprop="timeRequired" datetime="PT{{ lesson.estimated_time_minutes }}M">
+                Tempo estimado: {{ lesson.estimated_time_minutes }} minutos
+            </time>
+        </p>
         {% endif %}
+        <meta itemprop="author" content="Curso de Python">
+        <meta itemprop="inLanguage" content="pt-BR">
     </header>
 
+    <div itemprop="articleBody">
     {% if lesson.learning_objectives and lesson.learning_objectives|length > 0 %}
     <section class="mt-4">
         <h2>Objetivos de Aprendizagem</h2>
@@ -81,6 +89,8 @@
     </section>
     {% endif %}
 
+    </div>
+
     {% if exercises %}
     <aside class="mt-5">
         <h2>Exercícios Práticos</h2>
@@ -116,6 +126,7 @@
         {% endif %}
     </nav>
 </article>
+</div>
 
 {% block extra_js %}
 <script>

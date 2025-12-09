@@ -722,3 +722,154 @@ hr {
         right: 1rem !important;
     }
 }
+
+/* ============================================
+   Estilos para Modo de Leitura dos Navegadores
+   ============================================ */
+
+/* Melhorar legibilidade do conteúdo principal */
+article {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+article header {
+    margin-bottom: 2rem;
+}
+
+article h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+article .lead {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+article section {
+    margin-bottom: 2.5rem;
+}
+
+article section h2 {
+    font-size: 1.75rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+article section h3 {
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+/* Melhorar parágrafos para leitura */
+article p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+    color: var(--text-primary);
+}
+
+/* Listas mais legíveis */
+article ul,
+article ol {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+article li {
+    margin-bottom: 0.5rem;
+}
+
+/* Código mais destacado */
+article pre {
+    background-color: var(--code-bg);
+    color: var(--code-text);
+    padding: 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+article code {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Melhorar contraste de links */
+article a {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+article a:hover {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+/* Tempo de leitura mais discreto */
+article time {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+/* Separar navegação do conteúdo */
+article nav {
+    border-top: 2px solid var(--border-color);
+    padding-top: 2rem;
+    margin-top: 3rem;
+}
+
+/* Aside (exercícios) menos intrusivo */
+article aside {
+    border-top: 1px solid var(--border-color);
+    padding-top: 2rem;
+    margin-top: 3rem;
+}
+
+/* Garantir que imagens sejam responsivas */
+article img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.5rem auto;
+}
+
+/* Melhorar tabelas se houver */
+article table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+
+article table th,
+article table td {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+article table th {
+    background-color: var(--bg-tertiary);
+    font-weight: 600;
+}
+
+/* Blockquotes mais destacados */
+article blockquote {
+    border-left: 4px solid var(--accent-color);
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--text-secondary);
+}
