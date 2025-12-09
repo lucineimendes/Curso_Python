@@ -480,3 +480,114 @@ hr {
     padding: 1rem 0;
     font-style: italic;
 }
+
+/* Achievement Notifications */
+.achievement-notification {
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    min-width: 320px;
+    max-width: 400px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+}
+
+.achievement-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.achievement-notification.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.achievement-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.achievement-notification-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+    animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.achievement-notification-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.achievement-notification-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-color);
+    margin-bottom: 0.25rem;
+}
+
+.achievement-notification-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.achievement-notification-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Toast Container */
+#achievement-toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+#achievement-toast-container .achievement-notification {
+    pointer-events: all;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .achievement-notification {
+        min-width: 280px;
+        max-width: calc(100vw - 2rem);
+    }
+
+    #achievement-toast-container {
+        left: 1rem;
+        right: 1rem;
+    }
+}

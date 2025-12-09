@@ -160,7 +160,7 @@
   - Adicionar handler de clique para navegar à página de conquistas
   - _Requisitos: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 13. Integrar verificações de conquistas nos fluxos existentes
+- [x] 13. Integrar verificações de conquistas nos fluxos existentes
   - Atualizar fluxo de conclusão de lição para disparar verificação de conquistas
   - Atualizar fluxo de conclusão de exercício para disparar verificação de conquistas
   - Chamar `checkNewAchievements()` após atualizações de progresso

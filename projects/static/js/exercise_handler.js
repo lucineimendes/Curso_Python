@@ -81,8 +81,50 @@ async function markExerciseComplete(courseId, exerciseId) {
             if (window.courseRoadmap) {
                 window.courseRoadmap.markExerciseComplete(exerciseId);
             }
+
+            // Verificar novas conquistas
+            await checkAndShowNewAchievements();
         }
     } catch (error) {
         console.error('Erro ao marcar exercício como completo:', error);
+    }
+}
+
+/**
+ * Verifica se há novas conquistas desbloqueadas e exibe notificações
+ */
+async function checkAndShowNewAchievements() {
+    try {
+        const response = await fetch('/api/achievements/check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: 'default'
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.success && data.newly_unlocked && data.newly_unlocked.length > 0) {
+                console.log('Novas conquistas desbloqueadas:', data.newly_unlocked);
+
+                // Exibir notificações para cada conquista
+                if (window.achievementNotifier) {
+                    data.newly_unlocked.forEach(achievement => {
+                        window.achievementNotifier.show(achievement);
+                    });
+                }
+
+                // Atualizar contador de badges
+                if (window.badgeCounter) {
+                    window.badgeCounter.forceUpdate();
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Erro ao verificar conquistas:', error);
     }
 }

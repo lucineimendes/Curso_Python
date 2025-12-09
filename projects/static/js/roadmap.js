@@ -52,6 +52,9 @@ class CourseRoadmap {
         this.saveProgress();
         this.updateVisual();
         this.syncWithServer(lessonId, 'lesson');
+
+        // Verificar novas conquistas
+        this.checkAchievements();
     }
 
     markExerciseComplete(exerciseId) {
@@ -62,6 +65,9 @@ class CourseRoadmap {
         this.saveProgress();
         this.updateVisual();
         this.syncWithServer(exerciseId, 'exercise');
+
+        // Verificar novas conquistas
+        this.checkAchievements();
     }
 
     syncWithServer(itemId, type) {
@@ -237,6 +243,42 @@ class CourseRoadmap {
         // Recarregar o roadmap com dados atualizados
         if (typeof courseData !== 'undefined' && courseData.lessons && courseData.exercises) {
             this.render(courseData.lessons, courseData.exercises);
+        }
+    }
+
+    async checkAchievements() {
+        try {
+            const response = await fetch('/api/achievements/check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: 'default'
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                if (data.success && data.newly_unlocked && data.newly_unlocked.length > 0) {
+                    console.log('Novas conquistas desbloqueadas:', data.newly_unlocked);
+
+                    // Exibir notificações para cada conquista
+                    if (window.achievementNotifier) {
+                        data.newly_unlocked.forEach(achievement => {
+                            window.achievementNotifier.show(achievement);
+                        });
+                    }
+
+                    // Atualizar contador de badges
+                    if (window.badgeCounter) {
+                        window.badgeCounter.forceUpdate();
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao verificar conquistas:', error);
         }
     }
 }
