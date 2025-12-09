@@ -1,0 +1,278 @@
+[
+  {
+    "id": "shell-introducao-basicos",
+    "course_id": "shell",
+    "title": "Módulo 1: Introdução ao Shell e Comandos Básicos",
+    "order": 1,
+    "description": "Nesta lição, você entenderá o que é o Shell e o Terminal, a diferença entre eles e aprenderá os comandos essenciais para iniciar a navegação no sistema de arquivos.",
+    "learning_objectives": [
+      "Definir o que é um Shell, Terminal e Linha de Comando.",
+      "Utilizar o comando `pwd` para saber o diretório atual.",
+      "Utilizar o comando `ls` para listar o conteúdo de um diretório.",
+      "Utilizar o comando `cd` para navegar entre diretórios."
+    ],
+    "key_concepts": [
+      "Shell",
+      "Terminal",
+      "Linha de Comando",
+      "`pwd`",
+      "`ls`",
+      "`cd`",
+      "Navegação"
+    ],
+    "content": "<h2>O que é um Shell, Terminal e Linha de Comando?</h2><p>O <strong>Shell</strong> é um programa que atua como uma interface para o sistema operacional, interpretando comandos. O <strong>Terminal</strong> (ou emulador de terminal) é o programa que fornece uma interface gráfica para interagir com o Shell. A <strong>Linha de Comando (CLI)</strong> é a interface textual onde os comandos são digitados.</p><h2>Comandos Essenciais de Navegação</h2><p>Para interagir com o sistema, você precisará de comandos básicos de navegação:</p><ul><li><strong>`pwd` (Print Working Directory):</strong> Mostra o caminho completo do diretório atual.</li><li><strong>`ls` (List):</strong> Lista o conteúdo (arquivos e diretórios) do diretório atual. O modificador <code>-l</code> mostra detalhes e o <code>-a</code> mostra arquivos ocultos.</li><li><strong>`cd` (Change Directory):</strong> Permite mudar o diretório atual.</li></ul><h3>Exemplos de Navegação</h3><p>Para ir para o diretório <code>home</code>:</p><pre><code class='language-bash'>cd ~</code></pre><p>Para listar todos os arquivos com detalhes:</p><pre><code class='language-bash'>ls -la</code></pre>",
+    "examples": [],
+    "summary": "O Shell é o intérprete de comandos, acessado via Terminal. Os comandos básicos `pwd`, `ls` e `cd` são fundamentais para iniciar a navegação e a interação com o sistema de arquivos.",
+    "estimated_time_minutes": 15
+  },
+  {
+    "id": "shell-manipulando-arquivos",
+    "course_id": "shell",
+    "title": "Módulo 1: Manipulando Arquivos e Diretórios",
+    "order": 2,
+    "description": "Esta lição aborda os comandos fundamentais para a criação, remoção, cópia e movimentação de arquivos e diretórios, essenciais para o gerenciamento de arquivos na linha de comando.",
+    "learning_objectives": [
+      "Criar novos diretórios com `mkdir`.",
+      "Criar arquivos vazios ou atualizar timestamp com `touch`.",
+      "Copiar arquivos e diretórios com `cp`.",
+      "Mover ou renomear arquivos e diretórios com `mv`.",
+      "Remover arquivos com `rm` e diretórios vazios com `rmdir`."
+    ],
+    "key_concepts": [
+      "`mkdir`",
+      "`touch`",
+      "`rm`",
+      "`cp`",
+      "`mv`",
+      "`rmdir`",
+      "Gerenciamento de Arquivos"
+    ],
+    "content": "<h2>Comandos para Gerenciamento de Arquivos</h2><p>A manipulação de arquivos é uma tarefa comum no shell. Estes são os comandos principais:</p><ul><li><strong>`mkdir` (Make Directory):</strong> Cria um novo diretório. Use a flag <code>-p</code> para criar diretórios pais se não existirem.</li><li><strong>`touch`:</strong> Cria um novo arquivo vazio ou atualiza o tempo de acesso/modificação de um arquivo existente.</li><li><strong>`rm` (Remove):</strong> Remove arquivos. Para remover diretórios e seu conteúdo (recursivamente), use <code>-r</code> (CUIDADO!).</li><li><strong>`rmdir` (Remove Directory):</strong> Remove diretórios, mas <strong>somente se estiverem vazios</strong>.</li><li><strong>`cp` (Copy):</strong> Copia arquivos. Use a flag <code>-r</code> para copiar diretórios recursivamente.</li><li><strong>`mv` (Move):</strong> Move (recorta) um arquivo ou diretório de um local para outro. Também é usado para <strong>renomear</strong> arquivos/diretórios.</li></ul><h3>Exemplos Práticos</h3><p>Criar um novo diretório e um arquivo dentro dele:</p><pre><code class='language-bash'>mkdir projeto_novo\ncd projeto_novo\ntouch README.md</code></pre><p>Mover o arquivo para o diretório pai e renomeá-lo:</p><pre><code class='language-bash'>mv README.md ../documentacao.md</code></pre><p>Remover um diretório e todo o seu conteúdo (USE COM CAUTELA!):</p><pre><code class='language-bash'>rm -rf meu_diretorio_antigo</code></pre>",
+    "examples": [],
+    "summary": "Comandos como `mkdir`, `touch`, `cp`, `mv` e `rm` são as ferramentas essenciais para gerenciar a estrutura e o conteúdo dos arquivos e diretórios no sistema.",
+    "estimated_time_minutes": 20
+  },
+  {
+    "id": "shell-visualizar-buscar",
+    "course_id": "shell",
+    "title": "Módulo 2: Visualizando e Buscando em Arquivos",
+    "order": 3,
+    "description": "Nesta lição, você aprenderá a usar comandos para visualizar o conteúdo de arquivos de diferentes maneiras e como utilizar o poderoso comando `grep` para buscar padrões de texto.",
+    "learning_objectives": [
+      "Visualizar o conteúdo completo de um arquivo com `cat`.",
+      "Visualizar o conteúdo de forma paginada com `less`.",
+      "Mostrar as primeiras e últimas linhas de um arquivo com `head` e `tail`.",
+      "Buscar por padrões de texto dentro de arquivos usando `grep`."
+    ],
+    "key_concepts": [
+      "`cat`",
+      "`less`",
+      "`head`",
+      "`tail`",
+      "`grep`",
+      "Visualização de Conteúdo",
+      "Busca de Texto"
+    ],
+    "content": "<h2>Visualização de Conteúdo</h2><p>Existem diversas maneiras de visualizar o conteúdo de um arquivo na linha de comando:</p><ul><li><strong>`cat` (Concatenate):</strong> Exibe o conteúdo de um arquivo inteiro no terminal. É ideal para arquivos pequenos.</li><li><strong>`less`:</strong> Permite visualizar o conteúdo de um arquivo de forma paginada. Útil para arquivos grandes, pois só carrega o que cabe na tela.</li><li><strong>`head`:</strong> Exibe as primeiras 10 linhas de um arquivo (por padrão). Você pode especificar o número de linhas com o modificador <code>-n</code>.</li><li><strong>`tail`:</strong> Exibe as últimas 10 linhas de um arquivo (por padrão). A flag <code>-f</code> é muito útil para acompanhar o crescimento de logs em tempo real (follow).</li></ul><h2>Busca de Texto com `grep`</h2><p>O comando <strong>`grep`</strong> (Global Regular Expression Print) é usado para buscar linhas que correspondam a um padrão de texto (ou expressão regular) dentro de arquivos.</p><h3>Exemplos de Uso</h3><p>Mostrar as 5 primeiras linhas de um arquivo:</p><pre><code class='language-bash'>head -n 5 meu_log.txt</code></pre><p>Buscar todas as linhas que contêm a palavra \"ERROR\" no log:</p><pre><code class='language-bash'>grep \"ERROR\" meu_log.txt</code></pre><p>Acompanhar as últimas linhas de um arquivo de log (útil para logs de servidor):</p><pre><code class='language-bash'>tail -f servidor.log</code></pre>",
+    "examples": [],
+    "summary": "Comandos como `cat`, `less`, `head` e `tail` controlam como o conteúdo de arquivos é exibido, e o `grep` é a ferramenta essencial para realizar buscas eficientes por padrões de texto.",
+    "estimated_time_minutes": 15
+  },
+  {
+    "id": "shell-permissoes",
+    "course_id": "shell",
+    "title": "Módulo 3: Permissões de Arquivos",
+    "order": 4,
+    "description": "Esta lição explica o sistema de permissões de arquivos no Linux (leitura, escrita, execução), quem são os usuários afetados (dono, grupo, outros) e como usar o comando `chmod` para modificar essas permissões.",
+    "learning_objectives": [
+      "Interpretar a string de permissões exibida por `ls -l`.",
+      "Compreender os três tipos de permissões: leitura (`r`), escrita (`w`) e execução (`x`).",
+      "Entender os três grupos de usuários: dono, grupo e outros.",
+      "Modificar permissões usando a notação simbólica ou octal com o comando `chmod`."
+    ],
+    "key_concepts": [
+      "Permissões",
+      "`chmod`",
+      "`rwx`",
+      "Dono",
+      "Grupo",
+      "Outros"
+    ],
+    "content": "<h2>O Sistema de Permissões Unix/Linux</h2><p>O sistema de permissões é crucial para a segurança. Quando você executa <code>ls -l</code>, a primeira coluna mostra a string de permissões, como <code>-rwxr-xr--</code>. Essa string se divide em quatro partes:</p><ul><li><strong>Tipo de Arquivo:</strong> O primeiro caractere (<code>-</code> para arquivo, <code>d</code> para diretório).</li><li><strong>Dono (Owner):</strong> Os próximos três caracteres.</li><li><strong>Grupo (Group):</strong> Os próximos três caracteres.</li><li><strong>Outros (Others):</strong> Os últimos três caracteres.</li></ul><p>As permissões são representadas por:</p><ul><li><strong>`r` (Read):</strong> Leitura de conteúdo.</li><li><strong>`w` (Write):</strong> Escrita ou modificação.</li><li><strong>`x` (Execute):</strong> Execução (para arquivos) ou acesso (para diretórios).</li></ul><h2>Modificando Permissões com `chmod`</h2><p>O comando <strong>`chmod`</strong> (Change Mode) é usado para alterar as permissões. Ele pode usar duas notações:</p><h3>1. Notação Simbólica</h3><p>Usa letras para especificar usuário, permissão e operação (+adicionar, -remover, =definir):</p><pre><code class='language-bash'>chmod u+x meu_script.sh # Adiciona permissão de execução (x) para o dono (u)</code></pre><h3>2. Notação Octal (Numérica)</h3><p>Cada permissão é um valor numérico (r=4, w=2, x=1). A soma desses valores define a permissão para cada grupo:</p><ul><li><strong>rwx:</strong> $4+2+1 = 7$</li><li><strong>rw-:</strong> $4+2+0 = 6$</li><li><strong>r-x:</strong> $4+0+1 = 5$</li></ul><p>O comando <code>chmod 754</code>, por exemplo, define as permissões como: <strong>Dono</strong> (7) = rwx, <strong>Grupo</strong> (5) = r-x, <strong>Outros</strong> (4) = r--.</p>",
+    "examples": [],
+    "summary": "As permissões no Linux controlam o acesso a arquivos para o dono, grupo e outros, definidas por `rwx`. O comando `chmod`, seja com notação simbólica ou octal, é a ferramenta para modificar essas regras de acesso.",
+    "estimated_time_minutes": 25
+  },
+  {
+    "id": "shell-redirecionamento-pipes",
+    "course_id": "shell",
+    "title": "Módulo 4: Redirecionamento e Pipes",
+    "order": 5,
+    "description": "Esta lição explica os conceitos de `stdin`, `stdout` e `stderr` e como usar operadores de redirecionamento (`>`, `>>`) para controlar a saída dos comandos, além de como o operador pipe (`|`) conecta comandos para criar fluxos de trabalho poderosos.",
+    "learning_objectives": [
+      "Definir `stdin`, `stdout` e `stderr`.",
+      "Redirecionar a saída padrão (`stdout`) para um arquivo, sobrescrevendo-o (`>`).",
+      "Redirecionar a saída padrão (`stdout`) para um arquivo, anexando-a (`>>`).",
+      "Conectar a saída de um comando à entrada de outro usando o pipe (`|`)."
+    ],
+    "key_concepts": [
+      "Redirecionamento",
+      "Pipe",
+      "`stdin`",
+      "`stdout`",
+      "`|`",
+      "`>`",
+      "`>>`"
+    ],
+    "content": "<h2>Fluxos de Entrada e Saída</h2><p>Todo programa no Unix/Linux manipula três fluxos de dados principais (File Descriptors):</p><ul><li><strong>`stdin` (Standard Input - FD 0):</strong> A entrada padrão, geralmente o teclado.</li><li><strong>`stdout` (Standard Output - FD 1):</strong> A saída padrão, geralmente a tela (terminal).</li><li><strong>`stderr` (Standard Error - FD 2):</strong> A saída de erro, também geralmente a tela.</li></ul><p>  </p><h2>Redirecionamento de Saída</h2><p>Podemos controlar onde a saída de um comando vai:</p><ul><li><strong>`>` (Redirecionamento, Sobrescreve):</strong> Envia o `stdout` de um comando para um arquivo, **sobrescrevendo** o conteúdo existente.</li><li><strong>`>>` (Redirecionamento, Anexa):</strong> Envia o `stdout` de um comando para um arquivo, **anexando** ao conteúdo existente.</li></ul><h3>O Operador Pipe (`|`)</h3><p>O <strong>pipe</strong> (<code>|</code>) é um dos recursos mais poderosos do Shell. Ele pega a <strong>saída (`stdout`)</strong> de um comando e a usa como <strong>entrada (`stdin`)</strong> para o próximo comando. Isso permite encadear pequenos utilitários para realizar tarefas complexas.</p><h3>Exemplos de Redirecionamento e Pipes</h3><p>Listar os arquivos e salvar o resultado em um novo arquivo (sobrescreve):</p><pre><code class='language-bash'>ls -l > lista_arquivos.txt</code></pre><p>Anexar a saída do `grep` ao final do arquivo de log:</p><pre><code class='language-bash'>grep \"sucesso\" app.log >> relatorio_sucesso.txt</code></pre><p>Listar arquivos e paginar o resultado com `less` (usando pipe):</p><pre><code class='language-bash'>ls -la | less</code></pre>",
+    "examples": [],
+    "summary": "O redirecionamento (`>`, `>>`) e o pipe (`|`) são mecanismos essenciais para controlar o fluxo de dados (`stdin`, `stdout`, `stderr`) entre comandos, permitindo salvar saídas em arquivos ou encadear a execução de utilitários.",
+    "estimated_time_minutes": 20
+  },
+  {
+    "id": "shell-variaveis-scripts",
+    "course_id": "shell",
+    "title": "Módulo 5: Variáveis de Ambiente e Scripts Básicos",
+    "order": 6,
+    "description": "Esta lição introduz as variáveis de ambiente, como visualizá-las e defini-las. Por fim, fornece os passos iniciais para a criação de um Shell Script simples, cobrindo o shebang e a execução de arquivos.",
+    "learning_objectives": [
+      "Visualizar e entender o propósito de variáveis de ambiente com `echo` e `env`.",
+      "Definir variáveis de ambiente temporárias com `export`.",
+      "Criar um arquivo de Shell Script com o shebang (`#!/bin/bash`).",
+      "Tornar um script executável com `chmod` e executá-lo."
+    ],
+    "key_concepts": [
+      "Variáveis de Ambiente",
+      "`export`",
+      "`echo`",
+      "Shell Script",
+      "`#!/bin/bash`"
+    ],
+    "content": "<h2>Variáveis de Ambiente</h2><p>Variáveis de ambiente são valores nomeados que influenciam o comportamento de programas em execução no Shell. Exemplos comuns incluem <code>PATH</code>, <code>HOME</code> e <code>USER</code>.</p><ul><li><strong>Visualizar:</strong> Use o comando <code>env</code> para listar todas as variáveis ou <code>echo</code> para uma específica.</li><li><strong>Definir:</strong> Use o comando <code>export</code> para definir uma variável de ambiente que estará disponível para os processos filhos do Shell atual.</li></ul><h3>Exemplos de Variáveis</h3><p>Visualizar o caminho do diretório home:</p><pre><code class='language-bash'>echo $HOME</code></pre><p>Definir e exportar uma nova variável (temporária):</p><pre><code class='language-bash'>export NOME_PROJETO=\"MeuSistema\"\necho $NOME_PROJETO</code></pre><h2>Criação de Shell Scripts Básicos</h2><p>Shell Scripts são sequências de comandos armazenadas em um arquivo, permitindo automatizar tarefas.</p><h3>1. O Shebang</h3><p>A primeira linha de todo script shell deve ser o <strong>shebang</strong> (<code>#!/bin/bash</code>), que informa ao sistema qual interpretador deve ser usado para executar o script.</p><h3>2. Tornando o Script Executável</h3><p>Após criar o arquivo, é necessário dar a permissão de execução com `chmod`.</p><h3>Exemplo de Script</h3><p>Crie um arquivo chamado <code>ola_mundo.sh</code> com o seguinte conteúdo:</p><pre><code class='language-bash'>#!/bin/bash\n# Este é o meu primeiro Shell Script\necho \"Olá, mundo do Shell Scripting!\"</code></pre><p>Torne-o executável e execute:</p><pre><code class='language-bash'>chmod +x ola_mundo.sh\n./ola_mundo.sh</code></pre>",
+    "examples": [],
+    "summary": "Variáveis de ambiente (vistas com `echo` e `env`, definidas com `export`) armazenam configurações. Shell Scripts usam o shebang (`#!/bin/bash`) para indicar o interpretador e precisam da permissão de execução (`chmod +x`) para serem executados.",
+    "estimated_time_minutes": 25
+  },
+  {
+    "id": "shell-script-condicionais-loops",
+    "course_id": "shell",
+    "title": "Módulo 6: Estruturas de Controle (Condicionais e Loops)",
+    "order": 7,
+    "description": "Aprofundamento na criação de scripts com estruturas de controle, permitindo a tomada de decisões (`if`, `else`) e a repetição de tarefas (`for`, `while`).",
+    "learning_objectives": [
+      "Implementar lógica condicional em scripts usando `if`, `elif` e `else`.",
+      "Entender e utilizar as expressões de teste (`[ ]` e `[[ ]]`) para strings, números e arquivos.",
+      "Criar loops `for` para iterar sobre listas de itens.",
+      "Criar loops `while` para repetições baseadas em uma condição."
+    ],
+    "key_concepts": [
+      "Condicionais (`if`)",
+      "Loops (`for`, `while`)",
+      "Estruturas de Controle",
+      "Expressões de Teste",
+      "Iteração"
+    ],
+    "content": "<h2>Tomada de Decisão com `if-else`</h2><p>A estrutura `if-else` permite que seu script tome decisões com base no resultado de um teste. O teste é geralmente colocado entre colchetes.</p><pre><code class='language-bash'>#!/bin/bash\nNUMERO=10\nif [ $NUMERO -gt 5 ]; then\n  echo \"O número é maior que 5.\"\nelif [ $NUMERO -eq 5 ]; then\n  echo \"O número é igual a 5.\"\nelse\n  echo \"O número é menor que 5.\"\nfi</code></pre><ul><li><strong>`-gt` (Greater Than):</strong> Maior que.</li><li><strong>`-eq` (Equal):</strong> Igual a.</li></ul><h2>Repetição de Tarefas com Loops</h2><h3>Loop `for`</h3><p>Usado para iterar sobre uma lista predefinida de itens (arquivos, números, strings).</p><pre><code class='language-bash'>for arquivo in *.txt; do\n  echo \"Processando arquivo: $arquivo\"\n  # Comandos aqui\ndone</code></pre><h3>Loop `while`</h3><p>Executa um bloco de comandos repetidamente enquanto uma condição for verdadeira.</p><pre><code class='language-bash'>CONTADOR=1\nwhile [ $CONTADOR -le 3 ]; do\n  echo \"Contagem: $CONTADOR\"\n  CONTADOR=$((CONTADOR + 1))\ndone</code></pre>",
+    "examples": [],
+    "summary": "Estruturas de controle como `if`, `elif`, `else`, `for` e `while` transformam comandos simples em scripts dinâmicos, permitindo lógica condicional e automação de tarefas repetitivas.",
+    "estimated_time_minutes": 30
+  },
+  {
+    "id": "shell-script-funcoes-argumentos",
+    "course_id": "shell",
+    "title": "Módulo 7: Funções e Argumentos de Script",
+    "order": 8,
+    "description": "Explicação de como tornar scripts modulares usando funções e como aceitar e processar argumentos passados para o script ($1, $2, $@).",
+    "learning_objectives": [
+      "Criar e chamar funções dentro de um Shell Script.",
+      "Entender a diferença entre variáveis locais e globais em funções.",
+      "Acessar argumentos passados para o script ($1, $2, $3).",
+      "Utilizar as variáveis especiais `$#` (número de argumentos) e `$@` (todos os argumentos)."
+    ],
+    "key_concepts": [
+      "Funções Shell",
+      "Modularidade",
+      "Argumentos de Script",
+      "`$1`",
+      "`$@`",
+      "Variáveis Especiais"
+    ],
+    "content": "<h2>Funções para Modularidade</h2><p>Funções permitem agrupar comandos em blocos reutilizáveis, melhorando a organização e legibilidade do script. Elas devem ser definidas antes de serem chamadas.</p><pre><code class='language-bash'>#!/bin/bash\n\n# Definição da função\nmensagem_boas_vindas() {\n  local NOME=$1 # Variável local\n  echo \"Bem-vindo, $NOME!\"\n}\n\n# Chamada da função\nmensagem_boas_vindas \"Usuário\"\n\n# Exemplo de variável global (acessível em qualquer lugar)\nGLOBAL_VAR=\"OK\"</code></pre><h2>Processando Argumentos</h2><p>Argumentos são dados que você passa ao executar o script. O Shell usa variáveis especiais para capturá-los:</p><ul><li><strong>`$1, $2, ...` :</strong> Posição do argumento (primeiro, segundo, etc.).</li><li><strong>`$#`:</strong> Número total de argumentos passados.</li><li><strong>`$@` ou `$*`:</strong> Todos os argumentos.</li></ul><h3>Exemplo de Uso de Argumentos</h3><p>Se o script for chamado como <code>./script.sh backup db</code>:</p><pre><code class='language-bash'>#!/bin/bash\n\nif [ $# -lt 2 ]; then\n  echo \"Uso: $0 <comando> <serviço>\"\n  exit 1\nfi\n\nCOMANDO=$1\nSERVICO=$2\n\necho \"Comando: $COMANDO, Serviço: $SERVICO\"</code></pre>",
+    "examples": [],
+    "summary": "As funções criam scripts modulares e organizados. O uso de argumentos de linha de comando (`$1`, `$#`, `$@`) é crucial para que os scripts possam ser configurados e reutilizados com diferentes entradas de dados.",
+    "estimated_time_minutes": 25
+  },
+  {
+    "id": "shell-script-processamento-texto",
+    "course_id": "shell",
+    "title": "Módulo 8: Processamento Avançado de Texto: `sed` e `awk`",
+    "order": 9,
+    "description": "Introdução a duas das ferramentas de processamento de texto mais poderosas do Unix: `sed` (editor de fluxo) para transformações e `awk` para análise de dados estruturados.",
+    "learning_objectives": [
+      "Usar `sed` para substituição de texto e exclusão de linhas em arquivos (Stream Editor).",
+      "Usar `awk` para processar arquivos coluna por coluna (separadores de campo).",
+      "Realizar operações de filtro e formatação de saída complexas combinando `sed` e `awk` com pipes."
+    ],
+    "key_concepts": [
+      "`sed`",
+      "`awk`",
+      "Editor de Fluxo",
+      "Processamento de Colunas",
+      "Substituição de Texto",
+      "Análise de Logs"
+    ],
+    "content": "<h2>`sed`: O Editor de Fluxo</h2><p>O <strong>`sed`</strong> é uma ferramenta que processa texto linha por linha. Sua função mais comum é a **substituição** de padrões (regex) com o comando `s` (substitute).</p><h3>Exemplo de Substituição</h3><p>Substituir todas as ocorrências de \"erro\" por \"alerta\" no arquivo `log.txt` (usando a flag `g` para global):</p><pre><code class='language-bash'>sed 's/erro/alerta/g' log.txt</code></pre><h3>Exemplo de Exclusão</h3><p>Excluir linhas que contenham a palavra \"debug\":</p><pre><code class='language-bash'>cat log.txt | sed '/debug/d'</code></pre><h2>`awk`: Análise de Dados por Colunas</h2><p>O <strong>`awk`</strong> é excelente para analisar arquivos onde os dados são estruturados em campos (colunas). Ele usa por padrão espaços em branco como separadores de campo.</p><ul><li><strong>`$0`:</strong> Linha inteira.</li><li><strong>`$1, $2, ...`:</strong> Campos (colunas) específicos.</li><li><strong>`NF`:</strong> Número total de campos.</li></ul><h3>Exemplo de Análise</h3><p>Para o comando <code>ls -l</code>, queremos apenas o nome do arquivo (9ª coluna):</p><pre><code class='language-bash'>ls -l | awk '{print $9}'</code></pre><p>Imprimir linhas que tenham mais de 5 colunas:</p><pre><code class='language-bash'>awk 'NF > 5' arquivo.csv</code></pre>",
+    "examples": [],
+    "summary": "`sed` é um editor de fluxo usado principalmente para substituição e exclusão de padrões de texto em arquivos. Já `awk` é ideal para análise de dados estruturados, permitindo processar e filtrar o conteúdo baseado em campos (colunas).",
+    "estimated_time_minutes": 30
+  },
+  {
+    "id": "shell-script-manipulacao-strings-numeros",
+    "course_id": "shell",
+    "title": "Módulo 9: Manipulação de Strings e Cálculos Numéricos",
+    "order": 10,
+    "description": "Foco em técnicas de manipulação avançada de strings (substrings, comprimento, substituição) e como realizar aritmética complexa dentro de scripts.",
+    "learning_objectives": [
+      "Realizar operações de substring, remoção de prefixos e sufixos em variáveis Shell.",
+      "Obter o comprimento de uma string em variáveis.",
+      "Realizar operações aritméticas básicas e avançadas usando `$(())`.",
+      "Usar o comando `bc` para cálculos de ponto flutuante (floating point)."
+    ],
+    "key_concepts": [
+      "Manipulação de Strings",
+      "Substring",
+      "Aritmética Shell",
+      "Cálculo de Ponto Flutuante",
+      "`bc`",
+      "`$(())`"
+    ],
+    "content": "<h2>Manipulação Avançada de Strings</h2><p>O Bash fornece operadores embutidos para manipulação de strings dentro de variáveis:</p><ul><li><strong>Comprimento da String:</strong> <code>${#VARIAVEL}</code></li><li><strong>Substring (Extrair Parte):</strong> <code>${VARIAVEL:início:comprimento}</code></li><li><strong>Remover Prefixo (Ocorrência Mínima):</strong> <code>${VARIAVEL#padrão}</code></li><li><strong>Remover Sufixo (Ocorrência Máxima):</strong> <code>${VARIAVEL%%padrão}</code></li></ul><h3>Exemplos de Strings</h3><pre><code class='language-bash'>URL=\"www.exemplo.com.br\"\n\n# Extrair 'exemplo'\nDOMINIO=${URL:4:7}\necho $DOMINIO # Saída: exemplo\n\n# Remover prefixo 'www.'\nSEM_PREFIXO=${URL#www.}\necho $SEM_PREFIXO # Saída: exemplo.com.br</code></pre><h2>Aritmética e Cálculos</h2><p>O Bash nativamente lida apenas com **inteiros**. Para cálculos de ponto flutuante, é necessário usar utilitários externos.</p><h3>Aritmética de Inteiros</h3><p>Use a expansão de comandos com dois parênteses `$(())` para realizar operações com inteiros.</p><pre><code class='language-bash'>RESULTADO=$(( (5 * 3) + 10 / 2 ))\necho $RESULTADO # Saída: 20</code></pre><h3>Cálculos de Ponto Flutuante com `bc`</h3><p>O comando <strong>`bc`</strong> (Basic Calculator) é usado para cálculos mais complexos e com números decimais.</p><pre><code class='language-bash'># Calcular 10 dividido por 3 com 4 casas decimais\nDIVISAO=$(echo \"scale=4; 10 / 3\" | bc)\necho $DIVISAO # Saída: 3.3333</code></pre>",
+    "examples": [],
+    "summary": "O Shell oferece poderosas ferramentas nativas para manipular strings e realizar aritmética de inteiros. Para cálculos complexos ou com ponto flutuante, o utilitário `bc` é essencial.",
+    "estimated_time_minutes": 25
+  },
+  {
+    "id": "shell-script-automacao-agendamento",
+    "course_id": "shell",
+    "title": "Módulo 10: Automação e Agendamento de Tarefas (`cron`)",
+    "order": 11,
+    "description": "Lição focada em como agendar a execução de Shell Scripts automaticamente em horários definidos, utilizando o serviço `cron` e configurando o `crontab`.",
+    "learning_objectives": [
+      "Compreender a função do `cron` no agendamento de tarefas.",
+      "Editar e visualizar o arquivo de agendamento do usuário com `crontab -e`.",
+      "Entender a sintaxe das cinco posições de tempo do `crontab` (minuto, hora, dia do mês, mês, dia da semana).",
+      "Garantir que os scripts agendados sejam robustos e usem caminhos absolutos."
+    ],
+    "key_concepts": [
+      "`cron`",
+      "`crontab`",
+      "Agendamento de Tarefas",
+      "Sintaxe `cron`",
+      "Automação"
+    ],
+    "content": "<h2>O que é o `cron`?</h2><p>O <strong>`cron`</strong> é um serviço de agendamento de tarefas baseado em tempo em sistemas Unix-like. O <strong>`crontab`</strong> (CRON Table) é o arquivo de configuração que armazena os comandos a serem executados e seus respectivos tempos de execução.</p><h2>Gerenciando o `crontab`</h2><ul><li><strong>`crontab -e`:</strong> Abre o arquivo `crontab` do usuário para edição (use para criar ou modificar agendamentos).</li><li><strong>`crontab -l`:</strong> Lista o conteúdo atual do seu `crontab`.</li><li><strong>`crontab -r`:</strong> Remove o seu `crontab` (CUIDADO, remove todos os agendamentos!).</li></ul><h2>A Sintaxe do `crontab`</h2><p>Cada linha de um `crontab` tem cinco campos de tempo, seguidos pelo comando a ser executado:</p><pre><code class='language-bash'>* * * * * comando_a_executar</code></pre><ul><li><strong>Campo 1:</strong> Minuto (0 - 59)</li><li><strong>Campo 2:</strong> Hora (0 - 23)</li><li><strong>Campo 3:</strong> Dia do Mês (1 - 31)</li><li><strong>Campo 4:</strong> Mês (1 - 12)</li><li><strong>Campo 5:</strong> Dia da Semana (0 - 7, onde 0 e 7 = Domingo)</li></ul><h3>Exemplos de Agendamento</h3><p>Executar um script de backup todos os dias às 2h30 da manhã (use o caminho completo do script!):</p><pre><code class='language-bash'>30 2 * * * /home/usuario/scripts/backup_diario.sh</code></pre><p>Executar um comando a cada 15 minutos (usando `/` para incrementos):</p><pre><code class='language-bash'>*/15 * * * * echo \"Tarefa executada\" >> /tmp/cron_log.txt</code></pre>",
+    "examples": [],
+    "summary": "O `cron` e o `crontab` são as ferramentas padrão para agendar a execução de scripts e comandos em intervalos de tempo fixos, sendo essenciais para a automação de rotinas de manutenção e backup.",
+    "estimated_time_minutes": 20
+  }
+]

@@ -238,5 +238,67 @@
         },
         "lessons_file": "machine-learn/lessons.json",
         "exercises_file": "machine-learn/exercises.json"
+    },
+    {
+        "id": "shell-script",
+        "name": "Shell Script: Automação e Linha de Comando",
+        "short_description": "Domine a linha de comando e aprenda a criar scripts poderosos para automatizar tarefas no Linux/Unix.",
+        "description": "Este curso completo de Shell Script ensina desde os comandos básicos do terminal até a criação de scripts avançados para automação de tarefas. Você aprenderá a manipular arquivos, processar texto, controlar fluxo de execução, trabalhar com variáveis e funções, e criar ferramentas úteis para o dia a dia. Ideal para desenvolvedores, administradores de sistemas e qualquer pessoa que queira aumentar sua produtividade na linha de comando.",
+        "level": "Intermediário",
+        "duration": "25 horas",
+        "prerequisites": "Conhecimentos básicos de sistemas operacionais Linux/Unix",
+        "objectives": [
+            "Dominar os comandos essenciais do terminal Linux/Unix.",
+            "Criar e executar scripts shell para automatizar tarefas repetitivas.",
+            "Manipular arquivos e diretórios através da linha de comando.",
+            "Processar e filtrar texto usando ferramentas como grep, sed e awk.",
+            "Implementar estruturas de controle (if, loops) em scripts.",
+            "Trabalhar com variáveis, arrays e funções em shell script.",
+            "Processar argumentos de linha de comando e entrada do usuário.",
+            "Criar scripts robustos com tratamento de erros.",
+            "Automatizar tarefas de backup, monitoramento e manutenção do sistema."
+        ],
+        "learning_path": {
+            "stage1": {
+                "name": "Fundamentos do Shell",
+                "modules": [
+                    {
+                        "id": "shell-basico",
+                        "title": "Comandos Básicos e Navegação",
+                        "concepts": [
+                            "terminal",
+                            "navegação",
+                            "manipulação de arquivos"
+                        ]
+                    },
+                    {
+                        "id": "shell-texto",
+                        "title": "Processamento de Texto",
+                        "concepts": [
+                            "grep",
+                            "sed",
+                            "awk",
+                            "pipes"
+                        ]
+                    }
+                ]
+            },
+            "stage2": {
+                "name": "Programação Shell",
+                "modules": [
+                    {
+                        "id": "shell-scripting",
+                        "title": "Scripts e Automação",
+                        "concepts": [
+                            "variáveis",
+                            "estruturas de controle",
+                            "funções"
+                        ]
+                    }
+                ]
+            }
+        },
+        "lessons_file": "shell-script/lessons.json",
+        "exercises_file": "shell-script/exercises.json"
     }
 ]
