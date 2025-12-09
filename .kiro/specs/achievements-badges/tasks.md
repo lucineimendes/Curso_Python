@@ -211,14 +211,14 @@
 - [x] 18. Checkpoint final - Garantir que todos os testes passem
   - Garantir que todos os testes passem, perguntar ao usuário se surgirem questões.
 
-- [ ] 19. Escrever testes de integração
+- [x] 19. Escrever testes de integração
   - Testar fluxo completo: conclusão de lição → verificação de conquista → desbloqueio → notificação
   - Testar endpoints da API com cliente de teste Flask
   - Testar cenários de desbloqueio concorrente
   - Testar casos extremos: sem conquistas, todas as conquistas, limites exatos
   - _Requisitos: Todos_
 
-- [ ] 20. Testes de performance e otimização
+- [x] 20. Testes de performance e otimização
   - Testar performance de carregamento de conquistas
   - Testar tempos de resposta da API
   - Otimizar avaliação de condições se necessário
