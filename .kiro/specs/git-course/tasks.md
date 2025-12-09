@@ -10,7 +10,6 @@
   - Escrever `docs/git-course/02-intermediario/lab-merge-conflict.md`
   - _Requisito: Intermediário_
 
-
 - [x] 1. Criar conteúdo para Módulo 1: Internals
   - Escrever `docs/git-course/03-avancado/01-internals/theory.md`
   - Escrever `docs/git-course/03-avancado/01-internals/lab-objects.md`
@@ -39,3 +38,42 @@
 - [x] 6. Criar Referência Rápida
   - Escrever `docs/git-course/cheat-sheet.md`
   - _Requisito: 6_
+
+- [x] 7. Criar script de conversão e gerar arquivos JSON
+  - Criar `convert_git_course.py` para converter Markdown para JSON
+  - Gerar `projects/data/git-advanced/lessons.json` com todas as lições
+  - Gerar `projects/data/git-advanced/exercises.json` (estrutura inicial)
+  - _Requisito: Todos_
+
+- [x] 8. Criar exercícios interativos para o curso
+  - [x] 8.1 Criar exercícios para Módulo Básico
+    - Adicionar exercícios práticos de `git init`, `git add`, `git commit`
+    - Adicionar exercício de configuração do `.gitignore`
+    - _Requisito: Básico.1, Básico.2, Básico.3, Básico.4_
+
+  - [x] 8.2 Criar exercícios para Módulo Intermediário
+    - Adicionar exercícios de criação e troca de branches
+    - Adicionar exercício de merge básico
+    - Adicionar exercício de resolução de conflitos
+    - _Requisito: Intermediário.1, Intermediário.2, Intermediário.3_
+
+  - [x] 8.3 Criar exercícios para Módulo Internals
+    - Adicionar exercício de exploração do diretório `.git`
+    - Adicionar exercício usando `git hash-object` e `git cat-file`
+    - _Requisito: 1.1, 1.2, 1.3, 1.4_
+
+  - [x] 8.4 Criar exercícios para Módulo Histórico Avançado
+    - Adicionar exercício de `git commit --amend`
+    - Adicionar exercício de `git rebase -i` (squash, reword)
+    - Adicionar exercício de `git reflog` para recuperação
+    - _Requisito: 2.1, 2.2, 2.4_
+
+  - [x] 8.5 Criar exercícios para Módulo Workflows
+    - Adicionar exercício simulando Git Flow (feature branch)
+    - Adicionar exercício simulando GitHub Flow
+    - _Requisito: 3.1, 3.2, 3.3_
+
+  - [x] 8.6 Criar exercícios para Módulo Ferramentas
+    - Adicionar exercício de criação de Git Hook (pre-commit)
+    - Adicionar exercício simulado de `git bisect`
+    - _Requisito: 4.1, 4.2_
