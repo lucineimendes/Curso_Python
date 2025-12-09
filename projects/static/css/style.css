@@ -360,3 +360,123 @@ hr {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--accent-color);
 }
+
+/* Badge Counter & Tooltip */
+#badge-counter {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    background: var(--primary-gradient) !important;
+    color: white !important;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#badge-counter:hover {
+    transform: scale(1.1);
+}
+
+#badge-counter.pulse {
+    animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.badge-tooltip {
+    position: fixed;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    padding: 1rem;
+    min-width: 280px;
+    max-width: 320px;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tooltip-header {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tooltip-achievements {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tooltip-achievement {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background: var(--bg-tertiary);
+    transition: all 0.2s ease;
+}
+
+.tooltip-achievement:hover {
+    background: var(--bg-primary);
+    transform: translateX(4px);
+}
+
+.tooltip-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.tooltip-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tooltip-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tooltip-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.125rem;
+}
+
+.tooltip-empty {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 1rem 0;
+    font-style: italic;
+}

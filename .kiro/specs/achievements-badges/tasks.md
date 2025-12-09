@@ -110,10 +110,10 @@
   - **Propriedade 12: Códigos de status de erro da API**
   - **Valida: Requisitos 6.4**
 
-- [ ] 8. Checkpoint - Garantir que todos os testes backend passem
+- [x] 8. Checkpoint - Garantir que todos os testes backend passem
   - Garantir que todos os testes passem, perguntar ao usuário se surgirem questões.
 
-- [ ] 9. Criar página frontend de galeria de conquistas
+- [x] 9. Criar página frontend de galeria de conquistas
   - Criar template `projects/templates/achievements.html`
   - Exibir todas as conquistas em layout de grid
   - Mostrar conquistas desbloqueadas em cores completas, bloqueadas em escala de cinza
@@ -122,11 +122,11 @@
   - Exibir estatísticas: total desbloqueadas, porcentagem de conclusão
   - _Requisitos: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 9.1 Escrever teste de propriedade para cálculo de estatísticas
+- [x] 9.1 Escrever teste de propriedade para cálculo de estatísticas
   - **Propriedade 15: Precisão do cálculo de estatísticas**
   - **Valida: Requisitos 1.5**
 
-- [ ] 10. Criar estilos CSS de conquistas
+- [x] 10. Criar estilos CSS de conquistas
   - Criar `projects/static/css/achievements.css`
   - Estilizar cards de conquistas (estados bloqueado/desbloqueado)
   - Adicionar efeitos de hover e animações
@@ -134,7 +134,7 @@
   - Estilizar seção de estatísticas
   - _Requisitos: 1.2_
 
-- [ ] 11. Implementar sistema de notificações de conquistas
+- [x] 11. Implementar sistema de notificações de conquistas
   - Criar `projects/static/js/achievements.js`
   - Implementar classe `AchievementNotification`
   - Adicionar método `show()` para exibir notificação com animação
@@ -143,15 +143,15 @@
   - Adicionar auto-dismiss após 5 segundos
   - _Requisitos: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 11.1 Escrever teste de propriedade para ordenação da fila de notificações
+- [x] 11.1 Escrever teste de propriedade para ordenação da fila de notificações
   - **Propriedade 13: Ordenação da fila de notificações**
   - **Valida: Requisitos 3.4**
 
-- [ ] 11.2 Escrever teste de propriedade para estrutura de dados de notificação
+- [x] 11.2 Escrever teste de propriedade para estrutura de dados de notificação
   - **Propriedade 14: Estrutura de dados de notificação**
   - **Valida: Requisitos 3.2**
 
-- [ ] 12. Implementar contador de badges na navegação
+- [x] 12. Implementar contador de badges na navegação
   - Criar `projects/static/js/badge_counter.js`
   - Implementar classe `BadgeCounter`
   - Adicionar método `updateCount()` para buscar e exibir contagem de desbloqueadas
