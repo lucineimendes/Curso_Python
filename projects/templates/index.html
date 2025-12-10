@@ -3,97 +3,253 @@
 {% block title %}Curso de Python: Do Básico ao Avançado{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<div class="hero-section text-center">
-    <h1 class="display-4 mb-3">Domine Python com Prática</h1>
-    <p class="lead mb-4">
-        Uma plataforma interativa para você aprender do zero ao avançado.<br>
-        Escreva código real, resolva desafios e construa seu portfólio.
-    </p>
-    <div class="d-flex justify-content-center gap-3">
-        <a class="btn btn-primary btn-lg" href="{{ url_for('list_courses_page') }}">
-            Começar Agora <i class="bi bi-arrow-right ms-2"></i>
-        </a>
-        <a class="btn btn-outline-primary btn-lg" href="#cursos-destaque">
-            Explorar Cursos
-        </a>
-    </div>
-</div>
-
-<!-- Cursos em Destaque -->
-<div class="row mt-5" id="cursos-destaque">
-    <div class="col-12 text-center mb-4">
-        <h2 class="mb-2">Trilhas de Aprendizado</h2>
-        <p class="text-muted">Escolha o caminho ideal para o seu nível</p>
-    </div>
-
-    {% for course in courses %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body d-flex flex-column">
-                <div class="mb-3">
-                    <span class="badge badge-soft-primary">{{ course.level }}</span>
+<!-- Hero Section Moderno -->
+<section class="hero-modern">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <div class="hero-badge mb-4">
+                        <span class="badge-modern">
+                            <i class="bi bi-star-fill me-2"></i>
+                            Plataforma Interativa de Programação
+                        </span>
+                    </div>
+                    <h1 class="hero-title mb-4">
+                        Domine <span class="text-gradient">Python</span><br>
+                        do Zero ao Profissional
+                    </h1>
+                    <p class="hero-subtitle mb-5">
+                        Aprenda programação Python através de projetos práticos, exercícios interativos
+                        e uma metodologia comprovada. Construa seu portfólio enquanto desenvolve suas habilidades.
+                    </p>
+                    <div class="hero-actions mb-5">
+                        <a href="{{ url_for('list_courses_page') }}" class="btn btn-hero-primary me-3">
+                            <i class="bi bi-play-circle me-2"></i>
+                            Começar Gratuitamente
+                        </a>
+                        <a href="#trilhas" class="btn btn-hero-outline">
+                            <i class="bi bi-arrow-down me-2"></i>
+                            Ver Trilhas
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-number">{{ courses|length }}</div>
+                                <div class="stat-label">Cursos</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number">100+</div>
+                                <div class="stat-label">Exercícios</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number">200h+</div>
+                                <div class="stat-label">Conteúdo</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h5 class="card-title">{{ course.name }}</h5>
-                <p class="card-text text-muted flex-grow-1">{{ course.short_description }}</p>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ course.duration }}</small>
-                    <a href="{{ url_for('course_detail_page', course_id=course.id) }}" class="btn btn-link p-0 text-decoration-none fw-bold">
-                        Acessar <i class="bi bi-chevron-right"></i>
-                    </a>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-visual">
+                    <div class="code-window">
+                        <div class="code-header">
+                            <div class="code-dots">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                            </div>
+                            <div class="code-title">main.py</div>
+                        </div>
+                        <div class="code-content">
+                            <pre><code class="language-python"># Bem-vindo ao mundo Python!
+def aprender_python():
+    conhecimento = "básico"
+
+    while conhecimento != "avançado":
+        praticar()
+        resolver_exercicios()
+        construir_projetos()
+        conhecimento = "avançado"
+
+    return "Parabéns! 🎉"
+
+# Sua jornada começa aqui
+resultado = aprender_python()
+print(resultado)</code></pre>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    {% else %}
-    <div class="col-12">
-        <div class="alert alert-info text-center">
-            <i class="bi bi-info-circle me-2"></i>Nenhum curso disponível no momento. Volte em breve!
+</section>
+
+<!-- Trilhas de Aprendizado -->
+<section class="learning-paths" id="trilhas">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Trilhas de Aprendizado</h2>
+            <p class="section-subtitle">
+                Escolha sua jornada e evolua do básico ao avançado com nossa metodologia estruturada
+            </p>
+        </div>
+
+        <div class="row g-4">
+            {% for course in courses %}
+            <div class="col-lg-4 col-md-6">
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-level">
+                            <span class="level-badge level-{{ course.level|lower }}">{{ course.level }}</span>
+                        </div>
+                        <div class="course-icon">
+                            {% if course.level == 'Básico' %}
+                                <i class="bi bi-play-circle"></i>
+                            {% elif course.level == 'Intermediário' %}
+                                <i class="bi bi-gear"></i>
+                            {% elif course.level == 'Avançado' %}
+                                <i class="bi bi-rocket"></i>
+                            {% elif course.level == 'Especialização' %}
+                                <i class="bi bi-brain"></i>
+                            {% else %}
+                                <i class="bi bi-code-square"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">{{ course.name }}</h3>
+                        <p class="course-description">{{ course.short_description }}</p>
+                        <div class="course-meta">
+                            <div class="meta-item">
+                                <i class="bi bi-clock"></i>
+                                <span>{{ course.duration }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="bi bi-person"></i>
+                                <span>{{ course.level }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="course-footer">
+                        <a href="{{ url_for('course_detail_page', course_id=course.id) }}" class="btn btn-course">
+                            Iniciar Curso
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
-    {% endfor %}
-</div>
+</section>
 
-<!-- Seção de Recursos (Features) -->
-<div class="row mt-5 py-5">
-    <div class="col-12 text-center mb-5">
-        <h2>Por que estudar conosco?</h2>
-    </div>
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Por que escolher nossa plataforma?</h2>
+            <p class="section-subtitle">
+                Uma experiência de aprendizado completa e interativa
+            </p>
+        </div>
 
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-0 shadow-none bg-transparent">
-            <div class="card-body text-center">
-                <div class="mb-3 text-primary">
-                    <i class="bi bi-code-slash display-5"></i>
+        <div class="row g-5">
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-code-slash"></i>
+                    </div>
+                    <h3 class="feature-title">Editor Integrado</h3>
+                    <p class="feature-description">
+                        Escreva e execute código Python diretamente no navegador.
+                        Sem instalações, sem configurações complexas.
+                    </p>
                 </div>
-                <h4>Prática Real</h4>
-                <p class="text-muted">Editor de código integrado no navegador. Não precisa instalar nada para começar.</p>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h3 class="feature-title">Feedback Instantâneo</h3>
+                    <p class="feature-description">
+                        Receba validação automática dos seus exercícios com
+                        dicas personalizadas para acelerar seu aprendizado.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                    <h3 class="feature-title">Sistema de Conquistas</h3>
+                    <p class="feature-description">
+                        Mantenha-se motivado com nosso sistema gamificado.
+                        Desbloqueie conquistas e acompanhe seu progresso.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h3 class="feature-title">Progresso Visual</h3>
+                    <p class="feature-description">
+                        Acompanhe sua evolução com roadmaps interativos
+                        e estatísticas detalhadas de aprendizado.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-puzzle"></i>
+                    </div>
+                    <h3 class="feature-title">Projetos Práticos</h3>
+                    <p class="feature-description">
+                        Construa projetos reais enquanto aprende.
+                        Desenvolva um portfólio impressionante.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <h3 class="feature-title">Metodologia Comprovada</h3>
+                    <p class="feature-description">
+                        Aprenda com uma metodologia estruturada que
+                        leva você do básico ao profissional.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
+</section>
 
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-0 shadow-none bg-transparent">
-            <div class="card-body text-center">
-                <div class="mb-3 text-primary">
-                    <i class="bi bi-lightning-charge display-5"></i>
-                </div>
-                <h4>Feedback Instantâneo</h4>
-                <p class="text-muted">Validação automática dos seus exercícios com dicas para corrigir erros.</p>
-            </div>
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content text-center">
+            <h2 class="cta-title">Pronto para começar sua jornada?</h2>
+            <p class="cta-subtitle">
+                Junte-se a milhares de desenvolvedores que já transformaram suas carreiras com Python
+            </p>
+            <a href="{{ url_for('list_courses_page') }}" class="btn btn-cta">
+                <i class="bi bi-rocket me-2"></i>
+                Começar Agora - É Gratuito
+            </a>
         </div>
     </div>
-
-    <div class="col-md-4 mb-4">
-        <div class="card h-100 border-0 shadow-none bg-transparent">
-            <div class="card-body text-center">
-                <div class="mb-3 text-primary">
-                    <i class="bi bi-trophy display-5"></i>
-                </div>
-                <h4>Progresso Gamificado</h4>
-                <p class="text-muted">Avance níveis, desbloqueie conquistas e acompanhe sua evolução.</p>
-            </div>
-        </div>
-    </div>
-</div>
+</section>
 {% endblock %}

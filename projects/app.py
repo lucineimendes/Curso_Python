@@ -11,7 +11,7 @@ e o executor de código (code_executor).
 
 import logging
 
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
 from flask_cors import CORS
 
 from . import code_executor
@@ -74,36 +74,26 @@ def list_courses_page():  # Renomeado para clareza (página vs API)
 
 @app.route("/courses/<string:course_id>", methods=["GET"])
 def course_detail_page(course_id):  # Renomeado para clareza
-    """Renderiza a página de detalhes de um curso específico.
+    """Redireciona para a página de roadmap do curso.
 
-    Exibe informações sobre o curso e uma lista de suas lições.
+    A visualização padrão ao acessar um curso agora é o roadmap.
     Se o curso não for encontrado, retorna um erro 404.
 
     Args:
         course_id (str): O ID do curso a ser exibido.
 
     Returns:
-        str: O conteúdo HTML da página de detalhes do curso renderizada.
-             Ou uma resposta de erro 404 se o curso não for encontrado.
+        Response: Redirecionamento para a página de roadmap do curso.
+                  Ou uma resposta de erro 404 se o curso não for encontrado.
     """
-    logger.info(f"GET /courses/{course_id} - Solicitando página de detalhes para o curso ID: {course_id}")
+    logger.info(f"GET /courses/{course_id} - Redirecionando para roadmap do curso ID: {course_id}")
     course = course_mgr.get_course_by_id(course_id)
     if not course:
         logger.warning(f"GET /courses/{course_id} - Curso não encontrado.")
         abort(404)  # Usa abort para tratamento de erro padrão do Flask
 
-    # As lições são carregadas aqui para serem passadas ao template
-    # O frontend não precisará fazer uma chamada API separada para as lições nesta página.
-    lessons_file_relative_path = course.get("lessons_file")
-    lessons_for_course = []
-    if lessons_file_relative_path:
-        lessons_for_course = lesson_mgr.load_lessons_from_file(lessons_file_relative_path)
-    else:
-        logger.warning(f"Curso '{course_id}' não possui 'lessons_file' definido.")
-
-    return render_template(
-        "course_detail.html", course=course, lessons=lessons_for_course, title=course.get("name", "Detalhes do Curso")
-    )
+    # Redirecionar para o roadmap como visualização padrão
+    return redirect(url_for("course_roadmap_page", course_id=course_id))
 
 
 @app.route("/courses/<string:course_id>/roadmap", methods=["GET"])
