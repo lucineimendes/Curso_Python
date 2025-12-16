@@ -16,6 +16,7 @@ from flask_cors import CORS
 
 from . import code_executor
 from .achievement_manager import AchievementManager
+from .content_renderer import render_content
 
 # Assume que estes módulos estão no mesmo diretório (projects/)
 # Corrigido para import relativo consistente
@@ -31,6 +32,26 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)  # Habilita CORS para todas as rotas
+
+
+# Configurar filtros Jinja2
+def markdown_filter(text):
+    """Filtro Jinja2 para converter Markdown em HTML usando arquitetura SOLID."""
+    if not text or not isinstance(text, str):
+        return text
+    return render_content(text, format_type="markdown")
+
+
+def plain_text_filter(text):
+    """Filtro Jinja2 para renderizar texto simples com quebras de linha preservadas."""
+    if not text or not isinstance(text, str):
+        return text
+    return render_content(text, format_type="plain")
+
+
+# Registrar filtros no ambiente Jinja2
+app.jinja_env.filters["markdown"] = markdown_filter
+app.jinja_env.filters["plain_text"] = plain_text_filter
 
 # Instancia os managers
 # Os managers agora carregam dados sob demanda ou na inicialização, conforme suas implementações.
@@ -335,6 +356,23 @@ def generic_code_editor_page():
 
 
 # --- Rotas de API (JSON) ---
+
+
+@app.route("/api/courses", methods=["GET"])
+def api_get_all_courses():
+    """API endpoint para obter todos os cursos disponíveis.
+
+    Returns:
+        JSON: Lista de todos os cursos com suas informações básicas.
+    """
+    logger.info("GET /api/courses - Obtendo lista de todos os cursos.")
+    try:
+        all_courses = course_mgr.get_courses()
+        logger.info(f"GET /api/courses - Sucesso: {len(all_courses)} cursos retornados.")
+        return jsonify(all_courses)
+    except Exception as e:
+        logger.error(f"Erro ao obter lista de cursos: {e}", exc_info=True)
+        return jsonify({"error": "Erro interno do servidor"}), 500
 
 
 @app.route("/api/courses/<string:course_id>/lessons", methods=["GET"])

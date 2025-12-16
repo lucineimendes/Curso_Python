@@ -54,12 +54,19 @@
 
     <section class="mt-4">
         <h2>Conteúdo da Lição</h2>
-        {{ lesson.content | safe }}
+        <div class="lesson-content">
+            {{ lesson.content | markdown | safe }}
+        </div>
     </section>
 
-    {% if lesson.examples and lesson.examples|length > 0 %}
+    {% if lesson.examples %}
     <section class="mt-4">
         <h2>Exemplos</h2>
+        {% if lesson.examples is string %}
+        <div class="examples-content">
+            {{ lesson.examples | markdown | safe }}
+        </div>
+        {% else %}
         {% for example in lesson.examples %}
         <div class="card mt-3">
             <div class="card-body">
@@ -77,6 +84,7 @@
             </div>
         </div>
         {% endfor %}
+        {% endif %}
     </section>
     {% endif %}
 
@@ -84,7 +92,7 @@
     <section class="mt-5 lesson-summary-section">
         <h2><i class="bi bi-lightbulb me-2 text-warning"></i>Resumo da Lição</h2>
         <div class="summary-content">
-            {{ lesson.summary | safe }}
+            {{ lesson.summary | markdown | safe }}
         </div>
     </section>
     {% endif %}

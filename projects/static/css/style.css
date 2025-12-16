@@ -1372,3 +1372,265 @@ article blockquote {
         text-align: center;
     }
 }
+
+/* Estilos para conteúdo Markdown */
+.lesson-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.lesson-content h1,
+.lesson-content h2,
+.lesson-content h3,
+.lesson-content h4,
+.lesson-content h5,
+.lesson-content h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.lesson-content h1 {
+    font-size: 2.5rem;
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+}
+
+.lesson-content h2 {
+    font-size: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.3rem;
+}
+
+.lesson-content h3 {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
+
+.lesson-content h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.lesson-content p {
+    margin-bottom: 1.5rem;
+    text-align: justify;
+}
+
+.lesson-content ul,
+.lesson-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.lesson-content li {
+    margin-bottom: 0.5rem;
+}
+
+.lesson-content blockquote {
+    border-left: 4px solid var(--accent-color);
+    background-color: var(--bg-tertiary);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+.lesson-content code {
+    background-color: var(--bg-tertiary);
+    color: var(--accent-color);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+    font-size: 0.9em;
+}
+
+.lesson-content pre {
+    background-color: var(--code-bg);
+    color: var(--code-text);
+    padding: 1.5rem;
+    border-radius: var(--card-radius);
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    box-shadow: var(--shadow-md);
+}
+
+.lesson-content pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.95em;
+}
+
+.lesson-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background-color: var(--bg-secondary);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.lesson-content th,
+.lesson-content td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.lesson-content th {
+    background-color: var(--bg-tertiary);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.lesson-content tr:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.lesson-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+    box-shadow: var(--shadow-md);
+}
+
+.lesson-content hr {
+    border: none;
+    height: 2px;
+    background: var(--primary-gradient);
+    margin: 2rem 0;
+    border-radius: 1px;
+}
+
+/* Estilos para listas de tarefas (checkboxes) */
+.lesson-content input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+/* Estilos para código inline destacado */
+.lesson-content strong code,
+.lesson-content em code {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: bold;
+}
+
+/* Estilos para tabela de comandos */
+.lesson-content table.commands-table th {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.lesson-content table.commands-table td:first-child {
+    font-family: 'Fira Code', monospace;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+/* Responsividade para conteúdo Markdown */
+@media (max-width: 768px) {
+    .lesson-content {
+        font-size: 1rem;
+    }
+
+    .lesson-content h1 {
+        font-size: 2rem;
+    }
+
+    .lesson-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .lesson-content pre {
+        padding: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .lesson-content table {
+        font-size: 0.9rem;
+    }
+
+    .lesson-content th,
+    .lesson-content td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+/* Estilos específicos para seção de exemplos */
+.examples-content {
+    background-color: var(--bg-tertiary);
+    border-radius: var(--card-radius);
+    padding: 1.5rem;
+    margin-top: 1rem;
+    border-left: 4px solid var(--accent-color);
+}
+
+.examples-content h1,
+.examples-content h2,
+.examples-content h3,
+.examples-content h4,
+.examples-content h5,
+.examples-content h6 {
+    color: var(--accent-color);
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.examples-content h1:first-child,
+.examples-content h2:first-child,
+.examples-content h3:first-child,
+.examples-content h4:first-child,
+.examples-content h5:first-child,
+.examples-content h6:first-child {
+    margin-top: 0;
+}
+
+.examples-content pre {
+    background-color: var(--code-bg);
+    border: 1px solid var(--border-color);
+    margin: 1rem 0;
+}
+
+.examples-content code {
+    background-color: rgba(99, 102, 241, 0.1);
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.examples-content blockquote {
+    background-color: var(--bg-secondary);
+    border-left-color: var(--success-color);
+}
+
+/* Estilos para exemplos de comandos */
+.examples-content .codehilite pre {
+    position: relative;
+}
+
+.examples-content .codehilite pre::before {
+    content: "💻 Exemplo";
+    position: absolute;
+    top: -0.5rem;
+    right: 1rem;
+    background: var(--accent-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0 0 8px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Responsividade para exemplos */
+@media (max-width: 768px) {
+    .examples-content {
+        padding: 1rem;
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+        border-radius: 0;
+        border-left-width: 3px;
+    }
+}
