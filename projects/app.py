@@ -11,7 +11,7 @@ e o executor de código (code_executor).
 
 import logging
 
-from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
+from flask import Flask, abort, jsonify, render_template, request
 from flask_cors import CORS
 
 from . import code_executor
@@ -113,8 +113,13 @@ def course_detail_page(course_id):  # Renomeado para clareza
         logger.warning(f"GET /courses/{course_id} - Curso não encontrado.")
         abort(404)  # Usa abort para tratamento de erro padrão do Flask
 
-    # Redirecionar para o roadmap como visualização padrão
-    return redirect(url_for("course_roadmap_page", course_id=course_id))
+    # Carregar lições para o resumo do currículo
+    lessons_file = course.get("lessons_file")
+    lessons = lesson_mgr.load_lessons_from_file(lessons_file) if lessons_file else []
+
+    return render_template(
+        "course_detail.html", course=course, lessons=lessons, title=course.get("name", "Detalhes do Curso")
+    )
 
 
 @app.route("/courses/<string:course_id>/roadmap", methods=["GET"])

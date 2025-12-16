@@ -293,6 +293,19 @@ a:hover {
     line-height: 1.6;
 }
 
+/* Premium Lesson Item Hover Effect */
+.lesson-item {
+    border-left: 4px solid transparent; /* Prevents layout jump */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lesson-item:hover {
+    background-color: var(--bg-tertiary);
+    border-left-color: var(--accent-color);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-sm);
+}
+
 /* Code Blocks & Examples - Global Premium Mono */
 pre, code, kbd, samp, .CodeMirror {
     font-family: 'JetBrains Mono', monospace !important;

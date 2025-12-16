@@ -1,90 +1,169 @@
 {% extends 'base.html' %}
 
-{% block title %}Detalhes do Curso{% endblock %}
+{% block title %}{{ course.name }} - Detalhes do Curso{% endblock %}
+{% block description %}{{ course.short_description }}{% endblock %}
+{% block og_title %}{{ course.name }}{% endblock %}
+{% block og_description %}{{ course.short_description }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="mb-4 d-flex justify-content-between align-items-center">
-        <a href="{{ url_for('list_courses_page') }}" class="btn btn-outline-secondary">← Voltar para Cursos</a>
-        <a href="{{ url_for('course_roadmap_page', course_id=course.id) }}" class="btn btn-primary">
-            🗺️ Ver Roadmap do Curso
-        </a>
-    </div>
+<section class="hero-modern">
+    <div class="container">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-8">
+                <div class="hero-content">
+                    <div class="hero-badge mb-4">
+                        <span class="badge-modern">
+                            <i class="bi bi-bookmark-star-fill me-2"></i>
+                            {{ course.level }}
+                        </span>
+                    </div>
+                    <h1 class="hero-title mb-4">
+                        {{ course.name }}
+                    </h1>
+                    <p class="hero-subtitle mb-5">
+                        {{ course.short_description }}
+                    </p>
+                    <div class="hero-actions mb-5">
+                        <a href="{{ url_for('course_roadmap_page', course_id=course.id) }}" class="btn btn-hero-primary me-3">
+                            <i class="bi bi-rocket-takeoff me-2"></i>
+                            Iniciar Jornada
+                        </a>
+                        <a href="#conteudo" class="btn btn-hero-outline">
+                            <i class="bi bi-journal-text me-2"></i>
+                            Ver Conteúdo
+                        </a>
+                    </div>
 
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-body p-4">
-            <h2 class="card-title mb-3">{{ course.name }}</h2>
-            <div class="mb-3">
-                <span class="badge badge-soft-primary">{{ course.level }}</span>
-            </div>
-            <p class="card-text lead text-muted">{{ course.description }}</p>
-
-            <div class="d-flex gap-4 mt-4">
-                {% if course.duration %}
-                <div class="d-flex align-items-center text-muted">
-                    <i class="bi bi-clock me-2"></i>
-                    <span>{{ course.duration }}</span>
-                </div>
-                {% endif %}
-
-                {% if course.prerequisites %}
-                <div class="d-flex align-items-center text-muted">
-                    <i class="bi bi-exclamation-circle me-2"></i>
-                    <span>{{ course.prerequisites }}</span>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <div class="card mb-4 border-0 shadow-sm">
-        <div class="card-body p-4">
-            <h3 class="card-title h4 mb-4">
-                <i class="bi bi-bullseye text-primary me-2"></i>Objetivos do Curso
-            </h3>
-            <ul class="list-group list-group-flush">
-                {% for objective in course.objectives %}
-                    <li class="list-group-item px-0 py-3 border-bottom-0 d-flex">
-                        <i class="bi bi-check-circle-fill text-success me-3 mt-1"></i>
-                        <span>{{ objective }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-
-    <h3>Lições:</h3>
-    {% if lessons %}
-        <ul class="list-unstyled">
-            {% for lesson in lessons %}
-                <li class="mb-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <a href="{{ url_for('lesson_detail_page', course_id=course.id, lesson_id_str=lesson.id) }}" class="text-decoration-none">{{ lesson.title }}</a>
-                            </h5>
-                            {# Nota: A variável 'exercises' aqui parece ser a lista de todos os exercícios do curso,
-                               não filtrada por lição. A lógica para obter exercícios específicos da lição
-                               está em app.py para a rota lesson_detail_page.
-                               Se você quiser listar exercícios aqui, precisaria de uma lógica diferente
-                               ou passar os exercícios já filtrados para este template.
-                               Por enquanto, vamos assumir que você quer linkar para a página do editor do exercício.
-                               A rota para o editor é 'exercise_code_editor_page'.
-                            #}
-                            {# Exemplo de como listar exercícios se 'lesson.exercises' fosse uma lista de IDs de exercícios associados à lição:
-                                <ul class="list-unstyled">
-                                    {% for ex_id in lesson.exercises %}
-                                        <a href="{{ url_for('exercise_code_editor_page', course_id=course.id, exercise_id_str=ex_id) }}">Exercício {{ ex_id }}</a>
-                                    {% endfor %}
-                                </ul>
-                            #}
+                    <div class="hero-stats">
+                        <div class="row">
+                            <div class="col-auto me-5">
+                                <div class="stat-number">{{ course.duration }}</div>
+                                <div class="stat-label">Duração Estimada</div>
+                            </div>
+                            {% if lessons %}
+                            <div class="col-auto me-5">
+                                <div class="stat-number">{{ lessons|length }}</div>
+                                <div class="stat-label">Lições</div>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Nenhuma lição encontrada para este curso.</p>
-    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <!-- Coluna Principal -->
+        <div class="col-lg-8">
+            <!-- Sobre o Curso -->
+            <section class="mb-5">
+                <h2 class="section-title h3 mb-4">Sobre o Curso</h2>
+                <div class="fs-5 text-muted lh-lg">
+                    <p>{{ course.description }}</p>
+                </div>
+            </section>
+
+            <!-- Objetivos -->
+            <section class="mb-5">
+                <h2 class="section-title h3 mb-4">O que você vai aprender</h2>
+                <div class="card border-0 shadow-sm" style="background-color: var(--bg-tertiary);">
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            {% for objective in course.objectives %}
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-success mt-1 me-3 fs-5"></i>
+                                        <span class="fs-6">{{ objective }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Currículo / Conteúdo -->
+            <section id="conteudo" class="mb-5">
+                <h2 class="section-title h3 mb-4">Conteúdo Programático</h2>
+
+                <div class="card border-0 shadow-sm overflow-hidden">
+                    <div class="card-header py-3 border-bottom" style="background-color: var(--bg-tertiary);">
+                        <h4 class="h5 mb-0 text-primary">Grade Curricular Completa</h4>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% if lessons %}
+                            {% for lesson in lessons %}
+                                <div class="list-group-item p-4 list-group-item-action lesson-item">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-1 d-none d-md-flex justify-content-center">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-light text-primary fw-bold" style="width: 40px; height: 40px;">
+                                                {{ loop.index }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8 mb-3 mb-md-0">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <h5 class="h6 mb-0 fw-bold text-dark">{{ lesson.title }}</h5>
+                                            </div>
+                                            {% if lesson.description %}
+                                                <p class="small text-muted mb-0">{{ lesson.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-3 text-end">
+                                            {% if lesson.estimated_time_minutes %}
+                                                <div class="d-block small text-muted mb-2">
+                                                    <i class="bi bi-clock me-1"></i> {{ lesson.estimated_time_minutes }} min
+                                                </div>
+                                            {% endif %}
+                                            <a href="{{ url_for('lesson_detail_page', course_id=course.id, lesson_id_str=lesson.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-4 stretched-link-position-relative">
+                                                <i class="bi bi-play-circle me-1"></i> Acessar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="p-5 text-center">
+                                <i class="bi bi-cone-striped fs-1 text-muted mb-3"></i>
+                                <p class="text-muted mb-0">O conteúdo deste curso está sendo atualizado.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Sidebar / Detalhes Extras -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 100px;">
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="card-title h5 mb-3">Requisitos</h4>
+                        {% if course.prerequisites %}
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-info-circle me-2"></i>
+                                {{ course.prerequisites }}
+                            </p>
+                        {% else %}
+                            <p class="text-muted mb-0">Nenhum requisito prévio.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm text-center p-4 bg-primary text-white" style="background: var(--primary-gradient) !important; color: black !important;">
+                    <div class="card-body">
+                        <h4 class="h4 mb-3">Pronto para começar?</h4>
+                        <p class="mb-4">Junte-se a milhares de alunos e domine {{ course.name }} agora mesmo.</p>
+                        <a href="{{ url_for('course_roadmap_page', course_id=course.id) }}" class="btn btn-light rounded-pill w-100 fw-bold shadow-sm">
+                            Começar Curso Grátis
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 {% endblock %}
