@@ -13,7 +13,7 @@
 {% block schema_description %}{{ lesson.description }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="lesson-container mt-4">
 <article itemscope itemtype="http://schema.org/Article">
     <header>
         <h1 itemprop="headline">{{ lesson.title }}</h1>
@@ -67,23 +67,25 @@
             {{ lesson.examples | markdown | safe }}
         </div>
         {% else %}
-        {% for example in lesson.examples %}
-        <div class="card mt-3">
-            <div class="card-body">
-                <h3 class="h5">{{ example.title }}</h3>
-                {% if example.description %}
-                    <p>{{ example.description }}</p>
-                {% endif %}
-                {% if example.code %}
-                    <pre><code class="language-python">{{ example.code }}</code></pre>
-                {% endif %}
-                {% if example.explanation %}
-                    <p><strong>Explicação/Resultado:</strong></p>
-                    <div>{{ example.explanation | safe }}</div>
-                {% endif %}
+        <div class="examples-grid">
+            {% for example in lesson.examples %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h3 class="h5">{{ example.title }}</h3>
+                    {% if example.description %}
+                        <p>{{ example.description }}</p>
+                    {% endif %}
+                    {% if example.code %}
+                        <pre><code class="language-python">{{ example.code }}</code></pre>
+                    {% endif %}
+                    {% if example.explanation %}
+                        <p><strong>Explicação/Resultado:</strong></p>
+                        <div>{{ example.explanation | safe }}</div>
+                    {% endif %}
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
         {% endif %}
     </section>
     {% endif %}

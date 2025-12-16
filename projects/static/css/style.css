@@ -1,39 +1,41 @@
 /* Variáveis CSS para temas - Modern Python Theme */
 :root {
-    /* Paleta de Cores - Light Mode */
-    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
-    --bg-primary: #f8fafc;
+    /* Paleta de Cores - Light Mode (Neon Spring Green) */
+    --primary-gradient: linear-gradient(135deg, #03ff9c 0%, #00e5ff 100%); /* Spring Green -> Cyan */
+    --secondary-gradient: linear-gradient(135deg, #00bfa5 0%, #03ff9c 100%);
+    --bg-primary: #f0fdf9; /* Fundo levemente menta */
     --bg-secondary: #ffffff;
-    --bg-tertiary: #f1f5f9;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --code-bg: #1e293b;
-    --code-text: #e2e8f0;
-    --accent-color: #6366f1;
-    --success-color: #10b981;
+    --bg-tertiary: #ccfbf1;
+    --text-primary: #000000; /* Preto absoluto para contraste máximo */
+    --text-secondary: #333333; /* Cinza escuro para hierarquia */
+    --border-color: #99f6e4;
+    --shadow-sm: 0 1px 2px 0 rgb(3 255 156 / 0.15);
+    --shadow-md: 0 4px 6px -1px rgb(3 255 156 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(3 255 156 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    --code-bg: #0d1f1a;
+    --code-text: #23E099;
+    --accent-color: #23E099; /* Cor solicitada pelo usuário */
+    --success-color: #23E099;
     --error-color: #ef4444;
     --card-radius: 16px;
-    --btn-radius: 50px; /* Pill shape */
+    --btn-radius: 50px;
 }
 
 [data-theme="dark"] {
-    /* Paleta de Cores - Dark Mode */
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --border-color: #334155;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
-    --code-bg: #020617;
-    --code-text: #f8fafc;
+    /* Paleta de Cores - Dark Mode (Cyberpunk Spring Green) */
+    --bg-primary: #050a08; /* Quase preto com tom esverdeado imperceptível */
+    --bg-secondary: #0a1410;
+    --bg-tertiary: #11221c;
+    --text-primary: #f0fdfa;
+    --text-secondary: #99f6e4;
+    --border-color: #134e4a;
+    --shadow-sm: 0 1px 2px 0 rgb(3 255 156 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(3 255 156 / 0.2);
+    --shadow-lg: 0 10px 15px -3px rgb(3 255 156 / 0.3);
+    --code-bg: #000000;
+    --code-text: #23E099;
+    --accent-color: #23E099; /* Cor solicitada */
+    --primary-gradient: linear-gradient(135deg, #23E099 0%, #2bd999 100%);
 }
 
 /* Estilos Gerais */
@@ -63,8 +65,21 @@ a:hover {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     padding: 0 1.5rem;
+}
+
+/* Container responsivo para diferentes tamanhos de tela */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1500px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .container {
+        max-width: 1600px;
+    }
 }
 
 /* Navbar Moderna - Glassmorphism */
@@ -219,14 +234,14 @@ a:hover {
 
 .btn-primary {
     background: var(--primary-gradient);
-    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
-    color: white;
+    box-shadow: 0 4px 6px -1px rgba(35, 224, 153, 0.4);
+    color: #000000;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.5);
-    color: white;
+    box-shadow: 0 10px 15px -3px rgba(35, 224, 153, 0.5);
+    color: #000000;
 }
 
 .btn-outline-primary {
@@ -739,7 +754,7 @@ hr {
 
 /* Melhorar legibilidade do conteúdo principal */
 article {
-    max-width: 68ch; /* Padrão áureo para leitura confortável (65-75 caracteres) */
+    max-width: 90%; /* Ajustado para ocupar ~90% da tela */
     margin: 0 auto;
     padding: 4rem 1.5rem; /* Margens generosas para foco */
 }
@@ -872,39 +887,85 @@ article aside {
 }
 
 /* Garantir que imagens sejam responsivas */
+/* Garantir que imagens sejam responsivas e bonitas */
 article img {
     max-width: 100%;
     height: auto;
     display: block;
-    margin: 1.5rem auto;
+    margin: 2.5rem auto;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
 }
 
 /* Melhorar tabelas se houver */
+/* Melhorar tabelas - Estilo Premium */
 article table {
     width: 100%;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
+    border-collapse: separate; /* Necessário para border-radius */
+    border-spacing: 0;
+    margin: 2.5rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
 }
 
 article table th,
 article table td {
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
     text-align: left;
 }
 
 article table th {
     background-color: var(--bg-tertiary);
     font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-color);
+}
+
+article table tr:last-child td {
+    border-bottom: none;
+}
+
+article table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] article table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+article table tr:hover {
+    background-color: var(--bg-tertiary);
+    transition: background-color 0.2s ease;
 }
 
 /* Blockquotes mais destacados */
+/* Blockquotes mais destacados - Estilo Callout */
 article blockquote {
     border-left: 4px solid var(--accent-color);
-    padding-left: 1.5rem;
-    margin: 1.5rem 0;
+    background-color: var(--bg-tertiary); /* Fundo sutil */
+    padding: 1.5rem 2rem;
+    margin: 2.5rem 0;
     font-style: italic;
     color: var(--text-secondary);
+    border-radius: 0 12px 12px 0;
+    position: relative;
+}
+
+article blockquote::before {
+    content: '"';
+    font-family: serif;
+    font-size: 3rem;
+    color: var(--accent-color);
+    opacity: 0.2;
+    position: absolute;
+    top: -0.5rem;
+    left: 1rem;
+    pointer-events: none;
 }
 
 /* ============================================
@@ -987,14 +1048,16 @@ article blockquote {
 }
 
 .badge-modern {
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
-    color: white;
+    background: rgba(3, 255, 156, 0.1);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
     padding: 0.5rem 1rem;
     border-radius: 50px;
     font-size: 0.875rem;
     font-weight: 500;
     display: inline-flex;
     align-items: center;
+    box-shadow: 0 0 10px rgba(3, 255, 156, 0.2);
 }
 
 .hero-title {
@@ -1006,10 +1069,12 @@ article blockquote {
 }
 
 .text-gradient {
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+    /* Gradiente Spring Green to Cyan */
+    background: linear-gradient(135deg, #03ff9c 0%, #00e5ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    filter: drop-shadow(0 0 2px rgba(3, 255, 156, 0.3));
 }
 
 .hero-subtitle {
@@ -1020,21 +1085,21 @@ article blockquote {
 }
 
 .btn-hero-primary {
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+    background: var(--primary-gradient);
     border: none;
-    color: white;
+    color: #000; /* Texto preto para contraste no verde neon */
     padding: 1rem 2rem;
     border-radius: 50px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 1.1rem;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(3, 255, 156, 0.4);
 }
 
 .btn-hero-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-    color: white;
+    box-shadow: 0 8px 25px rgba(3, 255, 156, 0.6);
+    color: #000;
 }
 
 .btn-hero-outline {
@@ -1174,7 +1239,7 @@ article blockquote {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+    background: var(--primary-gradient);
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
@@ -1195,29 +1260,51 @@ article blockquote {
     margin-bottom: 1.5rem;
 }
 
+/* Badges de Nível Harmonizados - Estilo Cyberpunk */
 .level-badge {
     padding: 0.25rem 0.75rem;
-    border-radius: 20px;
+    border-radius: 4px; /* Bordas menos arredondadas para estilo tech */
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    border: 1px solid transparent;
 }
 
-.level-básico { background: #dcfce7; color: #166534; }
-.level-intermediário { background: #fef3c7; color: #92400e; }
-.level-avançado { background: #fecaca; color: #991b1b; }
-.level-especialização { background: #e0e7ff; color: #3730a3; }
+.level-básico {
+    background: rgba(3, 255, 156, 0.1);
+    color: var(--text-primary);
+    border-color: #03ff9c;
+}
+
+.level-intermediário {
+    background: rgba(0, 229, 255, 0.1);
+    color: var(--text-primary);
+    border-color: #00e5ff;
+}
+
+.level-avançado {
+    background: rgba(255, 0, 255, 0.1); /* Magenta neon para contraste tech */
+    color: var(--text-primary);
+    border-color: #ff00ff;
+}
+
+.level-especialização {
+    background: rgba(255, 255, 0, 0.1);
+    color: var(--text-primary);
+    border-color: #ffff00;
+}
 
 .course-icon {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+    background: rgba(3, 255, 156, 0.1);
+    border: 1px solid var(--accent-color);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--accent-color);
     font-size: 1.5rem;
 }
 
@@ -1250,19 +1337,20 @@ article blockquote {
 
 .btn-course {
     background: var(--accent-color);
-    color: white;
+    color: #000000; /* Texto preto para contraste no fundo #23E099 */
     border: none;
     padding: 0.75rem 1.5rem;
-    border-radius: 8px;
+    border-radius: var(--btn-radius);
     font-weight: 500;
     width: 100%;
     transition: all 0.3s ease;
 }
 
 .btn-course:hover {
-    background: #5856eb;
-    color: white;
+    background: #00e5ff; /* Cyan vibrante no hover */
+    color: #000;
     transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
 }
 
 /* Features Section */
@@ -1280,13 +1368,15 @@ article blockquote {
 .feature-icon {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+    background: rgba(3, 255, 156, 0.05);
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 0 20px rgba(3, 255, 156, 0.1);
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    color: white;
+    color: var(--accent-color);
     font-size: 2rem;
 }
 
@@ -1305,7 +1395,9 @@ article blockquote {
 /* CTA Section */
 .cta-section {
     padding: 6rem 0;
-    background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
+    background: linear-gradient(135deg, #0f392b 0%, #000000 100%); /* Gradiente escuro profundo */
+    border-top: 1px solid var(--accent-color);
+    border-bottom: 1px solid var(--accent-color);
     color: white;
     text-align: center;
 }
@@ -1323,11 +1415,12 @@ article blockquote {
 }
 
 .btn-cta {
-    background: white;
-    color: var(--accent-color);
+    background: var(--accent-color);
+    color: #000;
     border: none;
     padding: 1rem 2rem;
     border-radius: 50px;
+    box-shadow: 0 0 15px rgba(3, 255, 156, 0.4);
     font-weight: 600;
     font-size: 1.1rem;
     transition: all 0.3s ease;
@@ -1335,8 +1428,9 @@ article blockquote {
 
 .btn-cta:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-    color: var(--accent-color);
+    box-shadow: 0 0 25px rgba(3, 255, 156, 0.6);
+    background: #fff;
+    color: #000;
 }
 
 /* Responsividade */
@@ -1632,5 +1726,247 @@ article blockquote {
         margin-right: -0.5rem;
         border-radius: 0;
         border-left-width: 3px;
+    }
+}
+/* Otimizações para telas desktop grandes */
+@media (min-width: 1400px) {
+    .lesson-content {
+        font-size: 1.15rem;
+        line-height: 1.9;
+    }
+
+    .lesson-content pre {
+        padding: 2rem;
+        font-size: 1rem;
+        border-radius: 12px;
+    }
+
+    .lesson-content table {
+        font-size: 1rem;
+    }
+
+    .lesson-content th,
+    .lesson-content td {
+        padding: 1.25rem 1.5rem;
+    }
+
+    /* Melhor aproveitamento horizontal para código */
+    .lesson-content .codehilite pre {
+        max-width: none;
+        overflow-x: auto;
+    }
+
+    /* Layout em duas colunas para listas longas */
+    .lesson-content ul:has(> li:nth-child(8)),
+    .lesson-content ol:has(> li:nth-child(8)) {
+        columns: 2;
+        column-gap: 3rem;
+        column-fill: balance;
+    }
+
+    .lesson-content ul li,
+    .lesson-content ol li {
+        break-inside: avoid;
+        margin-bottom: 0.75rem;
+    }
+}
+
+@media (min-width: 1600px) {
+    .lesson-content {
+        font-size: 1.2rem;
+    }
+
+    .lesson-content h1 {
+        font-size: 3rem;
+    }
+
+    .lesson-content h2 {
+        font-size: 2.25rem;
+    }
+
+    .lesson-content h3 {
+        font-size: 1.75rem;
+    }
+
+    .lesson-content pre {
+        padding: 2.5rem;
+        font-size: 1.05rem;
+    }
+
+    /* Tabelas mais espaçosas */
+    .lesson-content th,
+    .lesson-content td {
+        padding: 1.5rem 2rem;
+    }
+}
+
+/* Layout específico para telas ultra-wide */
+@media (min-width: 1920px) {
+    .lesson-content {
+        font-size: 1.25rem;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+
+    /* Código com mais espaço horizontal */
+    .lesson-content pre {
+        padding: 3rem;
+        font-size: 1.1rem;
+        margin: 2rem 0;
+    }
+
+    /* Três colunas para listas muito longas */
+    .lesson-content ul:has(> li:nth-child(12)),
+    .lesson-content ol:has(> li:nth-child(12)) {
+        columns: 3;
+        column-gap: 4rem;
+    }
+}
+/* Otimização de espaçamento para desktop */
+@media (min-width: 1200px) {
+    /* Reduzir margens verticais desnecessárias */
+    .container.mt-4 {
+        margin-top: 2rem !important;
+    }
+
+    /* Seções mais compactas */
+    section.mt-4 {
+        margin-top: 2.5rem !important;
+    }
+
+    section.mt-5 {
+        margin-top: 3rem !important;
+    }
+
+    /* Navegação mais próxima do conteúdo */
+    nav.mt-5 {
+        margin-top: 3rem !important;
+    }
+
+    /* Header mais compacto */
+    article header {
+        margin-bottom: 2rem;
+    }
+
+    /* Melhor aproveitamento vertical */
+    .lesson-content h1,
+    .lesson-content h2,
+    .lesson-content h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .lesson-content p {
+        margin-bottom: 1.25rem;
+    }
+}
+
+/* Layout otimizado para telas muito grandes */
+@media (min-width: 1600px) {
+    /* Container principal mais compacto */
+    .container.mt-4 {
+        margin-top: 1.5rem !important;
+    }
+
+    /* Seções ainda mais próximas */
+    section.mt-4 {
+        margin-top: 2rem !important;
+    }
+
+    /* Aproveitar melhor a altura da tela */
+    body {
+        line-height: 1.7;
+    }
+
+    /* Títulos mais compactos */
+    .lesson-content h1 {
+        margin-top: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .lesson-content h2 {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+}
+/* Container específico para lições - melhor aproveitamento da tela */
+.lesson-container {
+    max-width: 95%;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Responsividade para lesson-container */
+@media (min-width: 768px) {
+    .lesson-container {
+        max-width: 90%;
+        padding: 0 2.5rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .lesson-container {
+        max-width: 85%;
+        padding: 0 3rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    .lesson-container {
+        max-width: 80%;
+        padding: 0 3.5rem;
+    }
+}
+
+@media (min-width: 1600px) {
+    .lesson-container {
+        max-width: 75%;
+        padding: 0 4rem;
+    }
+}
+
+@media (min-width: 1920px) {
+    .lesson-container {
+        max-width: 70%;
+        padding: 0 4.5rem;
+    }
+}
+
+/* Otimizações específicas para o conteúdo da lição */
+.lesson-container .lesson-content {
+    width: 100%;
+    max-width: none;
+}
+
+/* Tabelas e código aproveitando toda a largura disponível */
+.lesson-container .lesson-content table {
+    width: 100%;
+    table-layout: auto;
+}
+
+.lesson-container .lesson-content pre {
+    width: 100%;
+    max-width: none;
+    overflow-x: auto;
+}
+
+/* Melhor aproveitamento para exemplos */
+.lesson-container .examples-content {
+    width: 100%;
+    max-width: none;
+}
+
+/* Grid layout para cards de exemplo em telas grandes */
+@media (min-width: 1400px) {
+    .lesson-container .examples-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+
+    .lesson-container .card.mt-3 {
+        margin-top: 0 !important;
+        height: fit-content;
     }
 }

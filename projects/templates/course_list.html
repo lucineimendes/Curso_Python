@@ -3,6 +3,7 @@
 {% block title %}Cursos Disponíveis{% endblock %}
 
 {% block content %}
+<div class="container">
 <h1 class="mb-4">Cursos Disponíveis</h1>
 
 <div class="row">
@@ -25,7 +26,7 @@
                 {% endif %}
             </div>
             <div class="card-footer bg-transparent border-top-0 pb-4 pt-0">
-                <a href="{{ url_for('course_detail_page', course_id=course.id) }}" class="btn btn-primary w-100">Ver Detalhes</a>
+                <a href="{{ url_for('course_detail_page', course_id=course.id) }}" class="btn btn-primary px-4">Ver Detalhes</a>
             </div>
         </div>
     </div>
@@ -36,5 +37,6 @@
         </div>
     </div>
     {% endfor %}
+</div>
 </div>
 {% endblock %}
